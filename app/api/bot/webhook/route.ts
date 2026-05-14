@@ -81,7 +81,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (error: any) {
     console.error("Webhook error:", error);
-    return NextResponse.json({ ok: false, error: error.message });
+    return new Response(JSON.stringify({ ok: false, error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
 
