@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/firebase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { adminDb } from "@/lib/firebase-admin";
 
 const BOT_TOKEN = "8917648922:AAFKV2N9sN8rCqHOqCFMM9wzazX02i-_VyI";
 
@@ -10,7 +9,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("Webhook body:", JSON.stringify(body));
 
-    // Handle Callback Queries (Buttons)
     if (body.callback_query) {
       const { data, message, id: callbackQueryId } = body.callback_query;
       const chatId = message.chat.id;
@@ -22,14 +20,14 @@ export async function POST(request: NextRequest) {
         const invitationId = data.replace("confirm_", "");
         console.log(`Confirming invitation: ${invitationId}`);
         
-        const docRef = doc(db, "invitations", invitationId);
-        await updateDoc(docRef, { status: "active" });
-        console.log("Firestore updated to active");
+        const docRef = adminDb.collection("invitations").doc(invitationId);
+        await docRef.update({ status: "active" });
+        console.log("Firestore updated to active via Admin SDK");
 
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
           const invData = docSnap.data();
-          if (invData.telegramId) {
+          if (invData?.telegramId) {
             await sendTelegramMessage(invData.telegramId, "<b>✅ Tabriklaymiz!</b>\n\nTo'lovingiz tasdiqlandi va taklifnomangiz faollashtirildi.");
           }
         }
@@ -53,7 +51,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // Handle Replies (Rejection Reason)
     if (body.message && body.message.reply_to_message) {
       const replyText = body.message.reply_to_message.text;
       const reason = body.message.text;
@@ -64,13 +61,13 @@ export async function POST(request: NextRequest) {
         const invitationId = idMatch[1];
         console.log(`Processing rejection reason for: ${invitationId}`);
         
-        const docRef = doc(db, "invitations", invitationId);
-        await updateDoc(docRef, { status: "rejected", rejectReason: reason });
+        const docRef = adminDb.collection("invitations").doc(invitationId);
+        await docRef.update({ status: "rejected", rejectReason: reason });
 
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
           const invData = docSnap.data();
-          if (invData.telegramId) {
+          if (invData?.telegramId) {
             await sendTelegramMessage(invData.telegramId, `<b>❌ Uzr, sizning to'lovingiz rad etildi.</b>\n\n⚠️ <b>Sabab:</b> ${reason}\n\nIltimos, qayta urinib ko'ring.`);
           }
         }
