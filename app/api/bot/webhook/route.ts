@@ -1,50 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/firebase"; // Using the same db instance
+import { db } from "@/lib/firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 const BOT_TOKEN = "8917648922:AAFKV2N9sN8rCqHOqCFMM9wzazX02i-_VyI";
 
 export async function POST(request: NextRequest) {
+  console.log("Webhook received a request");
   try {
     const body = await request.json();
+    console.log("Webhook body:", JSON.stringify(body));
 
     // Handle Callback Queries (Buttons)
     if (body.callback_query) {
       const { data, message, id: callbackQueryId } = body.callback_query;
       const chatId = message.chat.id;
       const messageId = message.message_id;
+      
+      console.log(`Handling callback: ${data} for invitation`);
 
       if (data.startsWith("confirm_")) {
         const invitationId = data.replace("confirm_", "");
+        console.log(`Confirming invitation: ${invitationId}`);
         
-        // Update Firestore
         const docRef = doc(db, "invitations", invitationId);
         await updateDoc(docRef, { status: "active" });
+        console.log("Firestore updated to active");
 
-        // Get invitation data to notify user
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const invData = docSnap.data();
           if (invData.telegramId) {
-            await sendTelegramMessage(invData.telegramId, "✅ Tabriklaymiz! To'lovingiz tasdiqlandi va taklifnomangiz faollashtirildi.");
+            await sendTelegramMessage(invData.telegramId, "<b>✅ Tabriklaymiz!</b>\n\nTo'lovingiz tasdiqlandi va taklifnomangiz faollashtirildi.");
           }
         }
 
-        // Notify Admin and update keyboard
-        await editTelegramMessage(chatId, messageId, message.caption + "\n\n✅ *TASDIQLANDI*", null);
-        await answerCallbackQuery(callbackQueryId, "Buyurtma tasdiqlandi!");
+        const newCaption = (message.caption || "") + "\n\n✅ <b>TASDIQLANDI</b>";
+        await editTelegramMessage(chatId, messageId, newCaption, null);
+        await answerCallbackQuery(callbackQueryId, "Tasdiqlandi!");
       }
 
       if (data.startsWith("reject_")) {
         const invitationId = data.replace("reject_", "");
+        console.log(`Rejecting invitation: ${invitationId}`);
         
-        // Ask for reason
         await sendTelegramMessage(chatId, `❌ Bekor qilish sababini yozing (ID: ${invitationId}):`, {
-          force_reply: true,
-          selective: true
+          reply_markup: { force_reply: true, selective: true }
         });
         
-        await answerCallbackQuery(callbackQueryId, "Sababini kutilmoqda...");
+        await answerCallbackQuery(callbackQueryId, "Sababi kutilmoqda...");
       }
 
       return NextResponse.json({ ok: true });
@@ -56,21 +59,19 @@ export async function POST(request: NextRequest) {
       const reason = body.message.text;
       const chatId = body.message.chat.id;
 
-      // Extract ID from prompt "❌ Bekor qilish sababini yozing (ID: ...):"
       const idMatch = replyText.match(/ID: ([\w-]+)/);
       if (idMatch) {
         const invitationId = idMatch[1];
+        console.log(`Processing rejection reason for: ${invitationId}`);
         
-        // Update Firestore
         const docRef = doc(db, "invitations", invitationId);
         await updateDoc(docRef, { status: "rejected", rejectReason: reason });
 
-        // Get invitation data to notify user
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const invData = docSnap.data();
           if (invData.telegramId) {
-            await sendTelegramMessage(invData.telegramId, `❌ Uzr, sizning to'lovingiz rad etildi.\n\n⚠️ *Sabab:* ${reason}\n\nIltimos, qayta urinib ko'ring yoki qo'llab-quvvatlash xizmati bilan bog'laning.`);
+            await sendTelegramMessage(invData.telegramId, `<b>❌ Uzr, sizning to'lovingiz rad etildi.</b>\n\n⚠️ <b>Sabab:</b> ${reason}\n\nIltimos, qayta urinib ko'ring.`);
           }
         }
 
@@ -80,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error: any) {
-    console.error("Webhook error:", error);
+    console.error("Webhook error details:", error);
     return new Response(JSON.stringify({ ok: false, error: error.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -88,7 +89,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Helpers
 async function sendTelegramMessage(chatId: string | number, text: string, extra = {}) {
   return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
     method: "POST",
@@ -96,7 +96,7 @@ async function sendTelegramMessage(chatId: string | number, text: string, extra 
     body: JSON.stringify({
       chat_id: chatId,
       text: text,
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       ...extra,
     }),
   });
@@ -110,7 +110,7 @@ async function editTelegramMessage(chatId: string | number, messageId: number, c
       chat_id: chatId,
       message_id: messageId,
       caption: caption,
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: keyboard,
     }),
   });
