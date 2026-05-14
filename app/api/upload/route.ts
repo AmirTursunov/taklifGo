@@ -5,9 +5,9 @@ export const runtime = "nodejs";
 // maxDuration yo'q — Hobby plan 10s limit, audio uchun ishlatmaymiz
 
 cloudinary.config({
-  cloud_name: "dlwrrxcjg",
-  api_key: "658441217362522",
-  api_secret: "xQHAQAWWEbQPw72C65s_kEL1yH0",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dlwrrxcjg",
+  api_key: process.env.CLOUDINARY_API_KEY || "658441217362522",
+  api_secret: process.env.CLOUDINARY_API_SECRET || "xQHAQAWWEbQPw72C65s_kEL1yH0",
 });
 
 // ✅ Yangi endpoint: client uchun Cloudinary signed upload params beradi
