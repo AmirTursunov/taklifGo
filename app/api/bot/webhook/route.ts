@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
 
       if (data.startsWith("confirm_")) {
         const invitationId = data.replace("confirm_", "");
-        console.log(`Confirming invitation: ${invitationId}`);
         
         const docRef = adminDb.collection("invitations").doc(invitationId);
         await docRef.update({ status: "active" });
@@ -32,17 +31,16 @@ export async function POST(request: NextRequest) {
         }
 
         const newCaption = (message.caption || "") + "\n\n✅ <b>TASDIQLANDI</b>";
-        // reply_markup: null tugmalarni o'chiradi
-        await editTelegramMessage(chatId, messageId, newCaption, null);
+        // Bo'sh inline_keyboard tugmalarni o'chiradi
+        await editTelegramMessage(chatId, messageId, newCaption, { inline_keyboard: [] });
         await answerCallbackQuery(callbackQueryId, "Tasdiqlandi!");
       }
 
       if (data.startsWith("reject_")) {
         const invitationId = data.replace("reject_", "");
         
-        // Tugmalarni darhol o'chirib, "Jaroyonda..." yozuvini qo'shish
         const processCaption = (message.caption || "") + "\n\n⏳ <b>RAD ETISH JARAYONIDA...</b>";
-        await editTelegramMessage(chatId, messageId, processCaption, null);
+        await editTelegramMessage(chatId, messageId, processCaption, { inline_keyboard: [] });
 
         await sendTelegramMessage(chatId, `❌ Bekor qilish sababini yozing (ID: ${invitationId}):`, {
           reply_markup: { force_reply: true, selective: true }

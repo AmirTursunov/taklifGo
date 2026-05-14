@@ -162,21 +162,33 @@ export default function SuccessPage() {
                     ? "Поздравляем!"
                     : "Congratulations!"}
           </h1>
-          <p className="text-[#98a08d] max-w-md mx-auto">
-            {isPending
-              ? lang === "uz"
-                ? "Sizning to'lovingiz 5 daqiqa ichida ko'rib chiqiladi. Havola tasdiqlangandan so'ng faollashadi."
-                : lang === "ru"
-                  ? "Ваш платеж будет проверен в течение 5 минут. Ссылка станет активной после подтверждения."
-                  : "Your payment will be reviewed within 5 minutes. The link will become active after approval."
-              : isRejected
-                ? data?.rejectReason || (lang === "uz" ? "Chek yaroqsiz yoki ma'lumotlar xato." : "Чек недействителен или данные неверны.")
+
+          {isRejected && (
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-6 my-4 animate-in fade-in slide-in-from-top-4 duration-500">
+              <p className="text-red-600 font-bold mb-1">
+                {lang === "uz" ? "SABAB:" : "ПРИЧИНА:"}
+              </p>
+              <p className="text-red-800 text-lg">
+                {data?.rejectReason || (lang === "uz" ? "Chek yaroqsiz yoki ma'lumotlar xato." : "Чек недействителен или данные неверны.")}
+              </p>
+            </div>
+          )}
+
+          {!isRejected && (
+            <p className="text-[#98a08d] max-w-md mx-auto">
+              {isPending
+                ? lang === "uz"
+                  ? "Sizning to'lovingiz 5 daqiqa ichida ko'rib chiqiladi. Havola tasdiqlangandan so'ng faollashadi."
+                  : lang === "ru"
+                    ? "Ваш платеж будет проверен в v techeniye 5 minut. Ссылка станет активной posle подтверждения."
+                    : "Your payment will be reviewed within 5 minutes. The link will become active after approval."
                 : lang === "uz"
                   ? "Sizning 3D taklifnomangiz muvaffaqiyatli yaratildi va hozirda butun dunyo uchun ochiq."
                   : lang === "ru"
                     ? "Ваше 3D-приглашение успешно создано и теперь доступно для всего мира."
                     : "Your 3D invitation has been successfully created and is now live for the world to see."}
-          </p>
+            </p>
+          )}
 
           {(isPending || isRejected) && (
             <div className="pt-4 space-y-4">
