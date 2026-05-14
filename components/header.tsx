@@ -44,19 +44,19 @@ export function Header() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {user ? (
             <>
               <Link href="/dashboard">
-                <Button variant="ghost" className="text-[#98a08d] hover:text-[#5c6352] hover:bg-[#98a08d]/5 gap-2 font-bold">
-                  <UserIcon className="w-4 h-4" />
-                  {t.myProfile}
+                <Button variant="ghost" className="text-[#98a08d] hover:text-[#5c6352] hover:bg-[#98a08d]/5 gap-2 font-bold px-2 sm:px-4">
+                  <UserIcon className="w-5 h-5 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">{t.myProfile}</span>
                 </Button>
               </Link>
               <Link href="/create">
-                <Button className="bg-[#98a08d] hover:bg-[#868d7c] text-white gap-2 font-bold shadow-md shadow-[#98a08d]/20">
-                  <Plus className="w-4 h-4" />
-                  {t.newCreate}
+                <Button className="bg-[#98a08d] hover:bg-[#868d7c] text-white gap-2 font-bold shadow-md shadow-[#98a08d]/20 px-2 sm:px-4">
+                  <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">{t.newCreate}</span>
                 </Button>
               </Link>
               <Button 
