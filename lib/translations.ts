@@ -69,6 +69,8 @@ export const translations = {
     musicPremium: "Premium To'y",
     musicRomantic: "Romantik Piano",
     musicTraditional: "Milliy Cholg'u",
+    next: "Keyingisi",
+    previous: "Oldingisi",
   },
   ru: {
     heroTitle: "Создавайте Неповторимые 3D Приглашения",
@@ -139,6 +141,8 @@ export const translations = {
     musicPremium: "Премиум Свадьба",
     musicRomantic: "Романтическое Пианино",
     musicTraditional: "Национальные Инструменты",
+    next: "Следующая",
+    previous: "Предыдущая",
   },
   en: {
     heroTitle: "Create Unforgettable 3D Invitations",
@@ -210,6 +214,8 @@ export const translations = {
     musicPremium: "Premium Wedding",
     musicRomantic: "Romantic Piano",
     musicTraditional: "Traditional",
+    next: "Next",
+    previous: "Previous",
   },
 };
 
