@@ -45,7 +45,7 @@ export default async function InvitationPage({ params }: Props) {
     notFound();
   }
 
-  const data = { id: doc.id, ...doc.data() };
+  const data = JSON.parse(JSON.stringify({ id: doc.id, ...doc.data() }));
 
   return <InvitationClient data={data} id={id} />;
 }
