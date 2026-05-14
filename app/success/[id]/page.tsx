@@ -60,31 +60,15 @@ export default function SuccessPage() {
   const shareToTelegram = () => {
     let message = "";
     if (lang === "uz") {
-      message = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌`;
+      message = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌\n\nHavola: ${invitationUrl}`;
     } else if (lang === "ru") {
-      message = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌`;
+      message = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌\n\nСсылка: ${invitationUrl}`;
     } else {
-      message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌`;
+      message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌\n\nLink: ${invitationUrl}`;
     }
 
-    const telegramAppUrl = `tg://msg_url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(message)}`;
-    const telegramWebUrl = `https://t.me/share/url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(message)}`;
-
-    if (navigator.share) {
-      navigator.share({
-        text: message,
-        url: invitationUrl,
-      }).catch(() => {
-        window.location.href = telegramAppUrl;
-      });
-    } else {
-      window.location.href = telegramAppUrl;
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          window.open(telegramWebUrl, "_blank");
-        }
-      }, 2000);
-    }
+    const telegramUrl = `https://t.me/share/url?text=${encodeURIComponent(message)}`;
+    window.open(telegramUrl, "_blank");
   };
 
   if (loading) {
