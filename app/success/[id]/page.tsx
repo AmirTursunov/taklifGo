@@ -58,16 +58,19 @@ export default function SuccessPage() {
   };
 
   const shareToTelegram = () => {
-    let text = "";
+    let message = "";
     if (lang === "uz") {
-      text = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌`;
+      message = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌`;
     } else if (lang === "ru") {
-      text = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌`;
+      message = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌`;
     } else {
-      text = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌`;
+      message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌`;
     }
 
-    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(text)}`;
+    const hiddenLink = `[\u200B](${invitationUrl})`;
+    const fullText = message + hiddenLink;
+
+    const telegramUrl = `https://t.me/share/url?text=${encodeURIComponent(fullText)}`;
     window.open(telegramUrl, "_blank");
   };
 
