@@ -249,49 +249,33 @@ export default function CreateInvitation() {
     invitationId: string,
     receiptUrl: string,
   ) => {
-    const BOT_TOKEN = "8917648922:AAFKV2N9sN8rCqHOqCFMM9wzazX02i-_VyI";
-    const CHAT_ID = "948843072"; // Iltimos, o'zingizning CHAT_ID ni bu yerga qo'ying
-
-    const message =
-      `🚀 *Yangi Taklifnoma Buyurtmasi!*\n\n` +
-      `📧 *Email:* ${user?.email || "Noma'lum"}\n` +
-      `💰 *Narx:* 25,000 UZS\n` +
-      `💳 *To'lov turi:* ${paymentType?.toUpperCase()}\n` +
-      `🔗 *ID:* \`${invitationId}\``;
-
-    const keyboard = {
-      inline_keyboard: [
-        [
-          { text: "✅ Tasdiqlash", callback_data: `confirm_${invitationId}` },
-          { text: "❌ Bekor qilish", callback_data: `reject_${invitationId}` },
-        ],
-      ],
-    };
-
     try {
-      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+      const response = await fetch("/api/bot/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          chat_id: CHAT_ID,
-          photo: receiptUrl,
-          caption: message,
-          parse_mode: "Markdown",
-          reply_markup: keyboard,
+          invitationId,
+          receiptUrl,
+          names: data.names,
+          email: user?.email,
+          paymentType,
+          venue: data.venue,
+          date: data.date,
+          lang,
         }),
       });
 
       const result = await response.json();
-      if (!result.ok) {
-        throw new Error(result.description || "Telegram API error");
+      if (!result.success) {
+        throw new Error(result.error || "Notification failed");
       }
-      console.log("Telegram notification sent successfully");
+      console.log("Telegram notification sent successfully via server");
     } catch (e: any) {
       console.error("Telegram notification failed:", e);
       toast.error(
         lang === "uz"
           ? "Adminga xabar yuborishda xatolik (lekin buyurtma saqlandi)"
-          : "Ошибка отправки уведомления (но заказ сохранен)"
+          : "Ошибка отправки уведомления (но заказ сохранен)",
       );
     }
   };
