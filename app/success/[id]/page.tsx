@@ -67,14 +67,23 @@ export default function SuccessPage() {
       message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌`;
     }
 
-    // Use zero-width space to "hide" the link at the end of the message
-    // We don't use the 'url' parameter to avoid the link appearing at the top
-    const telegramUrl = `https://t.me/share/url?text=${encodeURIComponent(message + "\n\n\u200B" + invitationUrl)}`;
-    
-    if ((window as any).Telegram?.WebApp) {
-      (window as any).Telegram.WebApp.openTelegramLink(telegramUrl);
+    const telegramAppUrl = `tg://msg_url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(message)}`;
+    const telegramWebUrl = `https://t.me/share/url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(message)}`;
+
+    if (navigator.share) {
+      navigator.share({
+        text: message,
+        url: invitationUrl,
+      }).catch(() => {
+        window.location.href = telegramAppUrl;
+      });
     } else {
-      window.open(telegramUrl, "_blank");
+      window.location.href = telegramAppUrl;
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          window.open(telegramWebUrl, "_blank");
+        }
+      }, 2000);
     }
   };
 
