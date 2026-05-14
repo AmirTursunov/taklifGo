@@ -107,72 +107,71 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[#faf9f6]">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-6 pt-32 pb-12 space-y-12">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-12 space-y-8 md:space-y-12">
         {/* Welcome Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <p className="text-[#98a08d] font-bold tracking-[0.2em] uppercase text-xs">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
+          <div className="space-y-1 md:space-y-2">
+            <p className="text-[#98a08d] font-bold tracking-[0.2em] uppercase text-[10px] md:text-xs">
               {lang === 'uz' ? 'Xush kelibsiz' : lang === 'ru' ? 'Добро пожаловать' : 'Welcome'}
             </p>
-            <h1 className="text-4xl md:text-5xl font-serif text-[#5c6352]">
+            <h1 className="text-3xl md:text-5xl font-serif text-[#5c6352]">
               {user?.displayName || t.myInvitations}
             </h1>
           </div>
-
         </div>
 
-        <Tabs defaultValue="projects" className="space-y-8">
-          <TabsList className="bg-white/50 border border-[#98a08d]/10 p-1 rounded-2xl">
-            <TabsTrigger value="projects" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-[#98a08d] data-[state=active]:text-white gap-2 font-bold transition-all">
+        <Tabs defaultValue="projects" className="space-y-6 md:space-y-8">
+          <TabsList className="bg-white/50 border border-[#98a08d]/10 p-1 rounded-xl md:rounded-2xl w-full sm:w-auto overflow-x-auto flex-nowrap whitespace-nowrap">
+            <TabsTrigger value="projects" className="flex-1 sm:flex-none rounded-lg md:rounded-xl px-4 md:px-6 py-2 md:py-2.5 data-[state=active]:bg-[#98a08d] data-[state=active]:text-white gap-2 font-bold transition-all text-sm">
               <LayoutGrid className="w-4 h-4" />
               {t.projects}
             </TabsTrigger>
-            <TabsTrigger value="settings" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-[#98a08d] data-[state=active]:text-white gap-2 font-bold transition-all">
+            <TabsTrigger value="settings" className="flex-1 sm:flex-none rounded-lg md:rounded-xl px-4 md:px-6 py-2 md:py-2.5 data-[state=active]:bg-[#98a08d] data-[state=active]:text-white gap-2 font-bold transition-all text-sm">
               <Settings className="w-4 h-4" />
               {t.settings}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="projects" className="space-y-12">
+          <TabsContent value="projects" className="space-y-8 md:space-y-12">
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="p-8 rounded-[2.5rem] border-0 shadow-sm bg-white space-y-4">
-                <div className="w-12 h-12 bg-[#98a08d]/10 rounded-2xl flex items-center justify-center text-[#98a08d]">
-                  <Eye className="w-6 h-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+              <Card className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-0 shadow-sm bg-white space-y-3 md:space-y-4">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-[#98a08d]/10 rounded-xl md:rounded-2xl flex items-center justify-center text-[#98a08d]">
+                  <Eye className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-[#5c6352]">
+                  <p className="text-2xl md:text-3xl font-bold text-[#5c6352]">
                     {invitations.reduce((acc, inv) => acc + (inv.views || 0), 0)}
                   </p>
-                  <p className="text-xs text-[#98a08d] uppercase tracking-widest font-bold">
+                  <p className="text-[10px] text-[#98a08d] uppercase tracking-widest font-bold">
                     {t.totalViews}
                   </p>
                 </div>
               </Card>
 
-              <Card className="p-8 rounded-[2.5rem] border-0 shadow-sm bg-white space-y-4">
-                <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600">
-                  <Clock className="w-6 h-6" />
+              <Card className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-0 shadow-sm bg-white space-y-3 md:space-y-4">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-amber-500/10 rounded-xl md:rounded-2xl flex items-center justify-center text-amber-600">
+                  <Clock className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-[#5c6352]">
+                  <p className="text-2xl md:text-3xl font-bold text-[#5c6352]">
                     {invitations.filter(i => i.status === 'pending').length}
                   </p>
-                  <p className="text-xs text-[#98a08d] uppercase tracking-widest font-bold">
+                  <p className="text-[10px] text-[#98a08d] uppercase tracking-widest font-bold">
                     {t.pending}
                   </p>
                 </div>
               </Card>
 
-              <Card className="p-8 rounded-[2.5rem] border-0 shadow-sm bg-white space-y-4">
-                <div className="w-12 h-12 bg-[#98a08d]/10 rounded-2xl flex items-center justify-center text-[#98a08d]">
-                  <CheckCircle2 className="w-6 h-6" />
+              <Card className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-0 shadow-sm bg-white space-y-3 md:space-y-4 sm:col-span-2 md:col-span-1">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-[#98a08d]/10 rounded-xl md:rounded-2xl flex items-center justify-center text-[#98a08d]">
+                  <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-[#5c6352]">
+                  <p className="text-2xl md:text-3xl font-bold text-[#5c6352]">
                     {invitations.filter(i => i.status === 'active').length}
                   </p>
-                  <p className="text-xs text-[#98a08d] uppercase tracking-widest font-bold">
+                  <p className="text-[10px] text-[#98a08d] uppercase tracking-widest font-bold">
                     {t.active}
                   </p>
                 </div>
@@ -180,21 +179,21 @@ export default function DashboardPage() {
             </div>
 
             {/* Invitations List */}
-            <div className="space-y-6">
-              <h3 className="text-sm font-bold text-[#98a08d] tracking-[0.2em] uppercase">
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-[10px] md:text-sm font-bold text-[#98a08d] tracking-[0.2em] uppercase px-1">
                 {t.projectList}
               </h3>
 
               {invitations.length === 0 ? (
-                <Card className="p-20 rounded-[3rem] border-2 border-dashed border-[#98a08d]/20 bg-transparent flex flex-col items-center justify-center text-center space-y-4">
-                  <div className="w-20 h-20 bg-[#98a08d]/10 rounded-full flex items-center justify-center">
-                    <Plus className="w-10 h-10 text-[#98a08d]" />
+                <Card className="p-12 md:p-20 rounded-[2.5rem] md:rounded-[3rem] border-2 border-dashed border-[#98a08d]/20 bg-transparent flex flex-col items-center justify-center text-center space-y-4">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-[#98a08d]/10 rounded-full flex items-center justify-center">
+                    <Plus className="w-8 h-8 md:w-10 md:h-10 text-[#98a08d]" />
                   </div>
-                  <div className="space-y-2">
-                    <h4 className="text-xl font-serif text-[#5c6352]">
+                  <div className="space-y-1 md:space-y-2">
+                    <h4 className="text-lg md:text-xl font-serif text-[#5c6352]">
                       {t.nothingYet}
                     </h4>
-                    <p className="text-[#98a08d] text-sm max-w-xs">
+                    <p className="text-[#98a08d] text-xs md:text-sm max-w-xs">
                       {t.createFirstDesc}
                     </p>
                   </div>
@@ -204,25 +203,25 @@ export default function DashboardPage() {
                   {invitations.map((inv) => (
                     <Card
                       key={inv.id}
-                      className="group p-6 rounded-[2rem] border-0 shadow-sm bg-white hover:shadow-xl hover:shadow-[#98a08d]/10 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer overflow-hidden relative"
+                      className="group p-3 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-[#98a08d]/5 shadow-sm bg-white hover:shadow-xl hover:shadow-[#98a08d]/10 transition-all flex items-center justify-between gap-3 md:gap-6 cursor-pointer overflow-hidden"
                       onClick={() => router.push(`/success/${inv.id}`)}
                     >
-                      <div className="flex items-center gap-6">
-                        <div className="w-20 h-24 rounded-2xl overflow-hidden bg-[#faf9f6] border border-[#98a08d]/10">
+                      <div className="flex items-center gap-3 md:gap-6 min-w-0">
+                        <div className="w-14 h-18 md:w-20 md:h-24 rounded-xl overflow-hidden bg-[#faf9f6] border border-[#98a08d]/10 flex-shrink-0">
                           <img
                             src={inv.images?.[0] || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=200'}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             alt=""
                           />
                         </div>
-                        <div className="space-y-1">
-                          <h4 className="text-xl font-serif text-[#5c6352]">{inv.names}</h4>
-                          <div className="flex items-center gap-4 text-xs text-[#98a08d]">
-                            <span className="flex items-center gap-1">
+                        <div className="space-y-1 min-w-0">
+                          <h4 className="text-base md:text-xl font-serif text-[#5c6352] truncate">{inv.names}</h4>
+                          <div className="flex items-center gap-2 md:gap-4 text-[10px] md:text-xs text-[#98a08d]">
+                            <span className="flex items-center gap-1 shrink-0">
                               <Calendar className="w-3 h-3" />
-                              {inv.date}
+                              <span className="hidden xs:inline">{inv.date}</span>
                             </span>
-                            <span className={`px-2 py-0.5 rounded-full font-bold text-[9px] uppercase tracking-wider ${inv.status === 'active' ? 'bg-[#98a08d]/10 text-[#98a08d]' : 'bg-amber-100 text-amber-600'
+                            <span className={`px-2 py-0.5 rounded-full font-bold text-[8px] md:text-[9px] uppercase tracking-wider ${inv.status === 'active' ? 'bg-[#98a08d]/10 text-[#98a08d]' : 'bg-amber-100 text-amber-600'
                               }`}>
                               {inv.status === 'active' ? t.active : t.pending}
                             </span>
@@ -230,20 +229,9 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
-                        <Button
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            window.open(`/invitation/${inv.id}`, '_blank')
-                          }}
-                          className="rounded-xl border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-2 h-12 px-6 font-bold"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          {t.view}
-                        </Button>
-                        <div className="w-12 h-12 rounded-xl bg-[#faf9f6] flex items-center justify-center text-[#98a08d] group-hover:bg-[#98a08d] group-hover:text-white transition-all">
-                          <ChevronRight className="w-5 h-5" />
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-[#faf9f6] flex items-center justify-center text-[#98a08d] group-hover:bg-[#98a08d] group-hover:text-white transition-all">
+                          <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                         </div>
                       </div>
                     </Card>
