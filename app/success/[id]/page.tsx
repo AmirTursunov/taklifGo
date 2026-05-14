@@ -64,11 +64,11 @@ export default function SuccessPage() {
     
     let text = "";
     if (lang === "uz") {
-      text = `✨ *Sizni bizning eng baxtli kunimizda kutib qolamiz!*\n\n💍 *${names}*\n📅 *Sana:* ${date}\n📍 *Manzil:* ${venue}\n\n*Taklifnomani ko'rish uchun quyidagi havolani bosing:*`;
+      text = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomamni ochish uchun bosing 💌`;
     } else if (lang === "ru") {
-      text = `✨ *Приглашаем вас на наш самый счастливый день!*\n\n💍 *${names}*\n📅 *Дата:* ${date}\n📍 *Место:* ${venue}\n\n*Нажмите на ссылку, чтобы посмотреть приглашение:*`;
+      text = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌`;
     } else {
-      text = `✨ *We invite you to our most special day!*\n\n💍 *${names}*\n📅 *Date:* ${date}\n📍 *Venue:* ${venue}\n\n*Click the link to view the invitation:*`;
+      text = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌`;
     }
 
     window.open(
