@@ -45,7 +45,7 @@ export default function RootLayout({
     <html lang="en" className="bg-background" suppressHydrationWarning>
       <head />
       <body className="font-sans antialiased">
-        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
+        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="afterInteractive" />
         <AuthProvider>
           <LanguageProvider>
             {children}

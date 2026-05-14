@@ -31,8 +31,8 @@ export default function SuccessPage() {
 
   const invitationUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/invitation/${id}`
-      : "";
+      ? `${window.location.origin.includes('localhost') ? 'https://taklif-go.vercel.app' : window.location.origin}/invitation/${id}`
+      : "https://taklif-go.vercel.app";
 
   useEffect(() => {
     if (!id) return;
@@ -58,23 +58,17 @@ export default function SuccessPage() {
   };
 
   const shareToTelegram = () => {
-    const names = data?.names || "";
-    const date = data?.date || "";
-    const venue = data?.venue || "";
-    
     let text = "";
     if (lang === "uz") {
-      text = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomamni ochish uchun bosing 💌`;
+      text = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌`;
     } else if (lang === "ru") {
       text = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌`;
     } else {
       text = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌`;
     }
 
-    window.open(
-      `https://t.me/share/url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(text)}`,
-      "_blank",
-    );
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(text)}`;
+    window.open(telegramUrl, "_blank");
   };
 
   if (loading) {
