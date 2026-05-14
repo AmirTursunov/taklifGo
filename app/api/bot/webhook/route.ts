@@ -22,8 +22,7 @@ export async function POST(request: NextRequest) {
         
         const docRef = adminDb.collection("invitations").doc(invitationId);
         await docRef.update({ status: "active" });
-        console.log("Firestore updated to active via Admin SDK");
-
+        
         const docSnap = await docRef.get();
         if (docSnap.exists) {
           const invData = docSnap.data();
@@ -33,14 +32,18 @@ export async function POST(request: NextRequest) {
         }
 
         const newCaption = (message.caption || "") + "\n\n✅ <b>TASDIQLANDI</b>";
+        // reply_markup: null tugmalarni o'chiradi
         await editTelegramMessage(chatId, messageId, newCaption, null);
         await answerCallbackQuery(callbackQueryId, "Tasdiqlandi!");
       }
 
       if (data.startsWith("reject_")) {
         const invitationId = data.replace("reject_", "");
-        console.log(`Rejecting invitation: ${invitationId}`);
         
+        // Tugmalarni darhol o'chirib, "Jaroyonda..." yozuvini qo'shish
+        const processCaption = (message.caption || "") + "\n\n⏳ <b>RAD ETISH JARAYONIDA...</b>";
+        await editTelegramMessage(chatId, messageId, processCaption, null);
+
         await sendTelegramMessage(chatId, `❌ Bekor qilish sababini yozing (ID: ${invitationId}):`, {
           reply_markup: { force_reply: true, selective: true }
         });
