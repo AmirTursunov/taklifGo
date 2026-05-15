@@ -14,6 +14,7 @@ interface InvitationData {
   images: string[]
   musicUrl?: string
   mapUrl?: string
+  greeting?: string
 }
 
 // ── Countdown Timer ──────────────────────────────────────────
@@ -161,6 +162,14 @@ export function EternalBondTemplate({ data, onDataChange }: { data: InvitationDa
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="space-y-4">
             <Leaf className="w-8 h-8 text-[#98a08d] mx-auto opacity-40" />
+            <p 
+              className="text-[10px] lg:text-sm font-light tracking-[0.3em] text-[#98a08d] uppercase outline-none focus:bg-[#98a08d]/5 px-2 rounded-md"
+              contentEditable={!!onDataChange}
+              suppressContentEditableWarning
+              onBlur={(e) => handleEdit('greeting', e.currentTarget.textContent || '')}
+            >
+              {data.greeting || "Welcome to the Wedding of"}
+            </p>
             <h1
               className="text-4xl lg:text-7xl font-serif text-[#5c6352] tracking-tight leading-tight outline-none focus:bg-[#98a08d]/5 px-4 rounded-xl transition-all"
               contentEditable={!!onDataChange}

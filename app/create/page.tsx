@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { EternalBondTemplate } from "@/components/templates/eternal-bond";
 import { GoldenNightTemplate } from "@/components/templates/golden-night";
 import { NafosatTemplate } from "@/components/templates/nafosat";
@@ -67,6 +68,7 @@ export default function CreateInvitation() {
   const [paymentType, setPaymentType] = useState<"click" | "payme" | null>(
     null,
   );
+  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
 
   // ✅ Uploadlar darhol bo'ladi — handleSave da kutish yo'q
   const [isMusicUploading, setIsMusicUploading] = useState(false);
@@ -91,6 +93,7 @@ export default function CreateInvitation() {
       "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=800",
       "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=800",
     ],
+    greeting: "Nikoh Ziyofatiga Taklif",
     templateId: "eternal-bond",
   });
   
@@ -363,8 +366,34 @@ export default function CreateInvitation() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-[#faf9f6] overflow-hidden">
-      <aside className="w-full lg:w-[400px] h-full bg-white border-r border-[#98a08d]/10 flex flex-col z-20 shadow-xl overflow-y-auto hide-scrollbar">
+    <div className="flex flex-col lg:flex-row h-screen bg-[#faf9f6] overflow-hidden relative">
+      {/* Mobile Top Toggle */}
+      <div className="lg:hidden flex items-center justify-center p-2 bg-white border-b border-[#98a08d]/10 z-50 shrink-0">
+        <div className="flex p-1 bg-[#98a08d]/5 rounded-xl border border-[#98a08d]/10 w-full max-w-[300px]">
+          <button
+            onClick={() => setViewMode("edit")}
+            className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${viewMode === "edit"
+              ? "bg-[#98a08d] text-white shadow-md"
+              : "text-[#98a08d] hover:bg-[#98a08d]/10"
+              }`}
+          >
+            <Settings className="w-3.5 h-3.5" />
+            {lang === "uz" ? "Tahrirlash" : lang === "ru" ? "Редактировать" : "Edit"}
+          </button>
+          <button
+            onClick={() => setViewMode("preview")}
+            className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${viewMode === "preview"
+              ? "bg-[#98a08d] text-white shadow-md"
+              : "text-[#98a08d] hover:bg-[#98a08d]/10"
+              }`}
+          >
+            <Eye className="w-3.5 h-3.5" />
+            {lang === "uz" ? "Ko'rinish" : lang === "ru" ? "Просмотр" : "View"}
+          </button>
+        </div>
+      </div>
+
+      <aside className={`w-full lg:w-[400px] h-full bg-white border-r border-[#98a08d]/10 flex flex-col z-20 shadow-xl overflow-y-auto hide-scrollbar transition-all duration-300 ${viewMode === "edit" ? "flex" : "hidden lg:flex"}`}>
         <div className="p-6 border-b border-[#98a08d]/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
@@ -579,6 +608,8 @@ export default function CreateInvitation() {
                 </div>
               </div>
             </div>
+          </section>
+
           <section className="space-y-4 pt-4 border-t border-[#98a08d]/10 pb-10">
             <Button
               onClick={() => setShowPaymentModal(true)}
@@ -722,7 +753,7 @@ export default function CreateInvitation() {
         </DialogContent>
       </Dialog>
 
-      <main className="flex-1 relative bg-[#f8f7f4] overflow-hidden min-h-[500px] lg:h-screen flex flex-col">
+      <main className={`flex-1 relative bg-[#f8f7f4] overflow-hidden h-full flex flex-col transition-all duration-300 ${viewMode === "preview" ? "flex" : "hidden lg:flex"}`}>
         <div className="absolute top-6 left-6 z-30 flex flex-col gap-2 items-start">
           <div className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full shadow-md border border-[#98a08d]/10">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />

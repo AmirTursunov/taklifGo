@@ -13,6 +13,7 @@ interface InvitationData {
   images: string[]
   musicUrl?: string
   mapUrl?: string
+  greeting?: string
 }
 
 // ── GIRIH GEOMETRIC PATTERN SVG ───────────────────────────────
@@ -324,9 +325,14 @@ export function NafosatTemplate({
                 fill="#4a90d9" opacity="0.15" stroke="#4a90d9" strokeWidth="0.8" />
               <circle cx="24" cy="24" r="4" fill="#4a90d9" opacity="0.3" />
             </svg>
-            <p className="cinzel text-[9px] sm:text-[11px] tracking-[0.55em] uppercase"
-              style={{ color: '#7aafd4' }}>
-              Nikoh Ziyofatiga Taklif
+            <p 
+              className="cinzel text-[9px] sm:text-[11px] tracking-[0.55em] uppercase outline-none focus:outline-dashed focus:outline-[#4a90d9] px-2 rounded-lg"
+              style={{ color: '#7aafd4' }}
+              contentEditable={!!onDataChange}
+              suppressContentEditableWarning
+              onBlur={(e) => onDataChange?.({ greeting: e.currentTarget.textContent || "" })}
+            >
+              {data.greeting || "Nikoh Ziyofatiga Taklif"}
             </p>
           </motion.div>
 

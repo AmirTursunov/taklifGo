@@ -14,6 +14,7 @@ interface InvitationData {
   images: string[]
   musicUrl?: string
   mapUrl?: string
+  greeting?: string
 }
 
 // ── Confetti Particle ─────────────────────────────────────────
@@ -341,9 +342,12 @@ export function GoldenNightTemplate({
             initial={{ opacity: 0, letterSpacing: '0.1em' }}
             animate={{ opacity: 1, letterSpacing: '0.5em' }}
             transition={{ duration: 1.5, delay: 0.3 }}
-            className="cinzel text-[9px] sm:text-[11px] text-amber-400/70 uppercase tracking-[0.5em]"
+            className="cinzel text-[9px] sm:text-[11px] text-amber-400/70 uppercase tracking-[0.5em] outline-none focus:outline-dashed focus:outline-amber-500/50 px-2 rounded-lg"
+            contentEditable={!!onDataChange}
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit('greeting', e.currentTarget.textContent || '')}
           >
-            The Wedding of
+            {data.greeting || "The Wedding of"}
           </motion.p>
 
           {/* Names */}
