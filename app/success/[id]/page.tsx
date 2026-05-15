@@ -60,14 +60,14 @@ export default function SuccessPage() {
   const shareToTelegram = () => {
     let message = "";
     if (lang === "uz") {
-      message = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌\n\nHavola: ${invitationUrl}`;
+      message = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌\n${invitationUrl}`;
     } else if (lang === "ru") {
-      message = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌\n\nСсылка: ${invitationUrl}`;
+      message = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌\n${invitationUrl}`;
     } else {
-      message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌\n\nLink: ${invitationUrl}`;
+      message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌\n${invitationUrl}`;
     }
 
-    const telegramUrl = `https://telegram.me/share/url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(message)}`;
+    const telegramUrl = `https://telegram.me/share/url?url=${encodeURIComponent(message)}`;
     window.open(telegramUrl, "_blank");
   };
 
@@ -100,13 +100,12 @@ export default function SuccessPage() {
                 : "Back to Dashboard"}
           </Button>
           <div
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold border ${
-              isPending
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold border ${isPending
                 ? "bg-[#d97706]/5 text-[#d97706] border-[#d97706]/20"
                 : isRejected
                   ? "bg-red-50 text-red-600 border-red-200"
                   : "bg-[#98a08d]/5 text-[#98a08d] border-[#98a08d]/20"
-            }`}
+              }`}
           >
             {isPending ? (
               <>
@@ -134,9 +133,8 @@ export default function SuccessPage() {
         {/* Status Message */}
         <div className="text-center space-y-4 py-8">
           <div
-            className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${
-              isPending ? "bg-[#d97706]/10" : isRejected ? "bg-red-50" : "bg-[#98a08d]/10"
-            }`}
+            className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${isPending ? "bg-[#d97706]/10" : isRejected ? "bg-red-50" : "bg-[#98a08d]/10"
+              }`}
           >
             {isPending ? (
               <Loader2 className="w-10 h-10 text-[#d97706] animate-spin" />
@@ -198,7 +196,7 @@ export default function SuccessPage() {
                 +998 90 123 45 67
               </div>
               <p className="text-[10px] text-[#98a08d] italic">
-                {isRejected 
+                {isRejected
                   ? (lang === "uz" ? "Iltimos, qayta to'lov qiling va chekni yuklang yoki bog'laning." : "Пожалуйста, попробуйте снова или свяжитесь с нами.")
                   : (lang === "uz"
                     ? "Agar 5 daqiqadan ko'p vaqt o'tsa, yuqoridagi raqamga bog'laning."
