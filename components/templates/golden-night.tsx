@@ -487,7 +487,7 @@ export function GoldenNightTemplate({
                   {/* Gold overlay on hover */}
                   <div className="absolute inset-0 bg-gradient-to-t from-amber-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   {isEditable && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
                       <div className="w-12 h-12 rounded-full bg-amber-400/20 border border-amber-400/40 flex items-center justify-center backdrop-blur-sm">
                         <Camera className="w-5 h-5 text-amber-300" />
                       </div>

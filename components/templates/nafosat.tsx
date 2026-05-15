@@ -564,7 +564,7 @@ export function NafosatTemplate({
                     </svg>
                   </div>
                   {isEditable && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
                       <div className="w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-sm"
                         style={{ background: 'rgba(26,56,107,0.5)', border: '1px solid rgba(255,255,255,0.3)' }}>
                         <Camera className="w-5 h-5 text-white" />
