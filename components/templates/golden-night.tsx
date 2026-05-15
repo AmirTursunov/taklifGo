@@ -460,20 +460,18 @@ export function GoldenNightTemplate({
             <GoldDivider />
           </div>
 
-          {/* Masonry-style grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Masonry-style layout using columns */}
+          <div className="columns-2 lg:columns-4 gap-3 space-y-3">
             {data.images.map((url, i) => {
               const isEditable = !!onDataChange
-              const tall = i === 1 || i === 4
               return (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: i * 0.08 }}
-                  className={`group relative ${tall ? 'row-span-2' : ''} ${isEditable ? 'cursor-pointer' : ''} rounded-xl overflow-hidden border border-amber-500/10`}
-                  style={{ aspectRatio: tall ? undefined : '3/4', minHeight: tall ? '400px' : undefined }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  className={`relative mb-3 break-inside-avoid rounded-xl overflow-hidden border border-amber-500/10 group ${isEditable ? 'cursor-pointer' : ''}`}
                 >
                   {isEditable && (
                     <label className="absolute inset-0 cursor-pointer z-10">
