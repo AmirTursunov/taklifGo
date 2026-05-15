@@ -182,26 +182,6 @@ function BrushStroke({ className = '' }: { className?: string }) {
   )
 }
 
-// ── KANJI DECORATION ───────────────────────────────────────────
-function KanjiDecor({ text, className = '' }: { text: string; className?: string }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 2 }}
-      className={`select-none pointer-events-none ${className}`}
-      style={{
-        fontFamily: "'Noto Serif JP', serif",
-        writingMode: 'vertical-rl',
-        textOrientation: 'mixed',
-      }}
-    >
-      {text}
-    </motion.div>
-  )
-}
-
 // ── COUNTDOWN ─────────────────────────────────────────────────
 function CountdownTimer({ dateStr }: { dateStr: string }) {
   const getTimeLeft = () => {
@@ -221,7 +201,7 @@ function CountdownTimer({ dateStr }: { dateStr: string }) {
   }, [dateStr])
 
   if (!t) return (
-    <p className="text-xs tracking-widest text-stone-400 uppercase" style={{ fontFamily: "'Noto Serif JP', serif" }}>
+    <p className="text-xs tracking-widest text-stone-400 uppercase">
       式典は終了しました
     </p>
   )
@@ -229,18 +209,12 @@ function CountdownTimer({ dateStr }: { dateStr: string }) {
   return (
     <div className="flex items-end justify-center gap-2 sm:gap-5">
       {[
-        { v: t.days, jp: '日', en: 'Days' },
-        { v: t.hours, jp: '時', en: 'Hours' },
-        { v: t.minutes, jp: '分', en: 'Min' },
-        { v: t.seconds, jp: '秒', en: 'Sec' },
+        { v: t.days, en: 'Days' },
+        { v: t.hours, en: 'Hours' },
+        { v: t.minutes, en: 'Min' },
+        { v: t.seconds, en: 'Sec' },
       ].map((u, i) => (
         <div key={i} className="flex flex-col items-center gap-1">
-          <span
-            className="text-[9px] text-stone-400 tracking-widest"
-            style={{ fontFamily: "'Noto Serif JP', serif" }}
-          >
-            {u.jp}
-          </span>
           <div
             className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center border border-stone-200 relative"
             style={{
@@ -261,7 +235,6 @@ function CountdownTimer({ dateStr }: { dateStr: string }) {
             ))}
             <span
               className="text-xl sm:text-2xl font-bold text-stone-800 tabular-nums"
-              style={{ fontFamily: "'Noto Serif JP', serif" }}
             >
               {String(u.v).padStart(2, '0')}
             </span>
@@ -291,34 +264,6 @@ function MapEmbed({ location, mapUrl }: { location: string; mapUrl?: string }) {
   )
 }
 
-// ── RED SEAL (hanko) ───────────────────────────────────────────
-function HankoSeal({ text }: { text: string }) {
-  return (
-    <motion.div
-      initial={{ scale: 0, rotate: -15, opacity: 0 }}
-      whileInView={{ scale: 1, rotate: -8, opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.5 }}
-      className="relative w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center select-none"
-      style={{
-        border: '2.5px solid #c0392b',
-        borderRadius: '3px',
-        boxShadow: '0 0 0 1px #c0392b inset',
-      }}
-    >
-      <span
-        className="text-[10px] sm:text-xs text-[#c0392b] font-bold leading-tight text-center px-1"
-        style={{
-          fontFamily: "'Noto Serif JP', serif",
-          writingMode: 'vertical-rl',
-          letterSpacing: '0.15em',
-        }}
-      >
-        {text}
-      </span>
-    </motion.div>
-  )
-}
 
 // ── MAIN TEMPLATE ──────────────────────────────────────────────
 export function ZenGardenTemplate({
@@ -382,8 +327,7 @@ export function ZenGardenTemplate({
     >
       {/* Fonts */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600;700&family=Shippori+Mincho:wght@400;500;700&family=IM+Fell+DW+Pica:ital@0;1&display=swap');
-        .noto { font-family: 'Noto Serif JP', serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=IM+Fell+DW+Pica:ital@0;1&display=swap');
         .shippori { font-family: 'Shippori Mincho', serif; }
         .imfell { font-family: 'IM Fell DW Pica', serif; }
 
@@ -419,15 +363,6 @@ export function ZenGardenTemplate({
           <path d="M-50 420 Q150 400 350 430 Q550 460 850 410" stroke="#1a1a1a" strokeWidth="50" fill="none" strokeLinecap="round" />
         </svg>
 
-        {/* Vertical kanji side decorations */}
-        <KanjiDecor
-          text="永遠の愛"
-          className="absolute left-6 sm:left-12 top-1/2 -translate-y-1/2 text-2xl sm:text-3xl text-stone-300 leading-loose"
-        />
-        <KanjiDecor
-          text="幸福結婚"
-          className="absolute right-6 sm:right-12 top-1/2 -translate-y-1/2 text-2xl sm:text-3xl text-stone-300 leading-loose"
-        />
 
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
@@ -437,10 +372,10 @@ export function ZenGardenTemplate({
           <AnimatePresence>
             {heroReady && (
               <motion.p
-                className="noto text-[9px] sm:text-[10px] tracking-[0.6em] text-stone-400 uppercase ink-reveal"
+                className="text-[9px] sm:text-[10px] tracking-[0.6em] text-stone-400 uppercase ink-reveal"
                 style={{ animationDelay: '0.2s' }}
               >
-                ご結婚式のご案内
+                Wedding Invitation
               </motion.p>
             )}
           </AnimatePresence>
@@ -505,11 +440,10 @@ export function ZenGardenTemplate({
               >
                 <span className="absolute inset-0 bg-stone-900 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.77,0,0.175,1)]" />
                 <span className="relative z-10 group-hover:text-stone-100 transition-colors duration-300">
-                  墨を落とす · Siyoh tomizish
+                  Siyoh tomizish
                 </span>
               </motion.button>
             )}
-            <HankoSeal text="祝" />
           </div>
         </motion.div>
 
@@ -521,7 +455,7 @@ export function ZenGardenTemplate({
           >
             <ArrowDown className="w-4 h-4 text-stone-300" />
           </motion.div>
-          <p className="noto text-[7px] tracking-[0.5em] text-stone-300 uppercase">下へ</p>
+          <p className="text-[7px] tracking-[0.5em] text-stone-300 uppercase">Scroll Down</p>
         </div>
       </section>
 
@@ -534,19 +468,10 @@ export function ZenGardenTemplate({
         className="py-24 px-6 text-center relative washi"
         style={{ background: '#f5f3ef' }}
       >
-        {/* Large faded kanji bg */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-          <span
-            className="noto text-[20vw] font-bold text-stone-900/[0.025] select-none"
-            style={{ lineHeight: 1 }}
-          >
-            愛
-          </span>
-        </div>
 
         <div className="relative z-10 max-w-2xl mx-auto space-y-8">
           <div className="space-y-2">
-            <p className="noto text-[9px] tracking-[0.5em] text-stone-400 uppercase">ご招待状</p>
+            <p className="text-[9px] tracking-[0.5em] text-stone-400 uppercase">Invitation</p>
             <BrushStroke />
           </div>
 
@@ -585,7 +510,7 @@ export function ZenGardenTemplate({
       >
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12 space-y-3">
-            <p className="noto text-[8px] tracking-[0.6em] text-stone-400 uppercase">写真集</p>
+            <p className="text-[8px] tracking-[0.6em] text-stone-400 uppercase">GALLERY</p>
             <h2 className="shippori text-2xl sm:text-3xl text-stone-700">Our Album</h2>
             <BrushStroke className="max-w-xs mx-auto" />
           </div>
@@ -630,7 +555,6 @@ export function ZenGardenTemplate({
                     <div className="absolute bottom-1.5 left-0 right-0 text-center">
                       <span
                         className="text-[8px] text-stone-300"
-                        style={{ fontFamily: "'Noto Serif JP', serif" }}
                       >
                         {'★'.repeat(3)}
                       </span>
@@ -661,16 +585,16 @@ export function ZenGardenTemplate({
       >
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
-            <p className="noto text-[8px] tracking-[0.6em] text-stone-400 uppercase">式典の詳細</p>
+            <p className="text-[8px] tracking-[0.6em] text-stone-400 uppercase">DETAILS</p>
             <h2 className="shippori text-2xl sm:text-3xl text-stone-700">The Details</h2>
             <BrushStroke className="max-w-xs mx-auto" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              { id: 'date', icon: Calendar, jp: '日時', en: 'Date', desc: data.date || '15 Iyun, 2025', sub: 'Soat 18:00' },
-              { id: 'venue', icon: MapPin, jp: '会場', en: 'Venue', desc: data.venue || 'Grand Hall', sub: data.location || 'Toshkent' },
-              { id: 'registry', icon: Gift, jp: '贈り物', en: 'Gift', desc: 'Ishtirokingiz', sub: "eng yaxshi sovg'a" },
+              { id: 'date', icon: Calendar, en: 'Date', desc: data.date || '15 Iyun, 2025', sub: 'Soat 18:00' },
+              { id: 'venue', icon: MapPin, en: 'Venue', desc: data.venue || 'Grand Hall', sub: data.location || 'Toshkent' },
+              { id: 'registry', icon: Gift, en: 'Gift', desc: 'Ishtirokingiz', sub: "eng yaxshi sovg'a" },
             ].map((item, idx) => (
               <motion.div
                 key={idx}
@@ -700,8 +624,7 @@ export function ZenGardenTemplate({
                 <div className="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center mx-auto mb-4 border border-stone-200">
                   <item.icon className="w-4 h-4 text-stone-500" />
                 </div>
-                <p className="noto text-[8px] tracking-[0.4em] text-stone-400 uppercase mb-1">{item.jp}</p>
-                <p className="noto text-[7px] tracking-widest text-stone-300 mb-3">{item.en}</p>
+                <p className="text-[8px] tracking-[0.4em] text-stone-400 uppercase mb-3">DETAILS</p>
                 <p
                   className="shippori text-lg font-bold text-stone-800 leading-tight outline-none focus:bg-stone-100/50 rounded-md px-1"
                   contentEditable={!!onDataChange && item.id !== 'registry'}
@@ -733,7 +656,7 @@ export function ZenGardenTemplate({
         className="py-16 px-6 max-w-4xl mx-auto"
       >
         <div className="text-center mb-8 space-y-2">
-          <p className="noto text-[8px] tracking-[0.6em] text-stone-400 uppercase">会場地図</p>
+          <p className="text-[8px] tracking-[0.6em] text-stone-400 uppercase">LOCATION</p>
           <h2 className="shippori text-xl text-stone-600">
             {data.venue || 'Grand Hall'}
           </h2>
@@ -758,18 +681,10 @@ export function ZenGardenTemplate({
         className="py-28 text-center space-y-8 relative washi overflow-hidden"
         style={{ background: '#faf8f4' }}
       >
-        {/* Huge faded kanji */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <span className="noto font-bold text-stone-900/[0.02] select-none"
-            style={{ fontSize: '30vw', lineHeight: 1 }}>
-            縁
-          </span>
-        </div>
 
         <div className="relative z-10 space-y-6">
           <BrushStroke className="max-w-sm mx-auto" />
           <div className="flex items-center justify-center gap-6">
-            <HankoSeal text="愛" />
             <div className="space-y-2 text-center">
               <h2
                 className="shippori text-3xl sm:text-4xl font-bold text-stone-800 outline-none focus:bg-stone-100/50 px-4 rounded-xl"
@@ -782,14 +697,13 @@ export function ZenGardenTemplate({
               <p
                 className="imfell italic text-stone-400 text-sm tracking-widest"
               >
-                {data.date || '15 Iyun, 2025'} · 永遠に
+                {data.date || '15 Iyun, 2025'}
               </p>
             </div>
-            <HankoSeal text="縁" />
           </div>
           <BrushStroke className="max-w-sm mx-auto" />
-          <p className="noto text-[8px] tracking-[0.5em] text-stone-300 uppercase">
-            末永くお幸せに
+          <p className="text-[8px] tracking-[0.5em] text-stone-300 uppercase">
+            Best wishes
           </p>
         </div>
       </motion.footer>
