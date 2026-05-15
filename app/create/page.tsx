@@ -8,6 +8,7 @@ import { NafosatTemplate } from "@/components/templates/nafosat";
 import { GoldenWeddingTemplate } from "@/components/templates/golden-wedding";
 import { ElegantBirthdayTemplate } from "@/components/templates/elegant-birthday";
 import { GirlBirthdayTemplate } from "@/components/templates/girl-birthday";
+import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
 import { Input } from "@/components/ui/input";
@@ -54,24 +55,6 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "react-toastify";
 
-const TEMPLATES_BY_CATEGORY: Record<string, { id: string; name: string; color: string }[]> = {
-  wedding: [
-    { id: "eternal-bond", name: "Eternal Bond", color: "bg-[#98a08d]" },
-    { id: "golden-night", name: "Golden Night", color: "bg-[#D4AF37]" },
-    { id: "nafosat", name: "Royal Azure", color: "bg-[#1a56a0]" },
-    { id: "golden-wedding", name: "Golden Grace", color: "bg-[#8B6B23]" },
-  ],
-  birthday: [
-    { id: "elegant-birthday", name: "Elegant Gold", color: "bg-[#D4AF37]" },
-    { id: "girl-birthday", name: "Princess Pink", color: "bg-[#FF6FB4]" },
-  ],
-  farewell: [
-    { id: "nafosat", name: "Royal Azure", color: "bg-[#1a56a0]" },
-  ],
-  business: [
-    { id: "golden-night", name: "Golden Night", color: "bg-[#D4AF37]" },
-  ],
-};
 
 export default function CreateInvitation() {
   const { t, lang, setLang } = useLanguage();

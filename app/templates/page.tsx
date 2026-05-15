@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Sparkles, Heart, Gift, Briefcase, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 
 const CATEGORIES = [
   { 
@@ -12,7 +13,6 @@ const CATEGORIES = [
     icon: Heart, 
     color: "text-rose-500", 
     bg: "bg-rose-50",
-    count: 3
   },
   { 
     id: "birthday", 
@@ -20,7 +20,6 @@ const CATEGORIES = [
     icon: Gift, 
     color: "text-amber-500", 
     bg: "bg-amber-50",
-    count: 1
   },
   { 
     id: "farewell", 
@@ -28,7 +27,6 @@ const CATEGORIES = [
     icon: Sparkles, 
     color: "text-purple-500", 
     bg: "bg-purple-50",
-    count: 1
   },
   { 
     id: "business", 
@@ -36,7 +34,6 @@ const CATEGORIES = [
     icon: Briefcase, 
     color: "text-blue-500", 
     bg: "bg-blue-50",
-    count: 1
   },
 ];
 
@@ -86,30 +83,33 @@ export default function TemplatesPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {CATEGORIES.map((cat, idx) => (
-            <motion.div
-              key={cat.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              whileHover={{ y: -8 }}
-              onClick={() => selectCategory(cat.id)}
-              className="group bg-white p-8 rounded-[2rem] border border-[#98a08d]/10 shadow-lg hover:shadow-2xl transition-all cursor-pointer text-center space-y-4"
-            >
-              <div className={`w-16 h-16 mx-auto rounded-2xl ${cat.bg} flex items-center justify-center`}>
-                <cat.icon className={`w-8 h-8 ${cat.color}`} />
-              </div>
-              <h3 className="text-xl font-serif text-[#5c6352]">{cat.name}</h3>
-              <p className="text-xs text-[#98a08d] font-medium tracking-wide">
-                {cat.count} ta shablon
-              </p>
-              <div className="pt-2">
-                <div className="inline-flex items-center gap-2 text-[#98a08d] group-hover:text-[#5c6352] transition-colors text-xs font-bold uppercase tracking-widest">
-                  Tanlash <ChevronRight className="w-4 h-4" />
+          {CATEGORIES.map((cat, idx) => {
+            const count = TEMPLATES_BY_CATEGORY[cat.id]?.length || 0;
+            return (
+              <motion.div
+                key={cat.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover={{ y: -8 }}
+                onClick={() => selectCategory(cat.id)}
+                className="group bg-white p-8 rounded-[2rem] border border-[#98a08d]/10 shadow-lg hover:shadow-2xl transition-all cursor-pointer text-center space-y-4"
+              >
+                <div className={`w-16 h-16 mx-auto rounded-2xl ${cat.bg} flex items-center justify-center`}>
+                  <cat.icon className={`w-8 h-8 ${cat.color}`} />
                 </div>
-              </div>
-            </motion.div>
-          ))}
+                <h3 className="text-xl font-serif text-[#5c6352]">{cat.name}</h3>
+                <p className="text-xs text-[#98a08d] font-medium tracking-wide">
+                  {count} ta shablon
+                </p>
+                <div className="pt-2">
+                  <div className="inline-flex items-center gap-2 text-[#98a08d] group-hover:text-[#5c6352] transition-colors text-xs font-bold uppercase tracking-widest">
+                    Tanlash <ChevronRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </main>
     </div>
