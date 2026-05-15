@@ -526,7 +526,6 @@ export function NafosatTemplate({
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {data.images.map((url, i) => {
               const isEditable = !!onDataChange
-              const tall = i === 0 || i === 5
 
               return (
                 <motion.div
@@ -536,12 +535,12 @@ export function NafosatTemplate({
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: i * 0.07 }}
                   whileHover={{ scale: 1.03, zIndex: 10 }}
-                  className={`group relative overflow-hidden ${tall ? 'row-span-2' : ''} ${isEditable ? 'cursor-pointer' : ''}`}
+                  className={`group relative overflow-hidden ${isEditable ? 'cursor-pointer' : ''}`}
                   style={{
                     border: '1px solid #c9d8e8',
                     boxShadow: '0 4px 20px rgba(26,86,160,0.07)',
-                    minHeight: tall ? '320px' : '180px',
-                    aspectRatio: tall ? undefined : '3/4',
+                    minHeight: '220px',
+                    aspectRatio: '3/4',
                   }}
                 >
                   {isEditable && (
