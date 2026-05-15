@@ -67,7 +67,7 @@ export default function SuccessPage() {
       message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌\n\nLink: ${invitationUrl}`;
     }
 
-    const telegramUrl = `https://t.me/share/url?text=${encodeURIComponent(message)}`;
+    const telegramUrl = `https://telegram.me/share/url?url=${encodeURIComponent(invitationUrl)}&text=${encodeURIComponent(message)}`;
     window.open(telegramUrl, "_blank");
   };
 
