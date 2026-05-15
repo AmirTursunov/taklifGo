@@ -165,6 +165,13 @@ export function ElegantBirthdayTemplate({
         .dancing { font-family: 'Dancing Script', cursive; }
         .montserrat { font-family: 'Montserrat', sans-serif; }
         .quicksand { font-family: 'Quicksand', sans-serif; }
+        
+        ${!onDataChange ? `
+          [contenteditable="false"] {
+            outline: none !important;
+            cursor: default !important;
+          }
+        ` : ''}
       `}</style>
 
       {/* HERO SECTION */}

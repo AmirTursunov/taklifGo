@@ -257,6 +257,13 @@ export function NafosatTemplate({
         .cinzel   { font-family: 'Cinzel', serif; }
         .cormorant { font-family: 'Cormorant Garamond', serif; }
 
+        ${!onDataChange ? `
+          [contenteditable="false"] {
+            outline: none !important;
+            cursor: default !important;
+          }
+        ` : ''}
+
         @keyframes shimmer {
           0%   { background-position: -200% center; }
           100% { background-position: 200% center; }

@@ -442,6 +442,17 @@ export function GirlBirthdayTemplate({
         }
         .float-anim { animation: float 4s ease-in-out infinite; }
         .wiggle-anim { animation: wiggle 2s ease-in-out infinite; }
+        
+        /* Disable editing styles when read-only */
+        ${!onDataChange ? `
+          [contenteditable="false"] {
+            outline: none !important;
+            cursor: default !important;
+          }
+          .focus\\:outline-dashed:focus {
+            outline: none !important;
+          }
+        ` : ''}
       `}</style>
 
       <PartyCanvas burst={burst} />
@@ -516,7 +527,10 @@ export function GirlBirthdayTemplate({
           </motion.p>
 
           {/* Typographic Age */}
-          <CleanAge age={data.age || '21'} onEdit={(val) => handleEdit('age', val)} />
+          <CleanAge 
+            age={data.age || '21'} 
+            onEdit={onDataChange ? (val) => handleEdit('age', val) : undefined} 
+          />
 
           {/* yoshlik bayrami */}
           <motion.div
