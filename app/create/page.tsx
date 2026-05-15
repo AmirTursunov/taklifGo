@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { EternalBondTemplate } from "@/components/templates/eternal-bond";
 import { GoldenNightTemplate } from "@/components/templates/golden-night";
 import { NafosatTemplate } from "@/components/templates/nafosat";
+import { GoldenWeddingTemplate } from "@/components/templates/golden-wedding";
 import { ElegantBirthdayTemplate } from "@/components/templates/elegant-birthday";
 import { GirlBirthdayTemplate } from "@/components/templates/girl-birthday";
 import { PRESET_MUSIC } from "@/lib/music";
@@ -57,14 +58,15 @@ const TEMPLATES_BY_CATEGORY: Record<string, { id: string; name: string; color: s
   wedding: [
     { id: "eternal-bond", name: "Eternal Bond", color: "bg-[#98a08d]" },
     { id: "golden-night", name: "Golden Night", color: "bg-[#D4AF37]" },
-    { id: "nafosat", name: "Nafosat", color: "bg-[#1a56a0]" },
+    { id: "nafosat", name: "Royal Azure", color: "bg-[#1a56a0]" },
+    { id: "golden-wedding", name: "Golden Grace", color: "bg-[#8B6B23]" },
   ],
   birthday: [
     { id: "elegant-birthday", name: "Elegant Gold", color: "bg-[#D4AF37]" },
     { id: "girl-birthday", name: "Princess Pink", color: "bg-[#FF6FB4]" },
   ],
   farewell: [
-    { id: "nafosat", name: "Nafosat", color: "bg-[#1a56a0]" },
+    { id: "nafosat", name: "Royal Azure", color: "bg-[#1a56a0]" },
   ],
   business: [
     { id: "golden-night", name: "Golden Night", color: "bg-[#D4AF37]" },
@@ -105,7 +107,7 @@ export default function CreateInvitation() {
     const cat = searchParams.get("category") || "wedding";
     const defaultTmpl = TEMPLATES_BY_CATEGORY[cat]?.[0]?.id || "eternal-bond";
     const tmpl = searchParams.get("template") || defaultTmpl;
-    
+
     let greeting = "Nikoh Ziyofatiga Taklif";
     if (cat === "birthday") greeting = "Tug'ilgan Kun Muborak!";
     if (cat === "farewell") greeting = "Qiz Uzatish Marosimi";
@@ -113,7 +115,7 @@ export default function CreateInvitation() {
 
     return {
       names: cat === "birthday" ? "Amir" : "Sarah & James",
-      date: "June 15, 2025",
+      date: "June 15, 2028",
       location: "Paris, France",
       venue: "Rose Mansion",
       musicUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
@@ -471,11 +473,10 @@ export default function CreateInvitation() {
                 <button
                   key={tmpl.id}
                   onClick={() => setData({ ...data, templateId: tmpl.id })}
-                  className={`relative p-3 rounded-xl border text-center transition-all ${
-                    data.templateId === tmpl.id
+                  className={`relative p-3 rounded-xl border text-center transition-all ${data.templateId === tmpl.id
                       ? "border-[#98a08d] bg-[#98a08d]/5 ring-2 ring-[#98a08d]/20"
                       : "border-[#98a08d]/10 hover:border-[#98a08d]/30"
-                  }`}
+                    }`}
                 >
                   <div className={`w-full h-12 rounded-lg mb-2 ${tmpl.color} opacity-40`} />
                   <span className="text-[10px] font-bold text-[#5c6352]">{tmpl.name}</span>
@@ -816,25 +817,25 @@ export default function CreateInvitation() {
                   : "Live Preview"}
             </span>
           </div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2 px-4 py-2 bg-[#5c6352]/90 backdrop-blur-md rounded-full shadow-lg border border-white/10"
           >
             <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" />
             <span className="text-[9px] font-medium text-white/90">
-              {lang === "uz" 
-                ? "Taklifnomadagi so'zlarni to'g'ridan-to'g'ri ustiga bosib tahrirlashingiz mumkin" 
-                : lang === "ru" 
-                ? "Вы можете редактировать текст прямо в приглашении, нажав на него"
-                : "You can edit the text directly in the invitation by clicking on it"}
+              {lang === "uz"
+                ? "Taklifnomadagi so'zlarni to'g'ridan-to'g'ri ustiga bosib tahrirlashingiz mumkin"
+                : lang === "ru"
+                  ? "Вы можете редактировать текст прямо в приглашении, нажав на него"
+                  : "You can edit the text directly in the invitation by clicking on it"}
             </span>
           </motion.div>
         </div>
 
         <div className="flex-1 p-4 md:p-8 h-full overflow-hidden">
           <div className="w-full h-full bg-white shadow-2xl rounded-[2rem] overflow-hidden border border-[#98a08d]/10">
-            <div 
+            <div
               ref={previewRef}
               className="w-full h-full overflow-y-auto hide-scrollbar bg-[#faf9f6] scroll-smooth"
             >
@@ -863,6 +864,34 @@ export default function CreateInvitation() {
                     }
                   }}
                 />
+              ) : data.templateId === "golden-wedding" ? (
+                <GoldenWeddingTemplate
+                  data={data}
+                  onDataChange={async (newData) => {
+                    const mappedData: any = { ...newData };
+                    if (newData.name) mappedData.names = newData.name;
+
+                    if (newData.images) {
+                      const updatedImages = [...(newData.images as string[])];
+                      const uploadJobs = updatedImages.map(async (img, i) => {
+                        if (img.startsWith("data:image")) {
+                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                          try {
+                            const { url } = await uploadDirect(img, "image");
+                            updatedImages[i] = url;
+                          } catch {
+                          } finally {
+                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                          }
+                        }
+                      });
+                      await Promise.all(uploadJobs);
+                      setData((prev) => ({ ...prev, ...mappedData, images: updatedImages }));
+                    } else {
+                      setData((prev) => ({ ...prev, ...mappedData }));
+                    }
+                  }}
+                />
               ) : data.templateId === "girl-birthday" ? (
                 <GirlBirthdayTemplate
                   data={{
@@ -872,7 +901,7 @@ export default function CreateInvitation() {
                   onDataChange={async (newData) => {
                     const mappedData: any = { ...newData };
                     if (newData.name) mappedData.names = newData.name;
-                    
+
                     if (newData.images) {
                       const updatedImages = [...(newData.images as string[])];
                       const uploadJobs = updatedImages.map(async (img, i) => {
@@ -904,7 +933,7 @@ export default function CreateInvitation() {
                   onDataChange={async (newData) => {
                     const mappedData: any = { ...newData };
                     if (newData.name) mappedData.names = newData.name;
-                    
+
                     if (newData.images) {
                       const updatedImages = [...(newData.images as string[])];
                       const uploadJobs = updatedImages.map(async (img, i) => {

@@ -203,7 +203,7 @@ export const translations = {
     previewMobile: "Mobile View",
     eternalBond: "THE ETERNAL BOND",
     defaultNames: "Sarah & James",
-    defaultDate: "JUNE 15, 2025",
+    defaultDate: "JUNE 15, 2028",
     defaultLocation: "PARIS • FRANCE",
     areGettingMarried: "Are Getting Married",
     theAlbum: "The Album",

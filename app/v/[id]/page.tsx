@@ -8,7 +8,7 @@ const getInvitationData = (id: string) => {
   // In a real app, this would fetch from a database (Supabase/Firebase/etc.)
   return {
     names: 'Sarah & James',
-    date: 'June 15, 2025',
+    date: 'June 15, 2028',
     location: 'Paris, France',
     venue: 'Rose Mansion',
     images: [
