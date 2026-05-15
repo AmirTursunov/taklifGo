@@ -31,12 +31,11 @@ export default function SuccessPage() {
 
   const invitationUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin.includes('localhost') ? 'https://taklif-go.vercel.app' : window.location.origin}/invitation/${id}`
+      ? `${window.location.origin.includes("localhost") ? "https://taklif-go.vercel.app" : window.location.origin}/invitation/${id}`
       : "https://taklif-go.vercel.app";
 
   useEffect(() => {
     if (!id) return;
-
     const docRef = doc(db, "invitations", id as string);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -47,7 +46,6 @@ export default function SuccessPage() {
       console.error("Error listening to invitation:", error);
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, [id]);
 
@@ -66,7 +64,6 @@ export default function SuccessPage() {
     } else {
       message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌\n${invitationUrl}`;
     }
-
     const telegramUrl = `https://telegram.me/share/url?url=${encodeURIComponent(message)}`;
     window.open(telegramUrl, "_blank");
   };
@@ -81,10 +78,13 @@ export default function SuccessPage() {
 
   const isPending = data?.status === "pending";
   const isRejected = data?.status === "rejected";
+  // Real view count from Firestore — updated live via onSnapshot
+  const viewCount = data?.viewCount ?? 0;
 
   return (
     <div className="min-h-screen bg-[#faf9f6] p-6 lg:p-12">
       <div className="max-w-4xl mx-auto space-y-8">
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <Button
@@ -93,11 +93,7 @@ export default function SuccessPage() {
             className="text-[#98a08d] hover:text-white hover:bg-[#98a08d] -ml-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {lang === "uz"
-              ? "Profilga qaytish"
-              : lang === "ru"
-                ? "Вернуться в профиль"
-                : "Back to Dashboard"}
+            {lang === "uz" ? "Profilga qaytish" : lang === "ru" ? "Вернуться в профиль" : "Back to Dashboard"}
           </Button>
           <div
             className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold border ${isPending
@@ -110,11 +106,7 @@ export default function SuccessPage() {
             {isPending ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                {lang === "uz"
-                  ? "KO'RILMOQDA"
-                  : lang === "ru"
-                    ? "НА ПРОВЕРКЕ"
-                    : "UNDER REVIEW"}
+                {lang === "uz" ? "KO'RILMOQDA" : lang === "ru" ? "НА ПРОВЕРКЕ" : "UNDER REVIEW"}
               </>
             ) : isRejected ? (
               <>
@@ -146,20 +138,10 @@ export default function SuccessPage() {
           </div>
           <h1 className="text-4xl lg:text-5xl font-serif text-[#5c6352]">
             {isPending
-              ? lang === "uz"
-                ? "To'lov tekshirilmoqda"
-                : lang === "ru"
-                  ? "Оплата проверяется"
-                  : "Payment under review"
+              ? lang === "uz" ? "To'lov tekshirilmoqda" : lang === "ru" ? "Оплата проверяется" : "Payment under review"
               : isRejected
-                ? lang === "uz"
-                  ? "To'lov rad etildi"
-                  : "Оплата отклонена"
-                : lang === "uz"
-                  ? "Tabriklaymiz!"
-                  : lang === "ru"
-                    ? "Поздравляем!"
-                    : "Congratulations!"}
+                ? lang === "uz" ? "To'lov rad etildi" : "Оплата отклонена"
+                : lang === "uz" ? "Tabriklaymiz!" : lang === "ru" ? "Поздравляем!" : "Congratulations!"}
           </h1>
 
           {isRejected && (
@@ -179,7 +161,7 @@ export default function SuccessPage() {
                 ? lang === "uz"
                   ? "Sizning to'lovingiz 5 daqiqa ichida ko'rib chiqiladi. Havola tasdiqlangandan so'ng faollashadi."
                   : lang === "ru"
-                    ? "Ваш платеж будет проверен в v techeniye 5 minut. Ссылка станет активной posle подтверждения."
+                    ? "Ваш платеж будет проверен в течение 5 минут. Ссылка станет активной после подтверждения."
                     : "Your payment will be reviewed within 5 minutes. The link will become active after approval."
                 : lang === "uz"
                   ? "Sizning 3D taklifnomangiz muvaffaqiyatli yaratildi va hozirda butun dunyo uchun ochiq."
@@ -198,9 +180,7 @@ export default function SuccessPage() {
               <p className="text-[10px] text-[#98a08d] italic">
                 {isRejected
                   ? (lang === "uz" ? "Iltimos, qayta to'lov qiling va chekni yuklang yoki bog'laning." : "Пожалуйста, попробуйте снова или свяжитесь с нами.")
-                  : (lang === "uz"
-                    ? "Agar 5 daqiqadan ko'p vaqt o'tsa, yuqoridagi raqamga bog'laning."
-                    : "Если прошло более 5 минут, пожалуйста, свяжитесь по номеру выше.")}
+                  : (lang === "uz" ? "Agar 5 daqiqadan ko'p vaqt o'tsa, yuqoridagi raqamga bog'laning." : "Если прошло более 5 минут, пожалуйста, свяжитесь по номеру выше.")}
               </p>
               {isRejected && (
                 <Button
@@ -225,15 +205,12 @@ export default function SuccessPage() {
 
         {!isPending && !isRejected && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in zoom-in duration-700">
+
             {/* Main Card */}
             <Card className="lg:col-span-2 p-8 rounded-[2.5rem] border-0 shadow-2xl space-y-8 bg-white">
               <div className="space-y-4">
                 <h3 className="text-sm font-bold text-[#98a08d] tracking-[0.2em] uppercase">
-                  {lang === "uz"
-                    ? "Taklifnoma Havolasi"
-                    : lang === "ru"
-                      ? "Ссылка на Приглашение"
-                      : "Invitation Link"}
+                  {lang === "uz" ? "Taklifnoma Havolasi" : lang === "ru" ? "Ссылка на Приглашение" : "Invitation Link"}
                 </h3>
                 <div className="flex items-center gap-2 p-4 bg-[#faf9f6] rounded-2xl border border-[#98a08d]/10">
                   <input
@@ -244,17 +221,9 @@ export default function SuccessPage() {
                   <Button
                     onClick={copyToClipboard}
                     size="sm"
-                    className={
-                      copied
-                        ? "bg-green-500 hover:bg-green-600"
-                        : "bg-[#98a08d] hover:bg-[#868d7c]"
-                    }
+                    className={copied ? "bg-green-500 hover:bg-green-600" : "bg-[#98a08d] hover:bg-[#868d7c]"}
                   >
-                    {copied ? (
-                      <CheckCircle2 className="w-4 h-4" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
+                    {copied ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   </Button>
                 </div>
               </div>
@@ -279,20 +248,18 @@ export default function SuccessPage() {
               </div>
             </Card>
 
-            {/* Quick Stats/Info */}
+            {/* Side Cards */}
             <div className="space-y-6">
+
+              {/* Real view count — live via onSnapshot */}
               <Card className="p-8 rounded-[2.5rem] border-0 shadow-xl bg-white text-center space-y-4">
                 <div className="w-12 h-12 bg-[#98a08d]/10 rounded-full flex items-center justify-center mx-auto">
                   <Eye className="w-6 h-6 text-[#98a08d]" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-3xl font-bold text-[#5c6352]">0</h4>
+                  <h4 className="text-3xl font-bold text-[#5c6352]">{viewCount}</h4>
                   <p className="text-xs text-[#98a08d] uppercase tracking-widest font-bold">
-                    {lang === "uz"
-                      ? "Ko'rishlar"
-                      : lang === "ru"
-                        ? "Просмотры"
-                        : "Views"}
+                    {lang === "uz" ? "Ko'rishlar" : lang === "ru" ? "Просмотры" : "Views"}
                   </p>
                 </div>
               </Card>
@@ -301,9 +268,7 @@ export default function SuccessPage() {
                 <QrCode className="w-12 h-12 text-[#98a08d] mx-auto opacity-20" />
                 <div className="space-y-1">
                   <h4 className="font-bold text-[#5c6352]">QR Kod</h4>
-                  <p className="text-xs text-[#98a08d]">
-                    Tez orada faollashadi
-                  </p>
+                  <p className="text-xs text-[#98a08d]">Tez orada faollashadi</p>
                 </div>
               </Card>
 
