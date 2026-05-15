@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { EternalBondTemplate } from "@/components/templates/eternal-bond";
 import { GoldenNightTemplate } from "@/components/templates/golden-night";
 import { NafosatTemplate } from "@/components/templates/nafosat";
@@ -54,6 +54,7 @@ export default function CreateInvitation() {
   const { t, lang, setLang } = useLanguage();
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -92,6 +93,13 @@ export default function CreateInvitation() {
     ],
     templateId: "eternal-bond",
   });
+  
+  // ✅ Scroll to top when template changes
+  useEffect(() => {
+    if (previewRef.current) {
+      previewRef.current.scrollTop = 0;
+    }
+  }, [data.templateId]);
 
   // ✅ Barcha fayllarni FormData orqali yuklash (base64 JSON emas)
   // ─── Cloudinary direct upload (Vercel orqali o'tmaydi) ───────────────────────
@@ -355,8 +363,8 @@ export default function CreateInvitation() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-[#faf9f6]">
-      <aside className="w-full lg:w-[400px] bg-white border-r border-[#98a08d]/10 flex flex-col z-20 shadow-xl">
+    <div className="flex flex-col lg:flex-row h-screen bg-[#faf9f6] overflow-hidden">
+      <aside className="w-full lg:w-[400px] h-full bg-white border-r border-[#98a08d]/10 flex flex-col z-20 shadow-xl overflow-y-auto hide-scrollbar">
         <div className="p-6 border-b border-[#98a08d]/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
@@ -571,9 +579,7 @@ export default function CreateInvitation() {
                 </div>
               </div>
             </div>
-          </section>
-
-          <section className="space-y-4 pt-4 border-t border-[#98a08d]/10">
+          <section className="space-y-4 pt-4 border-t border-[#98a08d]/10 pb-10">
             <Button
               onClick={() => setShowPaymentModal(true)}
               disabled={isAnyLoading}
@@ -728,11 +734,28 @@ export default function CreateInvitation() {
                   : "Live Preview"}
             </span>
           </div>
+          <motion.div 
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-2 px-4 py-2 bg-[#5c6352]/90 backdrop-blur-md rounded-full shadow-lg border border-white/10"
+          >
+            <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" />
+            <span className="text-[9px] font-medium text-white/90">
+              {lang === "uz" 
+                ? "Taklifnomadagi so'zlarni to'g'ridan-to'g'ri ustiga bosib tahrirlashingiz mumkin" 
+                : lang === "ru" 
+                ? "Вы можете редактировать текст прямо в приглашении, нажав на него"
+                : "You can edit the text directly in the invitation by clicking on it"}
+            </span>
+          </motion.div>
         </div>
 
-        <div className="flex-1 p-4 md:p-8 overflow-hidden">
+        <div className="flex-1 p-4 md:p-8 h-full overflow-hidden">
           <div className="w-full h-full bg-white shadow-2xl rounded-[2rem] overflow-hidden border border-[#98a08d]/10">
-            <div className="w-full h-full overflow-y-auto hide-scrollbar bg-[#faf9f6]">
+            <div 
+              ref={previewRef}
+              className="w-full h-full overflow-y-auto hide-scrollbar bg-[#faf9f6] scroll-smooth"
+            >
               {data.templateId === "nafosat" ? (
                 <NafosatTemplate
                   data={data}
