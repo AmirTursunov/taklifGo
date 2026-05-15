@@ -83,15 +83,17 @@ export default function Home() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
         >
-          <Link href="/create" className="w-full sm:w-auto">
+          <Link href="/templates" className="w-full sm:w-auto">
             <Button className="w-full sm:w-auto bg-[#98a08d] hover:bg-[#868d7c] text-white rounded-2xl px-12 py-7 md:py-8 text-xs md:text-sm font-bold tracking-[0.2em] uppercase transition-all shadow-xl shadow-[#98a08d]/20 group">
               {t.startCreating}
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-          <Button variant="outline" className="w-full sm:w-auto rounded-2xl px-12 py-7 md:py-8 text-xs md:text-sm font-bold tracking-[0.2em] uppercase border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all">
-            {t.viewTemplates}
-          </Button>
+          <Link href="/templates" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto rounded-2xl px-12 py-7 md:py-8 text-xs md:text-sm font-bold tracking-[0.2em] uppercase border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all">
+              {t.viewTemplates}
+            </Button>
+          </Link>
         </motion.div>
 
         {/* Floating Decorative Elements */}

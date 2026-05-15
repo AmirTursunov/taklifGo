@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { EternalBondTemplate } from '@/components/templates/eternal-bond'
 import { GoldenNightTemplate } from '@/components/templates/golden-night'
 import { NafosatTemplate } from '@/components/templates/nafosat'
+import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday'
+import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
 import { Loader2 } from 'lucide-react'
 
 export default function InvitationClient({ data, id }: { data: any, id: string }) {
@@ -51,6 +53,20 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
       )}
       {data.templateId === "nafosat" ? (
         <NafosatTemplate data={data} />
+      ) : data.templateId === "girl-birthday" ? (
+        <GirlBirthdayTemplate data={{
+          ...data,
+          name: data.names,
+          time: data.time || "19:00",
+          age: data.age || "21"
+        }} />
+      ) : data.templateId === "elegant-birthday" ? (
+        <ElegantBirthdayTemplate data={{
+          ...data,
+          name: data.names,
+          time: data.time || "19:00",
+          age: data.age || "30"
+        }} />
       ) : data.templateId === "golden-night" ? (
         <GoldenNightTemplate data={data} />
       ) : (

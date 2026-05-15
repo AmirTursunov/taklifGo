@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { EternalBondTemplate } from "@/components/templates/eternal-bond";
 import { GoldenNightTemplate } from "@/components/templates/golden-night";
 import { NafosatTemplate } from "@/components/templates/nafosat";
+import { ElegantBirthdayTemplate } from "@/components/templates/elegant-birthday";
+import { GirlBirthdayTemplate } from "@/components/templates/girl-birthday";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
 import { Input } from "@/components/ui/input";
@@ -40,7 +42,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { Language } from "@/lib/translations";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -51,9 +53,28 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "react-toastify";
 
+const TEMPLATES_BY_CATEGORY: Record<string, { id: string; name: string; color: string }[]> = {
+  wedding: [
+    { id: "eternal-bond", name: "Eternal Bond", color: "bg-[#98a08d]" },
+    { id: "golden-night", name: "Golden Night", color: "bg-[#D4AF37]" },
+    { id: "nafosat", name: "Nafosat", color: "bg-[#1a56a0]" },
+  ],
+  birthday: [
+    { id: "elegant-birthday", name: "Elegant Gold", color: "bg-[#D4AF37]" },
+    { id: "girl-birthday", name: "Princess Pink", color: "bg-[#FF6FB4]" },
+  ],
+  farewell: [
+    { id: "nafosat", name: "Nafosat", color: "bg-[#1a56a0]" },
+  ],
+  business: [
+    { id: "golden-night", name: "Golden Night", color: "bg-[#D4AF37]" },
+  ],
+};
+
 export default function CreateInvitation() {
   const { t, lang, setLang } = useLanguage();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -80,24 +101,38 @@ export default function CreateInvitation() {
   >({}); // index → loading
   const isAnyLoading = isSaving || isMusicUploading || isReceiptUploading || Object.values(uploadingImages).some(v => v);
 
-  const [data, setData] = useState({
-    names: "Sarah & James",
-    date: "June 15, 2025",
-    location: "Paris, France",
-    venue: "Rose Mansion",
-    musicUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    musicPublicId: "",
-    images: [
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=800",
-    ],
-    greeting: "Nikoh Ziyofatiga Taklif",
-    templateId: "eternal-bond",
+  const [data, setData] = useState(() => {
+    const cat = searchParams.get("category") || "wedding";
+    const defaultTmpl = TEMPLATES_BY_CATEGORY[cat]?.[0]?.id || "eternal-bond";
+    const tmpl = searchParams.get("template") || defaultTmpl;
+    
+    let greeting = "Nikoh Ziyofatiga Taklif";
+    if (cat === "birthday") greeting = "Tug'ilgan Kun Muborak!";
+    if (cat === "farewell") greeting = "Qiz Uzatish Marosimi";
+    if (cat === "business") greeting = "Biznes Tadbirga Taklifnoma";
+
+    return {
+      names: cat === "birthday" ? "Amir" : "Sarah & James",
+      date: "June 15, 2025",
+      location: "Paris, France",
+      venue: "Rose Mansion",
+      musicUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      musicPublicId: "",
+      images: [
+        "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=800",
+        "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=800",
+      ],
+      greeting,
+      age: "30",
+      message: "",
+      category: cat,
+      templateId: tmpl,
+      time: "19:00",
+    };
   });
-  
-  // ✅ Scroll to top when template changes
+
   useEffect(() => {
     if (previewRef.current) {
       previewRef.current.scrollTop = 0;
@@ -432,11 +467,7 @@ export default function CreateInvitation() {
               {lang === "uz" ? "Dizayn" : lang === "ru" ? "Дизайн" : "Design"}
             </h3>
             <div className="grid grid-cols-2 gap-3">
-              {[
-                { id: "eternal-bond", name: "Eternal Bond", color: "bg-[#98a08d]" },
-                { id: "golden-night", name: "Golden Night", color: "bg-[#D4AF37]" },
-                { id: "nafosat", name: "Nafosat", color: "bg-[#1a56a0]" },
-              ].map((tmpl) => (
+              {TEMPLATES_BY_CATEGORY[data.category || "wedding"].map((tmpl) => (
                 <button
                   key={tmpl.id}
                   onClick={() => setData({ ...data, templateId: tmpl.id })}
@@ -464,21 +495,41 @@ export default function CreateInvitation() {
             </h3>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>{t.coupleNames}</Label>
+                <Label>{data.category === 'birthday' ? (lang === 'uz' ? 'Ism' : 'Имя') : t.coupleNames}</Label>
                 <Input
                   value={data.names}
                   onChange={(e) => setData({ ...data, names: e.target.value })}
                   className="rounded-xl border-[#98a08d]/20"
                 />
               </div>
+              {data.category === 'birthday' && (
+                <div className="space-y-2">
+                  <Label>{lang === 'uz' ? 'Yosh' : 'Возраст'}</Label>
+                  <Input
+                    value={data.age}
+                    onChange={(e) => setData({ ...data, age: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+              )}
               <div className="space-y-2">
-                <Label>{t.weddingDate}</Label>
+                <Label>{data.category === 'birthday' ? (lang === 'uz' ? 'Tug\'ilgan kun sanasi' : 'Дата рождения') : t.weddingDate}</Label>
                 <Input
                   value={data.date}
                   onChange={(e) => setData({ ...data, date: e.target.value })}
                   className="rounded-xl border-[#98a08d]/20"
                 />
               </div>
+              {data.category === 'birthday' && (
+                <div className="space-y-2">
+                  <Label>{lang === 'uz' ? 'Tadbir vaqti' : 'Время мероприятия'}</Label>
+                  <Input
+                    value={data.time}
+                    onChange={(e) => setData({ ...data, time: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+              )}
             </div>
           </section>
 
@@ -809,6 +860,69 @@ export default function CreateInvitation() {
                       setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
                     } else {
                       setData((prev) => ({ ...prev, ...newData }));
+                    }
+                  }}
+                />
+              ) : data.templateId === "girl-birthday" ? (
+                <GirlBirthdayTemplate
+                  data={{
+                    ...data,
+                    name: data.names,
+                  }}
+                  onDataChange={async (newData) => {
+                    const mappedData: any = { ...newData };
+                    if (newData.name) mappedData.names = newData.name;
+                    
+                    if (newData.images) {
+                      const updatedImages = [...(newData.images as string[])];
+                      const uploadJobs = updatedImages.map(async (img, i) => {
+                        if (img.startsWith("data:image")) {
+                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                          try {
+                            const { url } = await uploadDirect(img, "image");
+                            updatedImages[i] = url;
+                          } catch {
+                          } finally {
+                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                          }
+                        }
+                      });
+                      await Promise.all(uploadJobs);
+                      setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
+                    } else {
+                      setData((prev) => ({ ...prev, ...newData }));
+                    }
+                  }}
+                />
+              ) : data.templateId === "elegant-birthday" ? (
+                <ElegantBirthdayTemplate
+                  data={{
+                    ...data,
+                    name: data.names,
+                    time: "19:00",
+                  }}
+                  onDataChange={async (newData) => {
+                    const mappedData: any = { ...newData };
+                    if (newData.name) mappedData.names = newData.name;
+                    
+                    if (newData.images) {
+                      const updatedImages = [...(newData.images as string[])];
+                      const uploadJobs = updatedImages.map(async (img, i) => {
+                        if (img.startsWith("data:image")) {
+                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                          try {
+                            const { url } = await uploadDirect(img, "image");
+                            updatedImages[i] = url;
+                          } catch {
+                          } finally {
+                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                          }
+                        }
+                      });
+                      await Promise.all(uploadJobs);
+                      setData((prev) => ({ ...prev, ...mappedData, images: updatedImages }));
+                    } else {
+                      setData((prev) => ({ ...prev, ...mappedData }));
                     }
                   }}
                 />
