@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { EternalBondTemplate } from '@/components/templates/eternal-bond'
+import { GoldenNightTemplate } from '@/components/templates/golden-night'
 import { Loader2 } from 'lucide-react'
 
 export default function InvitationClient({ data, id }: { data: any, id: string }) {
@@ -47,7 +48,11 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
           </div>
         </div>
       )}
-      <EternalBondTemplate data={data} />
+      {data.templateId === "golden-night" ? (
+        <GoldenNightTemplate data={data} />
+      ) : (
+        <EternalBondTemplate data={data} />
+      )}
     </main>
   )
 }

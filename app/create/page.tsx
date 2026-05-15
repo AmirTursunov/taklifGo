@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { EternalBondTemplate } from "@/components/templates/eternal-bond";
+import { GoldenNightTemplate } from "@/components/templates/golden-night";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
 import { Input } from "@/components/ui/input";
@@ -88,6 +89,7 @@ export default function CreateInvitation() {
       "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=800",
       "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=800",
     ],
+    templateId: "eternal-bond",
   });
 
   // ✅ Barcha fayllarni FormData orqali yuklash (base64 JSON emas)
@@ -387,6 +389,36 @@ export default function CreateInvitation() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
+          <section className="space-y-4">
+            <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
+              {lang === "uz" ? "Dizayn" : lang === "ru" ? "Дизайн" : "Design"}
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { id: "eternal-bond", name: "Eternal Bond", color: "bg-[#98a08d]" },
+                { id: "golden-night", name: "Golden Night", color: "bg-[#D4AF37]" },
+              ].map((tmpl) => (
+                <button
+                  key={tmpl.id}
+                  onClick={() => setData({ ...data, templateId: tmpl.id })}
+                  className={`relative p-3 rounded-xl border text-center transition-all ${
+                    data.templateId === tmpl.id
+                      ? "border-[#98a08d] bg-[#98a08d]/5 ring-2 ring-[#98a08d]/20"
+                      : "border-[#98a08d]/10 hover:border-[#98a08d]/30"
+                  }`}
+                >
+                  <div className={`w-full h-12 rounded-lg mb-2 ${tmpl.color} opacity-40`} />
+                  <span className="text-[10px] font-bold text-[#5c6352]">{tmpl.name}</span>
+                  {data.templateId === tmpl.id && (
+                    <div className="absolute -top-1 -right-1 bg-[#98a08d] text-white rounded-full p-0.5">
+                      <CheckCircle2 className="w-3 h-3" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </section>
+
           <section className="space-y-4">
             <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
               {t.basicInfo}
@@ -699,39 +731,57 @@ export default function CreateInvitation() {
         <div className="flex-1 p-4 md:p-8 overflow-hidden">
           <div className="w-full h-full bg-white shadow-2xl rounded-[2rem] overflow-hidden border border-[#98a08d]/10">
             <div className="w-full h-full overflow-y-auto hide-scrollbar bg-[#faf9f6]">
-              <EternalBondTemplate
-                data={data}
-                onDataChange={async (newData) => {
-                  // Yangi base64 rasm kelsa — darhol Cloudinary ga yuklash
-                  if (newData.images) {
-                    const updatedImages = [...(newData.images as string[])];
-                    const uploadJobs = updatedImages.map(async (img, i) => {
-                      if (img.startsWith("data:image")) {
-                        setUploadingImages((prev) => ({ ...prev, [i]: true }));
-                        try {
-                          const { url } = await uploadDirect(img, "image");
-                          updatedImages[i] = url;
-                        } catch {
-                          // xato bo'lsa base64 qoladi, handleSave tekshiradi
-                        } finally {
-                          setUploadingImages((prev) => ({
-                            ...prev,
-                            [i]: false,
-                          }));
+              {data.templateId === "golden-night" ? (
+                <GoldenNightTemplate
+                  data={data}
+                  onDataChange={async (newData) => {
+                    if (newData.images) {
+                      const updatedImages = [...(newData.images as string[])];
+                      const uploadJobs = updatedImages.map(async (img, i) => {
+                        if (img.startsWith("data:image")) {
+                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                          try {
+                            const { url } = await uploadDirect(img, "image");
+                            updatedImages[i] = url;
+                          } catch {
+                          } finally {
+                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                          }
                         }
-                      }
-                    });
-                    await Promise.all(uploadJobs);
-                    setData((prev) => ({
-                      ...prev,
-                      ...newData,
-                      images: updatedImages,
-                    }));
-                  } else {
-                    setData((prev) => ({ ...prev, ...newData }));
-                  }
-                }}
-              />
+                      });
+                      await Promise.all(uploadJobs);
+                      setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
+                    } else {
+                      setData((prev) => ({ ...prev, ...newData }));
+                    }
+                  }}
+                />
+              ) : (
+                <EternalBondTemplate
+                  data={data}
+                  onDataChange={async (newData) => {
+                    if (newData.images) {
+                      const updatedImages = [...(newData.images as string[])];
+                      const uploadJobs = updatedImages.map(async (img, i) => {
+                        if (img.startsWith("data:image")) {
+                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                          try {
+                            const { url } = await uploadDirect(img, "image");
+                            updatedImages[i] = url;
+                          } catch {
+                          } finally {
+                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                          }
+                        }
+                      });
+                      await Promise.all(uploadJobs);
+                      setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
+                    } else {
+                      setData((prev) => ({ ...prev, ...newData }));
+                    }
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
