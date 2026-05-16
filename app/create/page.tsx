@@ -849,13 +849,14 @@ export default function CreateInvitation() {
           </motion.div>
         </div>
 
-        <div className="flex-1 p-4 md:p-8 h-full overflow-hidden">
+        <div className="flex-1 p-4 md:p-8 min-h-0 overflow-hidden">
           <div className="w-full h-full bg-white shadow-2xl rounded-[2rem] overflow-hidden border border-[#98a08d]/10">
             <div
               ref={previewRef}
-              className="w-full h-full overflow-y-auto hide-scrollbar bg-[#faf9f6] scroll-smooth"
+              className="w-full h-full overflow-y-scroll hide-scrollbar bg-[#faf9f6] scroll-smooth"
+              style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              <div className="w-full h-full">
+              <div className="w-full">
                 {data.templateId === "nafosat" ? (
                   <NafosatTemplate
                     data={data}
