@@ -69,6 +69,12 @@ export default function CreateInvitation() {
     }
   }, [user, authLoading, router]);
 
+  useEffect(() => {
+    if (previewRef.current) {
+      previewRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [data.templateId]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentType, setPaymentType] = useState<"click" | "payme" | null>(
