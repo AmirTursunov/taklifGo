@@ -16,22 +16,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const data = doc.data();
-  const names = data?.names || "To'y taklifnomasi";
+  const names = data?.names || "Taklifnoma";
   const image = data?.imageUrl || "https://taklif-go.vercel.app/placeholder-logo.png";
+  const category = data?.category || "wedding";
+
+  let dynamicTitle = `${names} - Taklifnoma`;
+  let dynamicDesc = "Sizni kutib qolamiz!";
+
+  if (category === "birthday") {
+    dynamicTitle = `${names} - Tug'ilgan kun taklifnomasi`;
+    dynamicDesc = "Sizni tug'ilgan kun bayramiga lutfan taklif qilamiz!";
+  } else if (category === "business") {
+    dynamicTitle = `${names} - Biznes tadbiriga taklif`;
+    dynamicDesc = "Sizni muhim biznes tadbirimizga taklif qilamiz.";
+  } else if (category === "farewell") {
+    dynamicTitle = `${names} - Qiz uzatish marosimi`;
+    dynamicDesc = "Sizni qiz uzatish marosimiga taklif qilamiz!";
+  } else {
+    dynamicTitle = `${names} - To'y taklifnomasi`;
+    dynamicDesc = "Sizni bizning eng baxtli kunimizda kutib qolamiz!";
+  }
 
   return {
-    title: `${names} - Wedding Invitation`,
-    description: "Sizni bizning eng baxtli kunimizda kutib qolamiz!",
+    title: dynamicTitle,
+    description: dynamicDesc,
     openGraph: {
-      title: `${names} - Wedding Invitation`,
-      description: "Sizni bizning eng baxtli kunimizda kutib qolamiz!",
+      title: dynamicTitle,
+      description: dynamicDesc,
       images: [{ url: image }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${names} - Wedding Invitation`,
-      description: "Sizni bizning eng baxtli kunimizda kutib qolamiz!",
+      title: dynamicTitle,
+      description: dynamicDesc,
       images: [image],
     },
   };

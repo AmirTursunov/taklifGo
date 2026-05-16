@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: '3D Wedding Invitation',
-  description: 'An elegant 3D interactive wedding invitation',
+  title: 'Taklif Go - 3D Interaktiv Taklifnomalar',
+  description: 'Barcha turdagi marosimlar uchun zamonaviy 3D taklifnomalar yaratish platformasi',
   generator: 'v0.app',
   icons: {
     icon: [
