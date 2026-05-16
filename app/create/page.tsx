@@ -43,7 +43,7 @@ import {
 import { useLanguage } from "@/lib/LanguageContext";
 import { Language } from "@/lib/translations";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Dialog,
@@ -114,9 +114,25 @@ export default function CreateInvitation() {
       message: "",
       category: cat,
       templateId: tmpl,
-      time: "19:00",
     };
   });
+
+  const [templateSettings, setTemplateSettings] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    async function fetchPrices() {
+      try {
+        const docRef = doc(db, "settings", "templates");
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          setTemplateSettings(snap.data());
+        }
+      } catch (e) {
+        console.error("Error fetching prices:", e);
+      }
+    }
+    fetchPrices();
+  }, []);
 
   useEffect(() => {
     if (previewRef.current) {
@@ -452,24 +468,35 @@ export default function CreateInvitation() {
               {lang === "uz" ? "Dizayn" : lang === "ru" ? "Дизайн" : "Design"}
             </h3>
             <div className="grid grid-cols-2 gap-3">
-              {TEMPLATES_BY_CATEGORY[data.category || "wedding"].map((tmpl) => (
-                <button
-                  key={tmpl.id}
-                  onClick={() => setData({ ...data, templateId: tmpl.id })}
-                  className={`relative p-3 rounded-xl border text-center transition-all ${data.templateId === tmpl.id
-                      ? "border-[#98a08d] bg-[#98a08d]/5 ring-2 ring-[#98a08d]/20"
-                      : "border-[#98a08d]/10 hover:border-[#98a08d]/30"
-                    }`}
-                >
-                  <div className={`w-full h-12 rounded-lg mb-2 ${tmpl.color} opacity-40`} />
-                  <span className="text-[10px] font-bold text-[#5c6352]">{tmpl.name}</span>
-                  {data.templateId === tmpl.id && (
-                    <div className="absolute -top-1 -right-1 bg-[#98a08d] text-white rounded-full p-0.5">
-                      <CheckCircle2 className="w-3 h-3" />
-                    </div>
-                  )}
-                </button>
-              ))}
+                {TEMPLATES_BY_CATEGORY[data.category || "wedding"].map((tmpl) => {
+                  const config = templateSettings[tmpl.id] || { price: 25000, originalPrice: 100000 };
+                  return (
+                    <button
+                      key={tmpl.id}
+                      onClick={() => setData({ ...data, templateId: tmpl.id })}
+                      className={`relative p-3 rounded-xl border text-center transition-all ${data.templateId === tmpl.id
+                          ? "border-[#98a08d] bg-[#98a08d]/5 ring-2 ring-[#98a08d]/20"
+                          : "border-[#98a08d]/10 hover:border-[#98a08d]/30"
+                        }`}
+                    >
+                      <div className={`w-full h-12 rounded-lg mb-2 ${tmpl.color} opacity-40`} />
+                      <span className="text-[10px] font-black text-[#5c6352] block mb-1">{tmpl.name}</span>
+                      <div className="flex flex-col items-center gap-0.5">
+                        <span className="text-[8px] text-[#98a08d] line-through opacity-60">
+                          {config.originalPrice.toLocaleString()}
+                        </span>
+                        <span className="text-[9px] font-black text-[#5c6352]">
+                          {config.price.toLocaleString()} UZS
+                        </span>
+                      </div>
+                      {data.templateId === tmpl.id && (
+                        <div className="absolute -top-1 -right-1 bg-[#98a08d] text-white rounded-full p-0.5 shadow-md">
+                          <CheckCircle2 className="w-3 h-3" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
           </section>
 
@@ -766,8 +793,13 @@ export default function CreateInvitation() {
               </div>
             </div>
 
-            <div className="text-center">
-              <p className="text-2xl font-bold text-[#5c6352]">25,000 UZS</p>
+            <div className="text-center space-y-1">
+              <p className="text-[10px] text-[#98a08d] line-through font-bold">
+                {(templateSettings[data.templateId || ""]?.originalPrice || 100000).toLocaleString()} UZS
+              </p>
+              <p className="text-3xl font-black text-[#5c6352]">
+                {(templateSettings[data.templateId || ""]?.price || 25000).toLocaleString()} UZS
+              </p>
             </div>
           </div>
 

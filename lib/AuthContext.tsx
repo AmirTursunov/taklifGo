@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { onAuthStateChanged, User } from 'firebase/auth'
-import { auth } from './firebase'
+import { auth, db } from './firebase'
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 interface AuthContextType {
   user: User | null
@@ -19,8 +20,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user)
+      if (user) {
+        // Sync user to firestore for admin panel
+        try {
+          await setDoc(doc(db, "users", user.uid), {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            lastSeen: serverTimestamp(),
+          }, { merge: true });
+        } catch (e) {
+          console.error("Error syncing user:", e);
+        }
+      }
       setLoading(false)
     })
 

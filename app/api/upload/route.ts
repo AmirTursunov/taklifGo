@@ -5,9 +5,9 @@ export const runtime = "nodejs";
 // maxDuration yo'q — Hobby plan 10s limit, audio uchun ishlatmaymiz
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dlwrrxcjg",
-  api_key: process.env.CLOUDINARY_API_KEY || "658441217362522",
-  api_secret: process.env.CLOUDINARY_API_SECRET || "xQHAQAWWEbQPw72C65s_kEL1yH0",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // ✅ Yangi endpoint: client uchun Cloudinary signed upload params beradi
@@ -27,15 +27,15 @@ export async function GET(request: NextRequest) {
 
   const signature = cloudinary.utils.api_sign_request(
     paramsToSign,
-    process.env.CLOUDINARY_API_SECRET || "xQHAQAWWEbQPw72C65s_kEL1yH0",
+    process.env.CLOUDINARY_API_SECRET || "",
   );
 
   return NextResponse.json({
     signature,
     timestamp,
     folder,
-    api_key: process.env.CLOUDINARY_API_KEY || "658441217362522",
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dlwrrxcjg",
+    api_key: process.env.CLOUDINARY_API_KEY,
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   });
 }
 

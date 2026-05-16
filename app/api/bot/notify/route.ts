@@ -4,8 +4,8 @@ export async function POST(request: NextRequest) {
   try {
     const { invitationId, receiptUrl, names, email, paymentType, venue, date, lang } = await request.json();
 
-    const BOT_TOKEN = "8917648922:AAFKV2N9sN8rCqHOqCFMM9wzazX02i-_VyI";
-    const CHAT_ID = "948843072";
+    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+    const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
     const message =
       `🚀 *Yangi Taklifnoma Buyurtmasi!*\n\n` +

@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/lib/LanguageContext'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LogOut, User as UserIcon, Plus } from 'lucide-react'
+import { LogOut, User as UserIcon, Plus, Shield } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { isAdmin } from '@/lib/admin'
 
 export function Header() {
   const { user } = useAuth()
@@ -47,6 +48,14 @@ export function Header() {
         <div className="flex items-center gap-2 sm:gap-4">
           {user ? (
             <>
+              {isAdmin(user.email) && (
+                <Link href="/admin">
+                  <Button variant="ghost" className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 gap-2 font-bold px-2 sm:px-4">
+                    <Shield className="w-5 h-5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Admin</span>
+                  </Button>
+                </Link>
+              )}
               <Link href="/dashboard">
                 <Button variant="ghost" className="text-[#98a08d] hover:text-[#5c6352] hover:bg-[#98a08d]/5 gap-2 font-bold px-2 sm:px-4">
                   <UserIcon className="w-5 h-5 sm:w-4 sm:h-4" />
