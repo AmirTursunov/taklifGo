@@ -233,20 +233,40 @@ export default function InvitationsManagement() {
                   </div>
 
                   <div className="pt-6 border-t border-[#98a08d]/10 flex gap-4">
-                    <button 
-                      onClick={() => updateStatus(selectedInv.id, 'active')}
-                      className="flex-1 py-4 bg-[#98a08d] text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 hover:bg-[#868d7c] transition-all"
-                    >
-                      <Check className="w-5 h-5" />
-                      TASDIQLASH
-                    </button>
-                    <button 
-                      onClick={() => updateStatus(selectedInv.id, 'rejected')}
-                      className="flex-1 py-4 bg-white border-2 border-red-100 text-red-500 rounded-2xl font-black text-sm flex items-center justify-center gap-2 hover:bg-red-50 transition-all"
-                    >
-                      <X className="w-5 h-5" />
-                      RAD ETISH
-                    </button>
+                    {selectedInv.status === 'pending' ? (
+                      <>
+                        <button 
+                          onClick={() => updateStatus(selectedInv.id, 'active')}
+                          className="flex-1 py-4 bg-[#98a08d] text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 hover:bg-[#868d7c] transition-all"
+                        >
+                          <Check className="w-5 h-5" />
+                          TASDIQLASH
+                        </button>
+                        <button 
+                          onClick={() => updateStatus(selectedInv.id, 'rejected')}
+                          className="flex-1 py-4 bg-white border-2 border-red-100 text-red-500 rounded-2xl font-black text-sm flex items-center justify-center gap-2 hover:bg-red-50 transition-all"
+                        >
+                          <X className="w-5 h-5" />
+                          RAD ETISH
+                        </button>
+                      </>
+                    ) : (
+                      <div className={`flex-1 py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 ${
+                        selectedInv.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      }`}>
+                        {selectedInv.status === 'active' ? (
+                          <>
+                            <Check className="w-5 h-5" />
+                            BU BUYURTMA TASDIQLANGAN
+                          </>
+                        ) : (
+                          <>
+                            <X className="w-5 h-5" />
+                            BU BUYURTMA RAD ETILGAN
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

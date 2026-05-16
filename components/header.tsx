@@ -29,15 +29,14 @@ export function Header() {
           <Link href="/" className="text-lg md:text-xl font-serif text-[#5c6352] tracking-tight shrink-0">
             3D Invitations
           </Link>
-          
+
           <div className="hidden md:flex p-1 bg-[#98a08d]/5 rounded-full border border-[#98a08d]/10">
             {(['uz', 'ru', 'en'] as const).map((l) => (
               <button
                 key={l}
                 onClick={() => setLang(l)}
-                className={`px-4 py-1.5 rounded-full text-[10px] font-bold transition-all ${
-                  lang === l ? 'bg-[#98a08d] text-white shadow-md' : 'text-[#98a08d] hover:bg-[#98a08d]/10'
-                }`}
+                className={`px-4 py-1.5 rounded-full text-[10px] font-bold transition-all ${lang === l ? 'bg-[#98a08d] text-white shadow-md' : 'text-[#98a08d] hover:bg-[#98a08d]/10'
+                  }`}
               >
                 {l.toUpperCase()}
               </button>
@@ -62,14 +61,14 @@ export function Header() {
                   <span className="hidden sm:inline">{t.myProfile}</span>
                 </Button>
               </Link>
-              <Link href="/create">
+              <Link href="/templates">
                 <Button className="bg-[#98a08d] hover:bg-[#868d7c] text-white gap-2 font-bold shadow-md shadow-[#98a08d]/20 px-2 sm:px-4">
                   <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">{t.newCreate}</span>
                 </Button>
               </Link>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={handleSignOut}
                 className="text-red-400 hover:text-red-500 hover:bg-red-50 p-2"
                 title={t.logout}
