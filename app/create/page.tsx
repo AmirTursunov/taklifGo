@@ -469,35 +469,35 @@ export default function CreateInvitation() {
               {lang === "uz" ? "Dizayn" : lang === "ru" ? "Дизайн" : "Design"}
             </h3>
             <div className="grid grid-cols-2 gap-3">
-                {TEMPLATES_BY_CATEGORY[data.category || "wedding"].map((tmpl) => {
-                  const config = templateSettings[tmpl.id] || { price: 25000, originalPrice: 100000 };
-                  return (
-                    <button
-                      key={tmpl.id}
-                      onClick={() => setData({ ...data, templateId: tmpl.id })}
-                      className={`relative p-3 rounded-xl border text-center transition-all ${data.templateId === tmpl.id
-                          ? "border-[#98a08d] bg-[#98a08d]/5 ring-2 ring-[#98a08d]/20"
-                          : "border-[#98a08d]/10 hover:border-[#98a08d]/30"
-                        }`}
-                    >
-                      <div className={`w-full h-12 rounded-lg mb-2 ${tmpl.color} opacity-40`} />
-                      <span className="text-[10px] font-black text-[#5c6352] block mb-1">{tmpl.name}</span>
-                      <div className="flex flex-col items-center gap-0.5">
-                        <span className="text-[8px] text-[#98a08d] line-through opacity-60">
-                          {config.originalPrice.toLocaleString()}
-                        </span>
-                        <span className="text-[9px] font-black text-[#5c6352]">
-                          {config.price.toLocaleString()} UZS
-                        </span>
+              {TEMPLATES_BY_CATEGORY[data.category || "wedding"].map((tmpl) => {
+                const config = templateSettings[tmpl.id] || { price: 25000, originalPrice: 100000 };
+                return (
+                  <button
+                    key={tmpl.id}
+                    onClick={() => setData({ ...data, templateId: tmpl.id })}
+                    className={`relative p-3 rounded-xl border text-center transition-all ${data.templateId === tmpl.id
+                      ? "border-[#98a08d] bg-[#98a08d]/5 ring-2 ring-[#98a08d]/20"
+                      : "border-[#98a08d]/10 hover:border-[#98a08d]/30"
+                      }`}
+                  >
+                    <div className={`w-full h-12 rounded-lg mb-2 ${tmpl.color} opacity-40`} />
+                    <span className="text-[10px] font-black text-[#5c6352] block mb-1">{tmpl.name}</span>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="text-[8px] text-[#98a08d] line-through opacity-60">
+                        {config.originalPrice.toLocaleString()}
+                      </span>
+                      <span className="text-[9px] font-black text-[#5c6352]">
+                        {config.price.toLocaleString()} UZS
+                      </span>
+                    </div>
+                    {data.templateId === tmpl.id && (
+                      <div className="absolute -top-1 -right-1 bg-[#98a08d] text-white rounded-full p-0.5 shadow-md">
+                        <CheckCircle2 className="w-3 h-3" />
                       </div>
-                      {data.templateId === tmpl.id && (
-                        <div className="absolute -top-1 -right-1 bg-[#98a08d] text-white rounded-full p-0.5 shadow-md">
-                          <CheckCircle2 className="w-3 h-3" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </section>
 
@@ -855,174 +855,174 @@ export default function CreateInvitation() {
               ref={previewRef}
               className="w-full h-full overflow-y-auto hide-scrollbar bg-[#faf9f6] scroll-smooth"
             >
-              <div className={`w-full h-full transition-transform duration-500 origin-top ${viewMode === 'preview' ? 'scale-[1.03] sm:scale-100' : 'scale-100'}`}>
+              <div className="w-full h-full">
                 {data.templateId === "nafosat" ? (
-                <NafosatTemplate
-                  data={data}
-                  onDataChange={async (newData) => {
-                    if (newData.images) {
-                      const updatedImages = [...(newData.images as string[])];
-                      const uploadJobs = updatedImages.map(async (img, i) => {
-                        if (img.startsWith("data:image")) {
-                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
-                          try {
-                            const { url } = await uploadDirect(img, "image");
-                            updatedImages[i] = url;
-                          } catch {
-                          } finally {
-                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                  <NafosatTemplate
+                    data={data}
+                    onDataChange={async (newData) => {
+                      if (newData.images) {
+                        const updatedImages = [...(newData.images as string[])];
+                        const uploadJobs = updatedImages.map(async (img, i) => {
+                          if (img.startsWith("data:image")) {
+                            setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                            try {
+                              const { url } = await uploadDirect(img, "image");
+                              updatedImages[i] = url;
+                            } catch {
+                            } finally {
+                              setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                            }
                           }
-                        }
-                      });
-                      await Promise.all(uploadJobs);
-                      setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
-                    } else {
-                      setData((prev) => ({ ...prev, ...newData }));
-                    }
-                  }}
-                />
-              ) : data.templateId === "golden-wedding" ? (
-                <GoldenWeddingTemplate
-                  data={data}
-                  onDataChange={async (newData) => {
-                    const mappedData: any = { ...newData };
-                    if (newData.name) mappedData.names = newData.name;
+                        });
+                        await Promise.all(uploadJobs);
+                        setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
+                      } else {
+                        setData((prev) => ({ ...prev, ...newData }));
+                      }
+                    }}
+                  />
+                ) : data.templateId === "golden-wedding" ? (
+                  <GoldenWeddingTemplate
+                    data={data}
+                    onDataChange={async (newData) => {
+                      const mappedData: any = { ...newData };
+                      if (newData.name) mappedData.names = newData.name;
 
-                    if (newData.images) {
-                      const updatedImages = [...(newData.images as string[])];
-                      const uploadJobs = updatedImages.map(async (img, i) => {
-                        if (img.startsWith("data:image")) {
-                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
-                          try {
-                            const { url } = await uploadDirect(img, "image");
-                            updatedImages[i] = url;
-                          } catch {
-                          } finally {
-                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                      if (newData.images) {
+                        const updatedImages = [...(newData.images as string[])];
+                        const uploadJobs = updatedImages.map(async (img, i) => {
+                          if (img.startsWith("data:image")) {
+                            setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                            try {
+                              const { url } = await uploadDirect(img, "image");
+                              updatedImages[i] = url;
+                            } catch {
+                            } finally {
+                              setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                            }
                           }
-                        }
-                      });
-                      await Promise.all(uploadJobs);
-                      setData((prev) => ({ ...prev, ...mappedData, images: updatedImages }));
-                    } else {
-                      setData((prev) => ({ ...prev, ...mappedData }));
-                    }
-                  }}
-                />
-              ) : data.templateId === "girl-birthday" ? (
-                <GirlBirthdayTemplate
-                  data={{
-                    ...data,
-                    name: data.names,
-                  }}
-                  onDataChange={async (newData) => {
-                    const mappedData: any = { ...newData };
-                    if (newData.name) mappedData.names = newData.name;
+                        });
+                        await Promise.all(uploadJobs);
+                        setData((prev) => ({ ...prev, ...mappedData, images: updatedImages }));
+                      } else {
+                        setData((prev) => ({ ...prev, ...mappedData }));
+                      }
+                    }}
+                  />
+                ) : data.templateId === "girl-birthday" ? (
+                  <GirlBirthdayTemplate
+                    data={{
+                      ...data,
+                      name: data.names,
+                    }}
+                    onDataChange={async (newData) => {
+                      const mappedData: any = { ...newData };
+                      if (newData.name) mappedData.names = newData.name;
 
-                    if (newData.images) {
-                      const updatedImages = [...(newData.images as string[])];
-                      const uploadJobs = updatedImages.map(async (img, i) => {
-                        if (img.startsWith("data:image")) {
-                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
-                          try {
-                            const { url } = await uploadDirect(img, "image");
-                            updatedImages[i] = url;
-                          } catch {
-                          } finally {
-                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                      if (newData.images) {
+                        const updatedImages = [...(newData.images as string[])];
+                        const uploadJobs = updatedImages.map(async (img, i) => {
+                          if (img.startsWith("data:image")) {
+                            setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                            try {
+                              const { url } = await uploadDirect(img, "image");
+                              updatedImages[i] = url;
+                            } catch {
+                            } finally {
+                              setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                            }
                           }
-                        }
-                      });
-                      await Promise.all(uploadJobs);
-                      setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
-                    } else {
-                      setData((prev) => ({ ...prev, ...newData }));
-                    }
-                  }}
-                />
-              ) : data.templateId === "elegant-birthday" ? (
-                <ElegantBirthdayTemplate
-                  data={{
-                    ...data,
-                    name: data.names,
-                    time: "19:00",
-                  }}
-                  onDataChange={async (newData) => {
-                    const mappedData: any = { ...newData };
-                    if (newData.name) mappedData.names = newData.name;
+                        });
+                        await Promise.all(uploadJobs);
+                        setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
+                      } else {
+                        setData((prev) => ({ ...prev, ...newData }));
+                      }
+                    }}
+                  />
+                ) : data.templateId === "elegant-birthday" ? (
+                  <ElegantBirthdayTemplate
+                    data={{
+                      ...data,
+                      name: data.names,
+                      time: "19:00",
+                    }}
+                    onDataChange={async (newData) => {
+                      const mappedData: any = { ...newData };
+                      if (newData.name) mappedData.names = newData.name;
 
-                    if (newData.images) {
-                      const updatedImages = [...(newData.images as string[])];
-                      const uploadJobs = updatedImages.map(async (img, i) => {
-                        if (img.startsWith("data:image")) {
-                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
-                          try {
-                            const { url } = await uploadDirect(img, "image");
-                            updatedImages[i] = url;
-                          } catch {
-                          } finally {
-                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                      if (newData.images) {
+                        const updatedImages = [...(newData.images as string[])];
+                        const uploadJobs = updatedImages.map(async (img, i) => {
+                          if (img.startsWith("data:image")) {
+                            setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                            try {
+                              const { url } = await uploadDirect(img, "image");
+                              updatedImages[i] = url;
+                            } catch {
+                            } finally {
+                              setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                            }
                           }
-                        }
-                      });
-                      await Promise.all(uploadJobs);
-                      setData((prev) => ({ ...prev, ...mappedData, images: updatedImages }));
-                    } else {
-                      setData((prev) => ({ ...prev, ...mappedData }));
-                    }
-                  }}
-                />
-              ) : data.templateId === "golden-night" ? (
-                <GoldenNightTemplate
-                  data={data}
-                  onDataChange={async (newData) => {
-                    if (newData.images) {
-                      const updatedImages = [...(newData.images as string[])];
-                      const uploadJobs = updatedImages.map(async (img, i) => {
-                        if (img.startsWith("data:image")) {
-                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
-                          try {
-                            const { url } = await uploadDirect(img, "image");
-                            updatedImages[i] = url;
-                          } catch {
-                          } finally {
-                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                        });
+                        await Promise.all(uploadJobs);
+                        setData((prev) => ({ ...prev, ...mappedData, images: updatedImages }));
+                      } else {
+                        setData((prev) => ({ ...prev, ...mappedData }));
+                      }
+                    }}
+                  />
+                ) : data.templateId === "golden-night" ? (
+                  <GoldenNightTemplate
+                    data={data}
+                    onDataChange={async (newData) => {
+                      if (newData.images) {
+                        const updatedImages = [...(newData.images as string[])];
+                        const uploadJobs = updatedImages.map(async (img, i) => {
+                          if (img.startsWith("data:image")) {
+                            setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                            try {
+                              const { url } = await uploadDirect(img, "image");
+                              updatedImages[i] = url;
+                            } catch {
+                            } finally {
+                              setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                            }
                           }
-                        }
-                      });
-                      await Promise.all(uploadJobs);
-                      setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
-                    } else {
-                      setData((prev) => ({ ...prev, ...newData }));
-                    }
-                  }}
-                />
-              ) : (
-                <EternalBondTemplate
-                  data={data}
-                  onDataChange={async (newData) => {
-                    if (newData.images) {
-                      const updatedImages = [...(newData.images as string[])];
-                      const uploadJobs = updatedImages.map(async (img, i) => {
-                        if (img.startsWith("data:image")) {
-                          setUploadingImages((prev) => ({ ...prev, [i]: true }));
-                          try {
-                            const { url } = await uploadDirect(img, "image");
-                            updatedImages[i] = url;
-                          } catch {
-                          } finally {
-                            setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                        });
+                        await Promise.all(uploadJobs);
+                        setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
+                      } else {
+                        setData((prev) => ({ ...prev, ...newData }));
+                      }
+                    }}
+                  />
+                ) : (
+                  <EternalBondTemplate
+                    data={data}
+                    onDataChange={async (newData) => {
+                      if (newData.images) {
+                        const updatedImages = [...(newData.images as string[])];
+                        const uploadJobs = updatedImages.map(async (img, i) => {
+                          if (img.startsWith("data:image")) {
+                            setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                            try {
+                              const { url } = await uploadDirect(img, "image");
+                              updatedImages[i] = url;
+                            } catch {
+                            } finally {
+                              setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                            }
                           }
-                        }
-                      });
-                      await Promise.all(uploadJobs);
-                      setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
-                    } else {
-                      setData((prev) => ({ ...prev, ...newData }));
-                    }
-                  }}
-                />
-              )}
+                        });
+                        await Promise.all(uploadJobs);
+                        setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
+                      } else {
+                        setData((prev) => ({ ...prev, ...newData }));
+                      }
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
