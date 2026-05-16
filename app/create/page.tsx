@@ -821,7 +821,7 @@ export default function CreateInvitation() {
         </DialogContent>
       </Dialog>
 
-      <main className={`flex-1 relative bg-[#f8f7f4] overflow-hidden min-h-0 flex flex-col transition-all duration-300 ${viewMode === "preview" ? "flex" : "hidden lg:flex"}`}>
+      <main className={`flex-1 min-h-0 relative bg-[#f8f7f4] flex flex-col transition-all duration-300 ${viewMode === "preview" ? "flex" : "hidden lg:flex"}`}>
         <div className="absolute top-6 left-6 z-30 flex flex-col gap-2 items-start">
           <div className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full shadow-md border border-[#98a08d]/10">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -849,11 +849,11 @@ export default function CreateInvitation() {
           </motion.div>
         </div>
 
-        <div className="flex-1 p-4 md:p-8 min-h-0 overflow-hidden">
-          <div className="w-full h-full bg-white shadow-2xl rounded-[2rem] overflow-hidden border border-[#98a08d]/10">
+        <div className="flex-1 relative min-h-0">
+          <div className="absolute inset-4 md:inset-8 bg-white shadow-2xl rounded-[2rem] overflow-hidden border border-[#98a08d]/10">
             <div
               ref={previewRef}
-              className="w-full h-full overflow-y-scroll hide-scrollbar bg-[#faf9f6] scroll-smooth"
+              className="absolute inset-0 overflow-y-scroll hide-scrollbar bg-[#faf9f6] scroll-smooth"
               style={{ WebkitOverflowScrolling: 'touch' }}
             >
               <div className="w-full">
