@@ -460,7 +460,7 @@ export function GirlBirthdayTemplate({
 
       {/* ══ HERO ══════════════════════════════════════ */}
       <section ref={heroRef}
-        className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden py-16 px-6"
+        className="relative w-full min-h-full flex flex-col items-center justify-center overflow-hidden py-16 px-6"
         style={{
           background: 'linear-gradient(160deg, #fff0f8 0%, #f8f0ff 40%, #fff5fb 70%, #fffbec 100%)',
         }}>
@@ -500,6 +500,7 @@ export function GirlBirthdayTemplate({
                 fontSize: 'clamp(3.5rem, 12vw, 7.5rem)',
                 fontWeight: 800,
                 letterSpacing: '-0.03em',
+                color: '#FF3D9A', // Fallback color
                 background: 'linear-gradient(135deg, #FF3D9A 0%, #C77DFF 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',

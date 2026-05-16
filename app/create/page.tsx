@@ -821,7 +821,7 @@ export default function CreateInvitation() {
         </DialogContent>
       </Dialog>
 
-      <main className={`flex-1 relative bg-[#f8f7f4] overflow-hidden h-full flex flex-col transition-all duration-300 ${viewMode === "preview" ? "flex" : "hidden lg:flex"}`}>
+      <main className={`flex-1 relative bg-[#f8f7f4] overflow-hidden min-h-0 flex flex-col transition-all duration-300 ${viewMode === "preview" ? "flex" : "hidden lg:flex"}`}>
         <div className="absolute top-6 left-6 z-30 flex flex-col gap-2 items-start">
           <div className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full shadow-md border border-[#98a08d]/10">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
