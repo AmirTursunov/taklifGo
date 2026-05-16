@@ -296,7 +296,7 @@ export function NafosatTemplate({
           HERO
       ══════════════════════════════════════════ */}
       <section ref={heroRef}
-        className="relative w-full min-h-full flex items-center justify-center overflow-hidden"
+        className="relative w-full h-[100dvh] flex items-center justify-center overflow-hidden"
         style={{ background: 'linear-gradient(160deg, #f0f6ff 0%, #e8f1fb 40%, #f7fafd 100%)' }}
       >
         <GirihPattern opacity={0.055} color="#1a56a0" />

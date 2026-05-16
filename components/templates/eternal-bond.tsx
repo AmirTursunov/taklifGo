@@ -139,7 +139,7 @@ export function EternalBondTemplate({ data, onDataChange }: { data: InvitationDa
     <div className="w-full min-h-screen bg-[#faf9f6] text-[#5c6352] selection:bg-[#98a08d]/20 overflow-x-hidden font-sans">
 
       {/* ── Hero ── */}
-      <section className="relative w-full min-h-full flex items-center justify-center overflow-hidden bg-[#faf9f6]">
+      <section className="relative w-full h-[600px] lg:h-screen flex items-center justify-center overflow-hidden bg-[#faf9f6]">
         <div className="absolute inset-0 z-0">
           <InvitationCanvas data={data} onDataChange={onDataChange} />
         </div>
