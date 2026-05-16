@@ -143,37 +143,62 @@ function Rings() {
   const ring1 = useRef<THREE.Mesh>(null);
   const ring2 = useRef<THREE.Mesh>(null);
   const ringsGroup = useRef<THREE.Group>(null);
+  const [rotation, setRotation] = useState([0, 0]);
+  const [isDragging, setIsDragging] = useState(false);
+  const lastPointer = useRef({ x: 0, y: 0 });
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
     if (ring1.current) {
-      ring1.current.rotation.x = t * 0.5;
-      ring1.current.rotation.y = t * 0.3;
+      ring1.current.rotation.x = t * 0.5 + rotation[1];
+      ring1.current.rotation.y = t * 0.3 + rotation[0];
     }
     if (ring2.current) {
-      ring2.current.rotation.z = t * 0.4;
-      ring2.current.rotation.y = -t * 0.2;
+      ring2.current.rotation.z = t * 0.4 + rotation[1];
+      ring2.current.rotation.y = -t * 0.2 + rotation[0];
     }
     if (ringsGroup.current) {
-      ringsGroup.current.rotation.y = Math.sin(t * 0.2) * 0.2;
+      ringsGroup.current.rotation.y = Math.sin(t * 0.2) * 0.2 + rotation[0] * 0.5;
     }
   });
 
+  const onPointerDown = (e: any) => {
+    e.stopPropagation();
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    setIsDragging(true);
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const onPointerMove = (e: any) => {
+    if (!isDragging) return;
+    const dx = (e.clientX - lastPointer.current.x) * 0.01;
+    const dy = (e.clientY - lastPointer.current.y) * 0.01;
+    setRotation(([x, y]) => [x + dx, y + dy]);
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const onPointerUp = (e: any) => {
+    setIsDragging(false);
+    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+  };
+
   return (
-    <>
-      {/* RINGS ONLY - These rotate and user can move them */}
-      <group ref={ringsGroup}>
-        <mesh ref={ring1}>
-          <torusGeometry args={[2.5, 0.05, 32, 100]} />
-          <meshStandardMaterial color="#d4a574" metalness={1} roughness={0.1} />
-        </mesh>
-        <mesh ref={ring2} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[2.3, 0.05, 32, 100]} />
-          <meshStandardMaterial color="#98a08d" metalness={0.8} roughness={0.2} />
-        </mesh>
-        <ParticleVortex />
-      </group>
-    </>
+    <group 
+      ref={ringsGroup}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+    >
+      <mesh ref={ring1}>
+        <torusGeometry args={[2.5, 0.05, 32, 100]} />
+        <meshStandardMaterial color="#d4a574" metalness={1} roughness={0.1} />
+      </mesh>
+      <mesh ref={ring2} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[2.3, 0.05, 32, 100]} />
+        <meshStandardMaterial color="#98a08d" metalness={0.8} roughness={0.2} />
+      </mesh>
+      <ParticleVortex />
+    </group>
   );
 }
 
@@ -188,44 +213,44 @@ function EternalBond({ data, onDataChange }: InvitationCanvasProps) {
 
   return (
     <group>
-      {/* 3D Rings */}
       <Rings />
 
-      {/* TEXT OVERLAY - COMPLETELY STATIONARY & EDITABLE */}
       <Html center>
-        <div className="flex flex-col items-center justify-center text-center select-none whitespace-nowrap pointer-events-auto px-4 w-full">
-          <h1 
-            className="text-4xl sm:text-5xl md:text-7xl font-serif text-[#5c6352] font-bold mb-4 outline-none focus:bg-[#98a08d]/5 px-4 rounded-xl transition-all cursor-text"
-            contentEditable={!!onDataChange}
-            suppressContentEditableWarning
-            onBlur={(e) => handleEdit('names', e.currentTarget.textContent || '')}
-          >
-            {data?.names || t.defaultNames}
-          </h1>
-          <p className="text-[10px] sm:text-xs md:text-sm tracking-[0.3em] sm:tracking-[0.5em] text-[#98a08d] uppercase mb-6 sm:mb-8 outline-none focus:bg-[#98a08d]/5 px-4 rounded-xl transition-all cursor-text"
-            contentEditable={!!onDataChange}
-            suppressContentEditableWarning
-            onBlur={(e) => handleEdit('tagline', e.currentTarget.textContent || '')}
-          >
-            {data?.tagline || t.eternalBond}
-          </p>
-          <div className="space-y-1">
-            <p 
-              className="text-base sm:text-lg md:text-xl font-medium text-[#5c6352] outline-none focus:bg-[#98a08d]/5 px-2 rounded-md transition-all cursor-text"
+        <div className="flex flex-col items-center justify-center text-center select-none whitespace-nowrap pointer-events-none px-4 w-full">
+          <div className="pointer-events-auto flex flex-col items-center">
+            <h1 
+              className="text-4xl sm:text-5xl md:text-7xl font-serif text-[#5c6352] font-bold mb-4 outline-none focus:bg-[#98a08d]/5 px-4 rounded-xl transition-all cursor-text"
               contentEditable={!!onDataChange}
               suppressContentEditableWarning
-              onBlur={(e) => handleEdit('date', e.currentTarget.textContent || '')}
+              onBlur={(e) => handleEdit('names', e.currentTarget.textContent || '')}
             >
-              {data?.date || t.defaultDate}
-            </p>
-            <p 
-              className="text-[10px] sm:text-xs md:text-sm tracking-[0.1em] sm:tracking-[0.2em] text-[#98a08d] uppercase outline-none focus:bg-[#98a08d]/5 px-2 rounded-md transition-all cursor-text"
+              {data?.names || t.defaultNames}
+            </h1>
+            <p className="text-[10px] sm:text-xs md:text-sm tracking-[0.3em] sm:tracking-[0.5em] text-[#98a08d] uppercase mb-6 sm:mb-8 outline-none focus:bg-[#98a08d]/5 px-4 rounded-xl transition-all cursor-text"
               contentEditable={!!onDataChange}
               suppressContentEditableWarning
-              onBlur={(e) => handleEdit('location', e.currentTarget.textContent || '')}
+              onBlur={(e) => handleEdit('tagline', e.currentTarget.textContent || '')}
             >
-              {data?.location || t.defaultLocation}
+              {data?.tagline || t.eternalBond}
             </p>
+            <div className="space-y-1">
+              <p 
+                className="text-base sm:text-lg md:text-xl font-medium text-[#5c6352] outline-none focus:bg-[#98a08d]/5 px-2 rounded-md transition-all cursor-text"
+                contentEditable={!!onDataChange}
+                suppressContentEditableWarning
+                onBlur={(e) => handleEdit('date', e.currentTarget.textContent || '')}
+              >
+                {data?.date || t.defaultDate}
+              </p>
+              <p 
+                className="text-[10px] sm:text-xs md:text-sm tracking-[0.1em] sm:tracking-[0.2em] text-[#98a08d] uppercase outline-none focus:bg-[#98a08d]/5 px-2 rounded-md transition-all cursor-text"
+                contentEditable={!!onDataChange}
+                suppressContentEditableWarning
+                onBlur={(e) => handleEdit('location', e.currentTarget.textContent || '')}
+              >
+                {data?.location || t.defaultLocation}
+              </p>
+            </div>
           </div>
         </div>
       </Html>
@@ -251,13 +276,6 @@ function KineticScene({ data, onDataChange }: InvitationCanvasProps) {
 
       <EternalBond data={data} onDataChange={onDataChange} />
       <FallingPetals />
-
-      <OrbitControls
-        enableZoom={false}
-        enablePan={false}
-        maxPolarAngle={Math.PI * 0.7}
-        minPolarAngle={Math.PI * 0.3}
-      />
     </group>
   );
 }
@@ -272,11 +290,12 @@ export function InvitationCanvas({ data, onDataChange }: InvitationCanvasProps) 
   if (!isClient) return <div className="w-full h-full bg-[#faf9f6]" />;
 
   return (
-    <div className="w-full h-full cursor-grab active:cursor-grabbing relative">
+    <div className="w-full h-full relative" style={{ touchAction: 'pan-y' }}>
       <Canvas
         camera={{ position: [0, 0, 12], fov: 35 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
+        style={{ touchAction: 'pan-y' }}
       >
         <Suspense fallback={null}>
           <KineticScene data={data} onDataChange={onDataChange} />
