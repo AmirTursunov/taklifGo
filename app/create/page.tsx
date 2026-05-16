@@ -69,12 +69,6 @@ export default function CreateInvitation() {
     }
   }, [user, authLoading, router]);
 
-  useEffect(() => {
-    if (previewRef.current) {
-      previewRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [data.templateId]);
-
   const [isSaving, setIsSaving] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentType, setPaymentType] = useState<"click" | "payme" | null>(
@@ -122,6 +116,12 @@ export default function CreateInvitation() {
       templateId: tmpl,
     };
   });
+
+  useEffect(() => {
+    if (previewRef.current) {
+      previewRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [data.templateId]);
 
   const [templateSettings, setTemplateSettings] = useState<Record<string, any>>({});
   const [pricesLoading, setPricesLoading] = useState(true);
@@ -696,7 +696,7 @@ export default function CreateInvitation() {
       </aside>
 
       <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
-        <DialogContent className="sm:max-w-[400px] rounded-[2rem] border-0 shadow-2xl bg-[#faf9f6]">
+        <DialogContent className="sm:max-w-[400px] max-w-[95vw] max-h-[85vh] overflow-y-auto hide-scrollbar rounded-[2rem] border-0 shadow-2xl bg-[#faf9f6]">
           <DialogHeader className="text-center space-y-4">
             <div className="w-16 h-16 bg-[#98a08d]/10 rounded-full flex items-center justify-center mx-auto">
               <CreditCard className="w-8 h-8 text-[#98a08d]" />

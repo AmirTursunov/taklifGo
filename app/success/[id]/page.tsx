@@ -57,13 +57,27 @@ export default function SuccessPage() {
 
   const shareToTelegram = () => {
     let message = "";
-    if (lang === "uz") {
-      message = `Assalomu Aleykum !\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌\n${invitationUrl}`;
-    } else if (lang === "ru") {
-      message = `Здравствуйте !\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌\n${invitationUrl}`;
+    const category = data?.category || "wedding";
+
+    if (category === "birthday") {
+      if (lang === "uz") message = `Assalomu Aleykum!\nSizni tug'ilgan kun bayramiga lutfan taklif qilamiz!\n\nTaklifnomani ochish uchun bosing 🎁\n${invitationUrl}`;
+      else if (lang === "ru") message = `Здравствуйте!\nПриглашаем вас на празднование дня рождения!\n\nНажмите, чтобы открыть приглашение 🎁\n${invitationUrl}`;
+      else message = `Hello!\nWe cordially invite you to a birthday celebration!\n\nClick to open the invitation 🎁\n${invitationUrl}`;
+    } else if (category === "business") {
+      if (lang === "uz") message = `Assalomu Aleykum!\nSizni muhim biznes tadbirimizga lutfan taklif qilamiz.\n\nTaklifnomani ochish uchun bosing 🤝\n${invitationUrl}`;
+      else if (lang === "ru") message = `Здравствуйте!\nПриглашаем вас на наше деловое мероприятие.\n\nНажмите, чтобы открыть приглашение 🤝\n${invitationUrl}`;
+      else message = `Hello!\nWe invite you to our upcoming business event.\n\nClick to open the invitation 🤝\n${invitationUrl}`;
+    } else if (category === "farewell") {
+      if (lang === "uz") message = `Assalomu Aleykum!\nSizni qiz uzatish marosimiga taklif qilamiz!\n\nTaklifnomani ochish uchun bosing 🕊\n${invitationUrl}`;
+      else if (lang === "ru") message = `Здравствуйте!\nПриглашаем вас на церемонию проводов невесты!\n\nНажмите, чтобы открыть приглашение 🕊\n${invitationUrl}`;
+      else message = `Hello!\nWe invite you to our farewell ceremony!\n\nClick to open the invitation 🕊\n${invitationUrl}`;
     } else {
-      message = `Hello !\nWe invite you to our most special day!\n\nClick to open the invitation 💌\n${invitationUrl}`;
+      // Default / Wedding
+      if (lang === "uz") message = `Assalomu Aleykum!\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌\n${invitationUrl}`;
+      else if (lang === "ru") message = `Здравствуйте!\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌\n${invitationUrl}`;
+      else message = `Hello!\nWe invite you to our most special day!\n\nClick to open the invitation 💌\n${invitationUrl}`;
     }
+
     const telegramUrl = `https://telegram.me/share/url?url=${encodeURIComponent(message)}`;
     window.open(telegramUrl, "_blank");
   };
