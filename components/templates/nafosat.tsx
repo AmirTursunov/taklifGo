@@ -167,7 +167,7 @@ function CountdownTimer({ dateStr }: { dateStr: string }) {
 function MapEmbed({ location, mapUrl }: { location: string; mapUrl?: string }) {
   const src = mapUrl || `https://maps.google.com/maps?q=${encodeURIComponent(location || 'Tashkent')}&output=embed&z=15`
   return (
-    <div className="w-full h-64 sm:h-80 overflow-hidden"
+    <div className="w-full aspect-video min-h-[250px] overflow-hidden"
       style={{ border: '1px solid #c9d8e8', boxShadow: '0 8px 32px rgba(26,86,160,0.08)' }}>
       <iframe src={src} width="100%" height="100%"
         style={{ border: 0 }} allowFullScreen loading="lazy"

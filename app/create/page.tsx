@@ -856,7 +856,7 @@ export default function CreateInvitation() {
               className="absolute inset-0 overflow-y-scroll hide-scrollbar bg-[#faf9f6] scroll-smooth"
               style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              <div className="w-full">
+              <div key={viewMode} className="w-full min-h-full">
                 {data.templateId === "nafosat" ? (
                   <NafosatTemplate
                     data={data}

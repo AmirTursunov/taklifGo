@@ -323,7 +323,7 @@ function CountdownTimer({ dateStr }: { dateStr: string }) {
 function MapEmbed({ location, mapUrl }: { location: string; mapUrl?: string }) {
   const src = mapUrl || `https://maps.google.com/maps?q=${encodeURIComponent(location || 'Tashkent')}&output=embed&z=15`
   return (
-    <div className="w-full h-64 overflow-hidden"
+    <div className="w-full aspect-video min-h-[250px] overflow-hidden"
       style={{
         border: '3px solid #FFB3DC',
         borderRadius: '24px',
