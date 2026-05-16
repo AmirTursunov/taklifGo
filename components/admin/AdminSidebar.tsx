@@ -2,12 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { 
-  LayoutDashboard, 
-  Users, 
-  ClipboardList, 
-  Settings, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  Users,
+  ClipboardList,
+  Settings,
+  LogOut,
   CreditCard,
   Sparkles
 } from 'lucide-react'
@@ -32,7 +32,7 @@ export function AdminSidebar() {
           <Sparkles className="text-white w-6 h-6" />
         </div>
         <div>
-          <h1 className="text-xl font-black tracking-tighter">NAFOSAT</h1>
+          <h1 className="text-xl font-black tracking-tighter">Taklif-Time</h1>
           <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Admin Control</p>
         </div>
       </div>
@@ -45,17 +45,16 @@ export function AdminSidebar() {
               <motion.div
                 whileHover={{ x: 5 }}
                 whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all relative group ${
-                  isActive 
-                    ? 'bg-white/10 text-white shadow-xl border border-white/5' 
-                    : 'text-white/40 hover:text-white hover:bg-white/5'
-                }`}
+                className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all relative group ${isActive
+                  ? 'bg-white/10 text-white shadow-xl border border-white/5'
+                  : 'text-white/40 hover:text-white hover:bg-white/5'
+                  }`}
               >
                 <item.icon className={`w-5 h-5 ${isActive ? 'text-[#98a08d]' : ''}`} />
                 <span className="font-bold text-sm tracking-wide">{item.name}</span>
-                
+
                 {isActive && (
-                  <motion.div 
+                  <motion.div
                     layoutId="active-pill"
                     className="absolute left-0 w-1 h-6 bg-[#98a08d] rounded-full"
                   />
@@ -67,7 +66,7 @@ export function AdminSidebar() {
       </nav>
 
       <div className="p-6 mt-auto">
-        <button 
+        <button
           onClick={() => window.location.href = '/'}
           className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-white/40 hover:text-red-400 hover:bg-red-400/5 transition-all font-bold text-sm"
         >

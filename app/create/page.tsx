@@ -118,6 +118,7 @@ export default function CreateInvitation() {
   });
 
   const [templateSettings, setTemplateSettings] = useState<Record<string, any>>({});
+  const [pricesLoading, setPricesLoading] = useState(true);
 
   useEffect(() => {
     async function fetchPrices() {
@@ -127,8 +128,8 @@ export default function CreateInvitation() {
         if (snap.exists()) {
           setTemplateSettings(snap.data());
         }
-      } catch (e) {
-        console.error("Error fetching prices:", e);
+      } finally {
+        setPricesLoading(false);
       }
     }
     fetchPrices();
@@ -393,7 +394,7 @@ export default function CreateInvitation() {
     }
   };
 
-  if (authLoading) {
+  if (authLoading || pricesLoading) {
     return (
       <div className="min-h-screen bg-[#faf9f6] flex items-center justify-center">
         <Loader2 className="w-10 h-10 text-[#98a08d] animate-spin" />
@@ -402,7 +403,7 @@ export default function CreateInvitation() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-[#faf9f6] overflow-hidden relative">
+    <div className="flex flex-col lg:flex-row h-[100dvh] bg-[#faf9f6] overflow-hidden relative">
       {/* Mobile Top Toggle */}
       <div className="lg:hidden flex items-center justify-center p-2 bg-white border-b border-[#98a08d]/10 z-50 shrink-0">
         <div className="flex p-1 bg-[#98a08d]/5 rounded-xl border border-[#98a08d]/10 w-full max-w-[300px]">

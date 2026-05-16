@@ -296,7 +296,7 @@ export function NafosatTemplate({
           HERO
       ══════════════════════════════════════════ */}
       <section ref={heroRef}
-        className="relative w-full h-screen flex items-center justify-center overflow-hidden"
+        className="relative w-full h-[100dvh] flex items-center justify-center overflow-hidden"
         style={{ background: 'linear-gradient(160deg, #f0f6ff 0%, #e8f1fb 40%, #f7fafd 100%)' }}
       >
         <GirihPattern opacity={0.055} color="#1a56a0" />
@@ -353,6 +353,7 @@ export function NafosatTemplate({
               className="playfair font-black leading-none outline-none focus:outline-dashed focus:outline-[#4a90d9] px-4 rounded-xl"
               style={{
                 fontSize: 'clamp(2.8rem, 9vw, 7rem)',
+                color: '#1a3a6b', // Fallback color
                 background: 'linear-gradient(135deg, #1a3a6b 0%, #1a56a0 35%, #4a90d9 55%, #a8c4e0 70%, #1a56a0 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
