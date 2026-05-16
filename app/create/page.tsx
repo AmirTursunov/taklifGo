@@ -855,7 +855,8 @@ export default function CreateInvitation() {
               ref={previewRef}
               className="w-full h-full overflow-y-auto hide-scrollbar bg-[#faf9f6] scroll-smooth"
             >
-              {data.templateId === "nafosat" ? (
+              <div className={`w-full h-full transition-transform duration-500 origin-top ${viewMode === 'preview' ? 'scale-[1.03] sm:scale-100' : 'scale-100'}`}>
+                {data.templateId === "nafosat" ? (
                 <NafosatTemplate
                   data={data}
                   onDataChange={async (newData) => {
@@ -1022,6 +1023,7 @@ export default function CreateInvitation() {
                   }}
                 />
               )}
+              </div>
             </div>
           </div>
         </div>
