@@ -29,6 +29,7 @@ import { GoldenWeddingTemplate } from '@/components/templates/golden-wedding'
 import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday'
 import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
 import { RoyalTealTemplate } from '@/components/templates/royal-teal'
+import { toJpeg } from 'html-to-image'
 
 export default function SuccessPage() {
   const { id } = useParams();
@@ -95,69 +96,24 @@ export default function SuccessPage() {
 
   const handleDownloadImage = () => {
     setIsCapturing(true);
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    script.onload = () => {
-      setTimeout(() => {
-        const captureElement = document.getElementById("hidden-template-capture");
-        if (captureElement) {
-          // Clean unsupported CSS rules temporarily
-          const backup: any[] = [];
-          for (let i = 0; i < document.styleSheets.length; i++) {
-            const sheet = document.styleSheets[i] as CSSStyleSheet;
-            try {
-              if (sheet.cssRules) {
-                for (let j = sheet.cssRules.length - 1; j >= 0; j--) {
-                  const rule = sheet.cssRules[j];
-                  if (rule.cssText.includes('lab(') || rule.cssText.includes('oklch(')) {
-                    backup.push({ sheet, index: j, text: rule.cssText });
-                    sheet.deleteRule(j);
-                  }
-                }
-              }
-            } catch (e) {
-              // Ignore cross-origin stylesheet errors
-            }
-          }
-
-          (window as any).html2canvas(captureElement, { 
-            useCORS: true, 
-            scale: 2, 
-            backgroundColor: null 
-          }).then((canvas: any) => {
-            const url = canvas.toDataURL('image/jpeg', 0.9);
-            setDownloadUrl(url);
-            setIsCapturing(false);
-
-            // Restore style sheets
-            for (let i = backup.length - 1; i >= 0; i--) {
-              const item = backup[i];
-              try {
-                item.sheet.insertRule(item.text, item.index);
-              } catch (e) {
-                // Ignore restore errors
-              }
-            }
-          }).catch((err: any) => {
-            console.error("Html2canvas error:", err);
-            setIsCapturing(false);
-            
-            // Restore style sheets on error too
-            for (let i = backup.length - 1; i >= 0; i--) {
-              const item = backup[i];
-              try {
-                item.sheet.insertRule(item.text, item.index);
-              } catch (e) {
-                // Ignore
-              }
-            }
-          });
-        } else {
+    setTimeout(() => {
+      const captureElement = document.getElementById("hidden-template-capture");
+      if (captureElement) {
+        toJpeg(captureElement, { 
+          quality: 0.95, 
+          pixelRatio: 2,
+          backgroundColor: '#113a47' // matches royal teal or defaults nicely
+        }).then((dataUrl) => {
+          setDownloadUrl(dataUrl);
           setIsCapturing(false);
-        }
-      }, 1500); // wait for fonts/images to render
-    };
-    document.body.appendChild(script);
+        }).catch((err) => {
+          console.error("toJpeg error:", err);
+          setIsCapturing(false);
+        });
+      } else {
+        setIsCapturing(false);
+      }
+    }, 1500); // wait for fonts/images to render
   };
 
   if (loading) {
