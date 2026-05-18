@@ -100,8 +100,14 @@ export default function SuccessPage() {
       const captureElement = document.getElementById("hidden-template-capture");
       if (captureElement) {
         toJpeg(captureElement, { 
-          quality: 0.95, 
+          quality: 0.98, 
           pixelRatio: 2,
+          width: 390,
+          height: 844,
+          style: {
+            width: '390px',
+            height: '844px',
+          },
           backgroundColor: '#113a47' // matches royal teal or defaults nicely
         }).then((dataUrl) => {
           setDownloadUrl(dataUrl);
@@ -376,7 +382,20 @@ export default function SuccessPage() {
       </div>
       
       {/* Hidden container to capture the image without navigation */}
-      <div style={{ position: 'fixed', top: '-20000px', left: '-20000px', pointerEvents: 'none', width: '390px', zIndex: -9999 }}>
+      <div style={{ position: 'fixed', top: '-20000px', left: '-20000px', pointerEvents: 'none', width: '390px', height: '844px', zIndex: -9999, overflow: 'hidden' }}>
+        <style dangerouslySetInnerHTML={{__html: `
+          #hidden-template-capture,
+          #hidden-template-capture > div,
+          #hidden-template-capture [id="invitation-capture"] {
+            width: 390px !important;
+            height: 844px !important;
+            min-height: 844px !important;
+            max-height: 844px !important;
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
+          }
+        `}} />
         <div id="hidden-template-capture" className="w-full">
           {data && renderTemplate()}
         </div>
