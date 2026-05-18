@@ -308,51 +308,10 @@ export default function SuccessPage() {
           </div>
         )}
       </div>
-      
-      {/* Hidden container to capture the image without navigation */}
-      <div style={{ position: 'fixed', top: '-20000px', left: '-20000px', pointerEvents: 'none', width: '390px', height: '844px', zIndex: -9999, overflow: 'hidden' }}>
-        <style dangerouslySetInnerHTML={{__html: `
-          ${greatVibesBase64 ? `
-          @font-face {
-            font-family: 'Great Vibes';
-            src: url("${greatVibesBase64}") format('woff2');
-            font-weight: normal;
-            font-style: normal;
-          }
-          ` : ''}
 
-          ${playfairBase64 ? `
-          @font-face {
-            font-family: 'Playfair Display';
-            src: url("${playfairBase64}") format('woff2');
-            font-weight: normal;
-            font-style: normal;
-          }
-          ` : ''}
 
-          .great-vibes-font {
-            font-family: 'Great Vibes', cursive !important;
-          }
-          .playfair-font {
-            font-family: 'Playfair Display', serif !important;
-          }
 
-          #hidden-template-capture,
-          #hidden-template-capture > div,
-          #hidden-template-capture [id="invitation-capture"] {
-            width: 390px !important;
-            height: 844px !important;
-            min-height: 844px !important;
-            max-height: 844px !important;
-            position: relative !important;
-            top: 0 !important;
-            left: 0 !important;
-          }
-        `}} />
-        <div id="hidden-template-capture" className="w-full">
-          {data && renderTemplate()}
-        </div>
-      </div>
+
     </div>
   );
 }
