@@ -29,7 +29,6 @@ import { GoldenWeddingTemplate } from '@/components/templates/golden-wedding'
 import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday'
 import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
 import { RoyalTealTemplate } from '@/components/templates/royal-teal'
-import { toJpeg } from 'html-to-image'
 
 export default function SuccessPage() {
   const { id } = useParams();
@@ -159,33 +158,93 @@ export default function SuccessPage() {
     window.open(telegramUrl, "_blank");
   };
 
-  const handleDownloadImage = () => {
+  const handleDownloadImage = async () => {
     setIsCapturing(true);
-    setTimeout(() => {
+
+    try {
+      // bgBase64 va fontlar yuklanishini kutamiz (max 5 sekund)
+      const waitForAssets = new Promise<void>((resolve) => {
+        const check = () => {
+          if (royalBgBase64 && greatVibesBase64 && playfairBase64) {
+            resolve();
+          } else {
+            setTimeout(check, 200);
+          }
+        };
+        check();
+        // max 5 sek kutamiz
+        setTimeout(resolve, 5000);
+      });
+      await waitForAssets;
+
+      // Elementni topamiz
       const captureElement = document.getElementById("hidden-template-capture");
-      if (captureElement) {
-        toJpeg(captureElement, { 
-          quality: 0.98, 
-          pixelRatio: 2,
-          width: 390,
-          height: 844,
-          style: {
-            width: '390px',
-            height: '844px',
-          },
-          cacheBust: true,
-          backgroundColor: '#113a47' // matches royal teal or defaults nicely
-        }).then((dataUrl) => {
-          setDownloadUrl(dataUrl);
-          setIsCapturing(false);
-        }).catch((err) => {
-          console.error("toJpeg error:", err);
-          setIsCapturing(false);
-        });
-      } else {
+      if (!captureElement) {
+        console.error("Capture element topilmadi");
         setIsCapturing(false);
+        return;
       }
-    }, 1500); // wait for fonts/images to render
+
+      // html2canvas ni dynamic import qilamiz (SSR muammosini oldini olish uchun)
+      const html2canvas = (await import('html2canvas')).default;
+
+      const canvas = await html2canvas(captureElement, {
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: '#113a47',
+        scale: 2,
+        width: 390,
+        height: 844,
+        logging: false,
+        imageTimeout: 15000,
+        onclone: (clonedDoc: Document) => {
+          // Cloned doc dagi barcha bg-image divlarini yangilash
+          const bgDiv = clonedDoc.querySelector('[data-bg-capture="true"]') as HTMLElement;
+          if (bgDiv && royalBgBase64) {
+            bgDiv.style.backgroundImage = `url(${royalBgBase64})`;
+            bgDiv.style.backgroundSize = 'cover';
+            bgDiv.style.backgroundPosition = 'center';
+            bgDiv.style.backgroundRepeat = 'no-repeat';
+            bgDiv.style.width = '390px';
+            bgDiv.style.height = '844px';
+            bgDiv.style.position = 'absolute';
+            bgDiv.style.top = '0';
+            bgDiv.style.left = '0';
+          }
+
+          // Font override
+          const styleEl = clonedDoc.createElement('style');
+          styleEl.textContent = `
+            ${greatVibesBase64 ? `
+              @font-face {
+                font-family: 'Great Vibes';
+                src: url("${greatVibesBase64}") format('woff2');
+                font-weight: normal;
+                font-style: normal;
+              }
+            ` : ''}
+            ${playfairBase64 ? `
+              @font-face {
+                font-family: 'Playfair Display';
+                src: url("${playfairBase64}") format('woff2');
+                font-weight: normal;
+                font-style: normal;
+              }
+            ` : ''}
+            .great-vibes-font { font-family: 'Great Vibes', cursive !important; }
+            .playfair-font { font-family: 'Playfair Display', serif !important; }
+          `;
+          clonedDoc.head.appendChild(styleEl);
+        }
+      });
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+      setDownloadUrl(dataUrl);
+    } catch (err) {
+      console.error("Capture xatosi:", err);
+    } finally {
+      setIsCapturing(false);
+    }
   };
 
   if (loading) {

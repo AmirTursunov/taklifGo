@@ -96,6 +96,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
     >
       {/* Real background image element for WebKit/iOS Safari compatibility in SVG Canvas */}
       <div
+        data-bg-capture="true"
         className="absolute inset-0 w-full h-full pointer-events-none z-0"
         style={{
           backgroundImage: `url(${data.bgBase64 || "/royal-bg.jpg"})`,
