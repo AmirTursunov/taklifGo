@@ -72,6 +72,7 @@ function CreateInvitationContent() {
 
   const [isSaving, setIsSaving] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [paymentType, setPaymentType] = useState<"click" | "payme" | null>(
     null,
   );
@@ -102,7 +103,7 @@ function CreateInvitationContent() {
       date: "June 15, 2028",
       location: "Paris, France",
       venue: "Rose Mansion",
-      musicUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      musicUrl: "",
       musicPublicId: "",
       images: [
         "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800",
@@ -683,7 +684,7 @@ function CreateInvitationContent() {
 
           <section className="space-y-4 pt-4 border-t border-[#98a08d]/10 pb-10">
             <Button
-              onClick={() => setShowPaymentModal(true)}
+              onClick={() => setShowConfirmationModal(true)}
               disabled={isAnyLoading}
               className="w-full bg-[#98a08d] hover:bg-[#868d7c] text-white rounded-xl py-6 flex items-center gap-2 disabled:opacity-50"
             >
@@ -719,7 +720,22 @@ function CreateInvitationContent() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
+          {/* Premium Top Price Tag */}
+          <div className="text-center space-y-1 py-4 bg-[#98a08d]/5 rounded-2xl border border-[#98a08d]/15 shadow-inner">
+            <p className="text-[10px] text-[#98a08d] tracking-widest font-bold uppercase">
+              {lang === "uz" ? "TO'LOV SUMMASI" : "СУММА ОПЛАТЫ"}
+            </p>
+            <div className="flex items-center justify-center gap-2 pt-1">
+              <span className="text-xs text-[#98a08d] line-through font-medium">
+                {(templateSettings[data.templateId || ""]?.originalPrice || 100000).toLocaleString()} UZS
+              </span>
+              <span className="text-2xl font-black text-[#5c6352]">
+                {(templateSettings[data.templateId || ""]?.price || 25000).toLocaleString()} UZS
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-4 py-2">
             <div className="flex gap-4">
               <div
                 onClick={() => setPaymentType("click")}
@@ -801,15 +817,6 @@ function CreateInvitationContent() {
                   : "Для связи: +998 90 123 45 67"}
               </div>
             </div>
-
-            <div className="text-center space-y-1">
-              <p className="text-[10px] text-[#98a08d] line-through font-bold">
-                {(templateSettings[data.templateId || ""]?.originalPrice || 100000).toLocaleString()} UZS
-              </p>
-              <p className="text-3xl font-black text-[#5c6352]">
-                {(templateSettings[data.templateId || ""]?.price || 25000).toLocaleString()} UZS
-              </p>
-            </div>
           </div>
 
           <DialogFooter>
@@ -824,6 +831,44 @@ function CreateInvitationContent() {
                 : lang === "ru"
                   ? "Подтвердить Оплату"
                   : "Confirm Payment"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation warning modal before payment */}
+      <Dialog open={showConfirmationModal} onOpenChange={setShowConfirmationModal}>
+        <DialogContent className="sm:max-w-[400px] max-w-[95vw] rounded-[2rem] border-0 shadow-2xl bg-[#faf9f6]">
+          <DialogHeader className="text-center space-y-4">
+            <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto">
+              <Info className="w-8 h-8 text-amber-500" />
+            </div>
+            <DialogTitle className="text-2xl font-serif text-[#5c6352]">
+              {lang === "uz" ? "Ma'lumotlarni tekshiring" : "Проверьте данные"}
+            </DialogTitle>
+            <DialogDescription className="text-[#98a08d] text-sm leading-relaxed">
+              {lang === "uz" 
+                ? "Barcha ma'lumotlarni to'g'ri kiritganingizga ishonchingiz komilmi? Havola yaratilgandan so'ng ma'lumotlarni o'zgartirib bo'lmaydi."
+                : "Вы уверены, что ввели все данные правильно? После создания ссылки изменить данные будет невозможно."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex flex-col sm:flex-row gap-3 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowConfirmationModal(false)}
+              className="flex-1 rounded-xl py-5 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d]/5"
+            >
+              {lang === "uz" ? "Tahrirlash" : "Редактировать"}
+            </Button>
+            <Button
+              onClick={() => {
+                setShowConfirmationModal(false);
+                setShowPaymentModal(true);
+              }}
+              className="flex-1 bg-[#98a08d] hover:bg-[#868d7c] text-white rounded-xl py-5 font-bold"
+            >
+              {lang === "uz" ? "Ha, davom etish" : "Да, продолжить"}
             </Button>
           </DialogFooter>
         </DialogContent>

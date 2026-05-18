@@ -37,73 +37,6 @@ export default function SuccessPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [royalBgBase64, setRoyalBgBase64] = useState<string | null>(null);
-  const [greatVibesBase64, setGreatVibesBase64] = useState<string | null>(null);
-  const [playfairBase64, setPlayfairBase64] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Preload background image as base64 using canvas + fetch fallback
-    const preloadBg = () => {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.onload = () => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.naturalWidth;
-          canvas.height = img.naturalHeight;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(img, 0, 0);
-            setRoyalBgBase64(canvas.toDataURL('image/jpeg', 0.95));
-          }
-        } catch (e) {
-          fallbackFetchBg();
-        }
-      };
-      img.onerror = () => fallbackFetchBg();
-      img.src = "/royal-bg.jpg";
-    };
-
-    const fallbackFetchBg = () => {
-      fetch("/royal-bg.jpg")
-        .then((res) => res.blob())
-        .then((blob) => {
-          const reader = new FileReader();
-          reader.onloadend = () => setRoyalBgBase64(reader.result as string);
-          reader.readAsDataURL(blob);
-        })
-        .catch((err) => console.error("Error fetching background:", err));
-    };
-
-    preloadBg();
-
-    // Preload Google Fonts as base64
-    const fetchFont = async (cssUrl: string, setter: (val: string) => void) => {
-      try {
-        const cssRes = await fetch(cssUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36'
-          }
-        });
-        const cssText = await cssRes.text();
-        const fontUrlMatch = cssText.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/);
-        if (fontUrlMatch) {
-          const fontRes = await fetch(fontUrlMatch[1]);
-          const blob = await fontRes.blob();
-          const reader = new FileReader();
-          reader.onloadend = () => setter(reader.result as string);
-          reader.readAsDataURL(blob);
-        }
-      } catch (e) {
-        console.error("Error preloading font:", cssUrl, e);
-      }
-    };
-
-    fetchFont("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap", setGreatVibesBase64);
-    fetchFont("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap", setPlayfairBase64);
-  }, []);
 
   const invitationUrl =
     typeof window !== "undefined"
@@ -158,95 +91,6 @@ export default function SuccessPage() {
     window.open(telegramUrl, "_blank");
   };
 
-  const handleDownloadImage = async () => {
-    setIsCapturing(true);
-
-    try {
-      // bgBase64 va fontlar yuklanishini kutamiz (max 5 sekund)
-      const waitForAssets = new Promise<void>((resolve) => {
-        const check = () => {
-          if (royalBgBase64 && greatVibesBase64 && playfairBase64) {
-            resolve();
-          } else {
-            setTimeout(check, 200);
-          }
-        };
-        check();
-        // max 5 sek kutamiz
-        setTimeout(resolve, 5000);
-      });
-      await waitForAssets;
-
-      // Elementni topamiz
-      const captureElement = document.getElementById("hidden-template-capture");
-      if (!captureElement) {
-        console.error("Capture element topilmadi");
-        setIsCapturing(false);
-        return;
-      }
-
-      // html2canvas ni dynamic import qilamiz (SSR muammosini oldini olish uchun)
-      const html2canvas = (await import('html2canvas')).default;
-
-      const canvas = await html2canvas(captureElement, {
-        useCORS: true,
-        allowTaint: false,
-        backgroundColor: '#113a47',
-        scale: 2,
-        width: 390,
-        height: 844,
-        logging: false,
-        imageTimeout: 15000,
-        onclone: (clonedDoc: Document) => {
-          // Cloned doc dagi barcha bg-image divlarini yangilash
-          const bgDiv = clonedDoc.querySelector('[data-bg-capture="true"]') as HTMLElement;
-          if (bgDiv && royalBgBase64) {
-            bgDiv.style.backgroundImage = `url(${royalBgBase64})`;
-            bgDiv.style.backgroundSize = 'cover';
-            bgDiv.style.backgroundPosition = 'center';
-            bgDiv.style.backgroundRepeat = 'no-repeat';
-            bgDiv.style.width = '390px';
-            bgDiv.style.height = '844px';
-            bgDiv.style.position = 'absolute';
-            bgDiv.style.top = '0';
-            bgDiv.style.left = '0';
-          }
-
-          // Font override
-          const styleEl = clonedDoc.createElement('style');
-          styleEl.textContent = `
-            ${greatVibesBase64 ? `
-              @font-face {
-                font-family: 'Great Vibes';
-                src: url("${greatVibesBase64}") format('woff2');
-                font-weight: normal;
-                font-style: normal;
-              }
-            ` : ''}
-            ${playfairBase64 ? `
-              @font-face {
-                font-family: 'Playfair Display';
-                src: url("${playfairBase64}") format('woff2');
-                font-weight: normal;
-                font-style: normal;
-              }
-            ` : ''}
-            .great-vibes-font { font-family: 'Great Vibes', cursive !important; }
-            .playfair-font { font-family: 'Playfair Display', serif !important; }
-          `;
-          clonedDoc.head.appendChild(styleEl);
-        }
-      });
-
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-      setDownloadUrl(dataUrl);
-    } catch (err) {
-      console.error("Capture xatosi:", err);
-    } finally {
-      setIsCapturing(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-[#faf9f6] flex items-center justify-center">
@@ -259,36 +103,6 @@ export default function SuccessPage() {
   const isRejected = data?.status === "rejected";
   // Real view count from Firestore — updated live via onSnapshot
   const viewCount = data?.viewCount ?? 0;
-
-  const renderTemplate = () => {
-    if (data?.templateId === "nafosat") return <NafosatTemplate data={data} />;
-    if (data?.templateId === "girl-birthday") return <GirlBirthdayTemplate data={{ ...data, name: data.names, time: data.time || "19:00", age: data.age || "21" }} />;
-    if (data?.templateId === "elegant-birthday") return <ElegantBirthdayTemplate data={{ ...data, name: data.names, time: data.time || "19:00", age: data.age || "30" }} />;
-    if (data?.templateId === "golden-wedding") return <GoldenWeddingTemplate data={data} />;
-    if (data?.templateId === "golden-night") return <GoldenNightTemplate data={data} />;
-    if (data?.templateId === "royal-teal") return <RoyalTealTemplate data={{ ...data, bgBase64: royalBgBase64 }} />;
-    return <EternalBondTemplate data={data} />;
-  };
-
-  if (downloadUrl) {
-    return (
-      <div className="min-h-screen bg-[#f4f4f5] z-[999] flex flex-col items-center justify-center p-6">
-        <h3 className="font-bold text-center mb-4 text-[#5c6352] text-xl">Tayyor!</h3>
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-6 border-4 border-white max-w-sm w-full">
-          <img src={downloadUrl} alt="Taklifnoma" className="w-full h-auto object-contain max-h-[70vh]" />
-        </div>
-        <p className="text-sm text-center text-[#98a08d] mb-6 max-w-xs font-medium">
-          Rasm ustiga barmog'ingizni uzoq bosib turing va <b>"Rasmni saqlash" (Save Image)</b> orqali telefoningizga yuklab oling.
-        </p>
-        <button 
-          onClick={() => setDownloadUrl(null)} 
-          className="bg-[#98a08d] hover:bg-[#868d7c] text-white px-8 py-3 rounded-full font-bold transition-colors"
-        >
-          Orqaga qaytish
-        </button>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-[#faf9f6] p-6 lg:p-12">
@@ -437,7 +251,7 @@ export default function SuccessPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Button
                   onClick={shareToTelegram}
                   variant="outline"
@@ -453,17 +267,6 @@ export default function SuccessPage() {
                 >
                   <ExternalLink className="w-4 h-4" />
                   {lang === "uz" ? "Ko'rib chiqish" : lang === "ru" ? "Посмотреть" : "Preview"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleDownloadImage}
-                  disabled={isCapturing}
-                  className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-2"
-                >
-                  {isCapturing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                  {isCapturing 
-                    ? (lang === "uz" ? "Yuklanmoqda..." : "Загрузка...") 
-                    : (lang === "uz" ? "Rasm qilib saqlash" : lang === "ru" ? "Сохранить фото" : "Save Image")}
                 </Button>
               </div>
             </Card>
