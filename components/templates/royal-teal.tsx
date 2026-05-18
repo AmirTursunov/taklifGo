@@ -94,7 +94,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
       id="invitation-capture"
       className={`min-h-[100dvh] w-full relative overflow-x-hidden flex flex-col items-center justify-center ${playfair.className} playfair-font bg-[#113a47] py-4`}
       style={{
-        backgroundImage: 'url("' + (typeof window !== 'undefined' ? window.location.origin : '') + '/royal-bg.jpg")',
+        backgroundImage: `url("${data.bgBase64 || '/royal-bg.jpg'}")`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'

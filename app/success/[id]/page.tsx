@@ -40,6 +40,21 @@ export default function SuccessPage() {
   const [copied, setCopied] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [royalBgBase64, setRoyalBgBase64] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Preload background image as base64 for reliable PDF/Image capture
+    fetch("/royal-bg.jpg")
+      .then((res) => res.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setRoyalBgBase64(reader.result as string);
+        };
+        reader.readAsDataURL(blob);
+      })
+      .catch((err) => console.error("Error preloading background image:", err));
+  }, []);
 
   const invitationUrl =
     typeof window !== "undefined"
@@ -142,7 +157,7 @@ export default function SuccessPage() {
     if (data?.templateId === "elegant-birthday") return <ElegantBirthdayTemplate data={{ ...data, name: data.names, time: data.time || "19:00", age: data.age || "30" }} />;
     if (data?.templateId === "golden-wedding") return <GoldenWeddingTemplate data={data} />;
     if (data?.templateId === "golden-night") return <GoldenNightTemplate data={data} />;
-    if (data?.templateId === "royal-teal") return <RoyalTealTemplate data={data} />;
+    if (data?.templateId === "royal-teal") return <RoyalTealTemplate data={{ ...data, bgBase64: royalBgBase64 }} />;
     return <EternalBondTemplate data={data} />;
   };
 
