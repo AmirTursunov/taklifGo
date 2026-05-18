@@ -377,6 +377,7 @@ export default function CreateInvitation() {
         receiptUrl,
         paymentType,
         userId: user?.uid,
+        userEmail: user?.email || null,
         telegramId: tgId || null,
         status: "pending",
         createdAt: serverTimestamp(),

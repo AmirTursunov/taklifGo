@@ -101,7 +101,7 @@ export default function InvitationsManagement() {
             <thead>
               <tr className="bg-[#f8f7f4] border-b border-[#98a08d]/10">
                 <th className="px-8 py-5 text-[10px] font-black text-[#98a08d] uppercase tracking-[0.2em]">Buyurtmachi</th>
-                <th className="px-8 py-5 text-[10px] font-black text-[#98a08d] uppercase tracking-[0.2em]">Sana & Joy</th>
+                <th className="px-8 py-5 text-[10px] font-black text-[#98a08d] uppercase tracking-[0.2em]">Sana</th>
                 <th className="px-8 py-5 text-[10px] font-black text-[#98a08d] uppercase tracking-[0.2em]">To'lov turi</th>
                 <th className="px-8 py-5 text-[10px] font-black text-[#98a08d] uppercase tracking-[0.2em]">Holat</th>
                 <th className="px-8 py-5 text-[10px] font-black text-[#98a08d] uppercase tracking-[0.2em]">Amallar</th>
@@ -126,10 +126,10 @@ export default function InvitationsManagement() {
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center border border-rose-100">
-                          <span className="text-rose-500 font-black text-sm">{inv.names?.[0]}</span>
+                          <span className="text-rose-500 font-black text-sm">{(inv.userEmail || inv.names || "?")[0]?.toUpperCase()}</span>
                         </div>
                         <div>
-                          <p className="text-sm font-black text-[#5c6352]">{inv.names}</p>
+                          <p className="text-sm font-black text-[#5c6352]">{inv.userEmail || "Noma'lum"}</p>
                           <p className="text-[10px] text-[#98a08d] font-bold">ID: {inv.id.slice(0, 8)}</p>
                         </div>
                       </div>
@@ -138,11 +138,9 @@ export default function InvitationsManagement() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-[10px] text-[#5c6352] font-bold">
                           <Calendar className="w-3 h-3 text-[#98a08d]" />
-                          {inv.date}
-                        </div>
-                        <div className="flex items-center gap-2 text-[10px] text-[#98a08d] font-medium">
-                          <MapPin className="w-3 h-3" />
-                          {inv.venue}
+                          {inv.createdAt?.toDate 
+                            ? new Date(inv.createdAt.toDate()).toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit' }) 
+                            : 'Noma\'lum sana'}
                         </div>
                       </div>
                     </td>
