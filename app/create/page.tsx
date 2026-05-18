@@ -8,6 +8,7 @@ import { NafosatTemplate } from "@/components/templates/nafosat";
 import { GoldenWeddingTemplate } from "@/components/templates/golden-wedding";
 import { ElegantBirthdayTemplate } from "@/components/templates/elegant-birthday";
 import { GirlBirthdayTemplate } from "@/components/templates/girl-birthday";
+import { RoyalTealTemplate } from "@/components/templates/royal-teal";
 import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
@@ -1004,6 +1005,10 @@ export default function CreateInvitation() {
                         setData((prev) => ({ ...prev, ...newData }));
                       }
                     }}
+                  />
+                ) : data.templateId === "royal-teal" ? (
+                  <RoyalTealTemplate
+                    data={data}
                   />
                 ) : (
                   <EternalBondTemplate

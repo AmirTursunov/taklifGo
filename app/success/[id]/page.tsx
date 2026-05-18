@@ -242,22 +242,30 @@ export default function SuccessPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <Button
                   onClick={shareToTelegram}
                   variant="outline"
-                  className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-3"
+                  className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-2"
                 >
-                  <Send className="w-5 h-5" />
-                  Telegram orqali yuborish
+                  <Send className="w-4 h-4" />
+                  {lang === "uz" ? "Telegramda ulashish" : lang === "ru" ? "Поделиться" : "Share"}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => window.open(invitationUrl, "_blank")}
-                  className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-3"
+                  className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-2"
                 >
-                  <ExternalLink className="w-5 h-5" />
-                  Ko'rib chiqish
+                  <ExternalLink className="w-4 h-4" />
+                  {lang === "uz" ? "Ko'rib chiqish" : lang === "ru" ? "Посмотреть" : "Preview"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => window.open(`${invitationUrl}?download=true`, "_blank")}
+                  className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-2"
+                >
+                  <Copy className="w-4 h-4" />
+                  {lang === "uz" ? "Rasm qilib saqlash" : lang === "ru" ? "Сохранить фото" : "Save Image"}
                 </Button>
               </div>
             </Card>

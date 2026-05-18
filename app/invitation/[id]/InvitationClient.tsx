@@ -7,6 +7,7 @@ import { NafosatTemplate } from '@/components/templates/nafosat'
 import { GoldenWeddingTemplate } from '@/components/templates/golden-wedding'
 import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday'
 import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
+import { RoyalTealTemplate } from '@/components/templates/royal-teal'
 import { Loader2 } from 'lucide-react'
 
 export default function InvitationClient({ data, id }: { data: any, id: string }) {
@@ -30,6 +31,30 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
       }
     }
     updateViews();
+
+    // Handle Image Download
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('download') === 'true') {
+      setShowNotice(false); // hide notice in screenshot
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      script.onload = () => {
+        setTimeout(() => {
+          (window as any).html2canvas(document.body, { 
+            useCORS: true, 
+            scale: 2, 
+            backgroundColor: null 
+          }).then((canvas: any) => {
+            const link = document.createElement('a');
+            link.download = `taklifnoma-${id}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+            setTimeout(() => window.close(), 1000);
+          });
+        }, 1500); // Wait for fonts and images to fully render
+      };
+      document.body.appendChild(script);
+    }
     
     return () => clearTimeout(timer)
   }, [id, data.status])
@@ -72,6 +97,8 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
         <GoldenWeddingTemplate data={data} />
       ) : data.templateId === "golden-night" ? (
         <GoldenNightTemplate data={data} />
+      ) : data.templateId === "royal-teal" ? (
+        <RoyalTealTemplate data={data} />
       ) : (
         <EternalBondTemplate data={data} />
       )}
