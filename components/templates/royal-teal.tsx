@@ -12,13 +12,22 @@ const greatVibes = Great_Vibes({ weight: '400', subsets: ['latin'] })
 
 interface RoyalTealTemplateProps {
   data: any
+  onDataChange?: (data: any) => void
 }
 
-export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
+export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps) {
   const { lang } = useLanguage()
   const [isPlaying, setIsPlaying] = React.useState(false)
   const [showMap, setShowMap] = React.useState(false)
   const audioRef = React.useRef<HTMLAudioElement>(null)
+
+  const isEditable = !!onDataChange
+
+  const handleEdit = (field: string, value: string) => {
+    if (onDataChange) {
+      onDataChange({ ...data, [field]: value })
+    }
+  }
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -83,7 +92,7 @@ export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
   return (
     <div 
       id="invitation-capture"
-      className={`h-[100dvh] w-full relative overflow-hidden flex flex-col items-center justify-center ${playfair.className} bg-[#113a47]`}
+      className={`min-h-[100dvh] w-full relative overflow-x-hidden flex flex-col items-center justify-center ${playfair.className} bg-[#113a47] py-4`}
       style={{
         backgroundImage: 'url("/royal-bg.jpg")',
         backgroundSize: 'cover',
@@ -93,17 +102,17 @@ export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
     >
       
       {/* Decorative Container (transparent since BG image has the design) */}
-      <div className="relative z-10 w-[92%] max-w-md my-8 min-h-[85vh] flex flex-col items-center justify-between p-6 sm:p-8 text-center bg-transparent rounded-sm">
+      <div className="relative z-10 w-[92%] max-w-md min-h-[90vh] flex flex-col items-center justify-between p-4 sm:p-6 text-center bg-transparent rounded-sm">
         
         {/* Header Section */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="mt-8 space-y-4 flex flex-col items-center"
+          className="mt-4 space-y-2 flex flex-col items-center"
         >
           {isWedding && (
-            <div className="relative w-16 h-16 flex items-center justify-center mb-2">
+            <div className="relative w-12 h-12 flex items-center justify-center mb-1">
               <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#D8B154] drop-shadow-md">
                 <circle cx="35" cy="50" r="20" stroke="currentColor" strokeWidth="2.5" />
                 <circle cx="65" cy="50" r="20" stroke="currentColor" strokeWidth="2.5" />
@@ -112,7 +121,7 @@ export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
               </svg>
             </div>
           )}
-          <h2 className="text-white font-bold tracking-[0.2em] text-[10px] md:text-xs uppercase drop-shadow-md">
+          <h2 className="text-white font-bold tracking-[0.2em] text-[9px] md:text-xs uppercase drop-shadow-md">
             {getHeader()}
           </h2>
         </motion.div>
@@ -122,20 +131,35 @@ export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, delay: 0.5 }}
-          className="my-10 text-center w-full"
+          className="my-4 text-center w-full"
         >
           {namesParts.length > 1 ? (
-            <div className="flex flex-col items-center justify-center space-y-2">
-              <h1 className={`${greatVibes.className} text-5xl md:text-7xl text-[#D8B154] leading-tight drop-shadow-lg`}>
+            <div className="flex flex-col items-center justify-center space-y-0.5">
+              <h1 
+                contentEditable={isEditable}
+                suppressContentEditableWarning
+                onBlur={(e) => handleEdit("names", e.currentTarget.textContent + " va " + namesParts[1])}
+                className={`${greatVibes.className} text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg outline-none cursor-text`}
+              >
                 {namesParts[0].trim()}
               </h1>
-              <span className={`${greatVibes.className} text-3xl md:text-4xl text-[#D8B154] opacity-80`}>&</span>
-              <h1 className={`${greatVibes.className} text-5xl md:text-7xl text-[#D8B154] leading-tight drop-shadow-lg`}>
+              <span className={`${greatVibes.className} text-2xl md:text-3xl text-[#D8B154] opacity-80`}>&</span>
+              <h1 
+                contentEditable={isEditable}
+                suppressContentEditableWarning
+                onBlur={(e) => handleEdit("names", namesParts[0] + " va " + e.currentTarget.textContent)}
+                className={`${greatVibes.className} text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg outline-none cursor-text`}
+              >
                 {namesParts[1].trim()}
               </h1>
             </div>
           ) : (
-            <h1 className={`${greatVibes.className} text-5xl md:text-7xl text-[#D8B154] leading-tight drop-shadow-lg px-4`}>
+            <h1 
+              contentEditable={isEditable}
+              suppressContentEditableWarning
+              onBlur={(e) => handleEdit("names", e.currentTarget.textContent || "")}
+              className={`${greatVibes.className} text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg px-4 outline-none cursor-text`}
+            >
               {names}
             </h1>
           )}
@@ -146,9 +170,9 @@ export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.8 }}
-          className="max-w-[80%] mx-auto"
+          className="max-w-[85%] mx-auto"
         >
-          <p className="text-white text-[9px] md:text-[11px] font-bold tracking-[0.15em] leading-relaxed drop-shadow-md uppercase">
+          <p className="text-white text-[8px] md:text-[10px] font-bold tracking-[0.15em] leading-relaxed drop-shadow-md uppercase">
             {getInvitationText()}
           </p>
         </motion.div>
@@ -158,25 +182,32 @@ export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1 }}
-          className="my-10 w-full"
+          className="my-6 w-full"
         >
-          <h3 className="text-white font-bold tracking-[0.3em] text-[10px] uppercase mb-4">{monthName}</h3>
+          <h3 className="text-white font-bold tracking-[0.3em] text-[9px] uppercase mb-3">{monthName}</h3>
           
-          <div className="flex items-center justify-center gap-4">
-            <div className="text-right w-24 border-t border-b border-[#D8B154]/50 py-2">
-              <p className="text-white font-bold tracking-[0.1em] text-[9px] uppercase">{dayName}</p>
+          <div className="flex items-center justify-center gap-3">
+            <div className="text-right w-20 border-t border-b border-[#D8B154]/50 py-1.5">
+              <p className="text-white font-bold tracking-[0.1em] text-[8px] uppercase">{dayName}</p>
             </div>
             
-            <div className="text-5xl md:text-6xl font-bold text-[#D8B154] drop-shadow-lg">
+            <div className="text-4xl md:text-5xl font-bold text-[#D8B154] drop-shadow-lg">
               {day}
             </div>
             
-            <div className="text-left w-24 border-t border-b border-[#D8B154]/50 py-2">
-              <p className="text-white font-bold tracking-[0.1em] text-lg">{data.time || "17:00"}</p>
+            <div className="text-left w-20 border-t border-b border-[#D8B154]/50 py-1.5">
+              <p 
+                contentEditable={isEditable}
+                suppressContentEditableWarning
+                onBlur={(e) => handleEdit("time", e.currentTarget.textContent || "17:00")}
+                className="text-white font-bold tracking-[0.1em] text-sm md:text-base outline-none cursor-text"
+              >
+                {data.time || "17:00"}
+              </p>
             </div>
           </div>
           
-          <h3 className="text-white font-bold tracking-[0.3em] text-[10px] mt-4">{year}</h3>
+          <h3 className="text-white font-bold tracking-[0.3em] text-[9px] mt-3">{year}</h3>
         </motion.div>
 
         {/* Location Section */}
@@ -184,15 +215,25 @@ export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.2 }}
-          className="w-full space-y-2 mb-8"
+          className="w-full space-y-1 mb-4"
         >
-          <p className="text-white/80 font-bold tracking-[0.15em] text-[9px] uppercase">
+          <p 
+            contentEditable={isEditable}
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("address", e.currentTarget.textContent || "")}
+            className="text-white/80 font-bold tracking-[0.15em] text-[8px] uppercase outline-none cursor-text"
+          >
             {lang === 'uz' ? 'MANZIL' : lang === 'ru' ? 'АДРЕС' : 'ADDRESS'}: {data.address || "SAMARQAND SHAHAR"}
           </p>
-          <p className="text-[#D8B154] font-bold tracking-[0.1em] text-sm md:text-base drop-shadow-md uppercase">
+          <p 
+            contentEditable={isEditable}
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("venue", e.currentTarget.textContent || "")}
+            className="text-[#D8B154] font-bold tracking-[0.1em] text-xs md:text-sm drop-shadow-md uppercase outline-none cursor-text"
+          >
             "{data.venue || 'LIFE GARDEN'}"
           </p>
-          <p className="text-white font-bold tracking-[0.15em] text-[9px] uppercase">
+          <p className="text-white font-bold tracking-[0.15em] text-[8px] uppercase">
             {lang === 'uz' ? 'RESTORAN' : lang === 'ru' ? 'РЕСТОРАН' : 'RESTAURANT'}
           </p>
         </motion.div>
@@ -203,12 +244,12 @@ export function RoyalTealTemplate({ data }: RoyalTealTemplateProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1.4 }}
-            className="w-full flex justify-center mb-8"
+            className="w-full flex justify-center mb-4"
           >
             <Button 
               onClick={() => setShowMap(!showMap)}
               variant="outline"
-              className="bg-transparent border-[#D8B154] text-[#D8B154] hover:bg-[#D8B154] hover:text-[#184C59] transition-all duration-300 rounded-none px-8 tracking-widest text-[10px] uppercase font-bold"
+              className="bg-transparent border-[#D8B154] text-[#D8B154] hover:bg-[#D8B154] hover:text-[#184C59] transition-all duration-300 rounded-none px-6 h-8 tracking-widest text-[9px] uppercase font-bold"
             >
               <MapPin className="w-3 h-3 mr-2" />
               {showMap 

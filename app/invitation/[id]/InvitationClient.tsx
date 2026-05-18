@@ -12,6 +12,7 @@ import { Loader2 } from 'lucide-react'
 
 export default function InvitationClient({ data, id }: { data: any, id: string }) {
   const [showNotice, setShowNotice] = useState(true)
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
 
   useEffect(() => {
     const timer = setTimeout(() => setShowNotice(false), 5000)
@@ -45,11 +46,18 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
             scale: 2, 
             backgroundColor: null 
           }).then((canvas: any) => {
-            const link = document.createElement('a');
-            link.download = `taklifnoma-${id}.jpg`;
-            link.href = canvas.toDataURL('image/jpeg', 0.9);
-            link.click();
-            setTimeout(() => window.close(), 1000);
+            const url = canvas.toDataURL('image/jpeg', 0.9);
+            setDownloadUrl(url); // Show it to the user
+
+            try {
+              const link = document.createElement('a');
+              link.download = `taklifnoma-${id}.jpg`;
+              link.href = url;
+              link.click();
+              // Do not automatically close window so they can manually save if click() fails
+            } catch (err) {
+              console.error("Auto download failed", err);
+            }
           });
         }, 1500); // Wait for fonts and images to fully render
       };
@@ -63,6 +71,26 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
     uz: "Ushbu havola faqat ko'rish uchun mo'ljallangan.",
     ru: "Эта ссылка предназначена только для просмотра.",
     en: "This link is for viewing purposes only."
+  }
+
+  if (downloadUrl) {
+    return (
+      <div className="fixed inset-0 bg-[#f4f4f5] z-[999] flex flex-col items-center justify-center p-6">
+        <h3 className="font-bold text-center mb-4 text-[#5c6352] text-xl">Tayyor!</h3>
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-6 border-4 border-white max-w-sm w-full">
+          <img src={downloadUrl} alt="Taklifnoma" className="w-full h-auto object-contain max-h-[60vh]" />
+        </div>
+        <p className="text-sm text-center text-[#98a08d] mb-6 max-w-xs font-medium">
+          Rasm ustiga barmog'ingizni uzoq bosib turing va <b>"Rasmni saqlash" (Save Image)</b> orqali telefoningizga yuklab oling.
+        </p>
+        <button 
+          onClick={() => window.close()} 
+          className="bg-[#98a08d] hover:bg-[#868d7c] text-white px-8 py-3 rounded-full font-bold transition-colors"
+        >
+          Yopish
+        </button>
+      </div>
+    )
   }
 
   return (
