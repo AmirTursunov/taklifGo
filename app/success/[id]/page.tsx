@@ -101,6 +101,25 @@ export default function SuccessPage() {
       setTimeout(() => {
         const captureElement = document.getElementById("hidden-template-capture");
         if (captureElement) {
+          // Clean unsupported CSS rules temporarily
+          const backup: any[] = [];
+          for (let i = 0; i < document.styleSheets.length; i++) {
+            const sheet = document.styleSheets[i] as CSSStyleSheet;
+            try {
+              if (sheet.cssRules) {
+                for (let j = sheet.cssRules.length - 1; j >= 0; j--) {
+                  const rule = sheet.cssRules[j];
+                  if (rule.cssText.includes('lab(') || rule.cssText.includes('oklch(')) {
+                    backup.push({ sheet, index: j, text: rule.cssText });
+                    sheet.deleteRule(j);
+                  }
+                }
+              }
+            } catch (e) {
+              // Ignore cross-origin stylesheet errors
+            }
+          }
+
           (window as any).html2canvas(captureElement, { 
             useCORS: true, 
             scale: 2, 
@@ -109,7 +128,32 @@ export default function SuccessPage() {
             const url = canvas.toDataURL('image/jpeg', 0.9);
             setDownloadUrl(url);
             setIsCapturing(false);
+
+            // Restore style sheets
+            for (let i = backup.length - 1; i >= 0; i--) {
+              const item = backup[i];
+              try {
+                item.sheet.insertRule(item.text, item.index);
+              } catch (e) {
+                // Ignore restore errors
+              }
+            }
+          }).catch((err: any) => {
+            console.error("Html2canvas error:", err);
+            setIsCapturing(false);
+            
+            // Restore style sheets on error too
+            for (let i = backup.length - 1; i >= 0; i--) {
+              const item = backup[i];
+              try {
+                item.sheet.insertRule(item.text, item.index);
+              } catch (e) {
+                // Ignore
+              }
+            }
           });
+        } else {
+          setIsCapturing(false);
         }
       }, 1500); // wait for fonts/images to render
     };
