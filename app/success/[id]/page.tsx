@@ -108,6 +108,7 @@ export default function SuccessPage() {
             width: '390px',
             height: '844px',
           },
+          cacheBust: true,
           backgroundColor: '#113a47' // matches royal teal or defaults nicely
         }).then((dataUrl) => {
           setDownloadUrl(dataUrl);
@@ -384,6 +385,15 @@ export default function SuccessPage() {
       {/* Hidden container to capture the image without navigation */}
       <div style={{ position: 'fixed', top: '-20000px', left: '-20000px', pointerEvents: 'none', width: '390px', height: '844px', zIndex: -9999, overflow: 'hidden' }}>
         <style dangerouslySetInnerHTML={{__html: `
+          @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap');
+
+          .great-vibes-font {
+            font-family: 'Great Vibes', cursive !important;
+          }
+          .playfair-font {
+            font-family: 'Playfair Display', serif !important;
+          }
+
           #hidden-template-capture,
           #hidden-template-capture > div,
           #hidden-template-capture [id="invitation-capture"] {

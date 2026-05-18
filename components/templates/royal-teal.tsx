@@ -92,9 +92,9 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
   return (
     <div 
       id="invitation-capture"
-      className={`min-h-[100dvh] w-full relative overflow-x-hidden flex flex-col items-center justify-center ${playfair.className} bg-[#113a47] py-4`}
+      className={`min-h-[100dvh] w-full relative overflow-x-hidden flex flex-col items-center justify-center ${playfair.className} playfair-font bg-[#113a47] py-4`}
       style={{
-        backgroundImage: 'url("/royal-bg.jpg")',
+        backgroundImage: 'url("' + (typeof window !== 'undefined' ? window.location.origin : '') + '/royal-bg.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -121,7 +121,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
               </svg>
             </div>
           )}
-          <h2 className="text-white font-bold tracking-[0.2em] text-[9px] md:text-xs uppercase drop-shadow-md">
+          <h2 className="text-white font-bold tracking-[0.2em] text-[9px] md:text-xs uppercase drop-shadow-md playfair-font">
             {getHeader()}
           </h2>
         </motion.div>
@@ -139,16 +139,16 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
                 contentEditable={isEditable}
                 suppressContentEditableWarning
                 onBlur={(e) => handleEdit("names", e.currentTarget.textContent + " va " + namesParts[1])}
-                className={`${greatVibes.className} text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg outline-none cursor-text`}
+                className={`${greatVibes.className} great-vibes-font text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg outline-none cursor-text`}
               >
                 {namesParts[0].trim()}
               </h1>
-              <span className={`${greatVibes.className} text-2xl md:text-3xl text-[#D8B154] opacity-80`}>&</span>
+              <span className={`${greatVibes.className} great-vibes-font text-2xl md:text-3xl text-[#D8B154] opacity-80`}>&</span>
               <h1 
                 contentEditable={isEditable}
                 suppressContentEditableWarning
                 onBlur={(e) => handleEdit("names", namesParts[0] + " va " + e.currentTarget.textContent)}
-                className={`${greatVibes.className} text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg outline-none cursor-text`}
+                className={`${greatVibes.className} great-vibes-font text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg outline-none cursor-text`}
               >
                 {namesParts[1].trim()}
               </h1>
@@ -158,7 +158,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
               contentEditable={isEditable}
               suppressContentEditableWarning
               onBlur={(e) => handleEdit("names", e.currentTarget.textContent || "")}
-              className={`${greatVibes.className} text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg px-4 outline-none cursor-text`}
+              className={`${greatVibes.className} great-vibes-font text-5xl md:text-6xl text-[#D8B154] leading-tight drop-shadow-lg px-4 outline-none cursor-text`}
             >
               {names}
             </h1>
