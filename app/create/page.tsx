@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EternalBondTemplate } from "@/components/templates/eternal-bond";
 import { GoldenNightTemplate } from "@/components/templates/golden-night";
@@ -57,7 +57,7 @@ import {
 import { toast } from "react-toastify";
 
 
-export default function CreateInvitation() {
+function CreateInvitationContent() {
   const { t, lang, setLang } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -1052,5 +1052,17 @@ export default function CreateInvitation() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function CreateInvitation() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#faf9f6]">
+        <Loader2 className="w-8 h-8 text-[#98a08d] animate-spin" />
+      </div>
+    }>
+      <CreateInvitationContent />
+    </Suspense>
   );
 }

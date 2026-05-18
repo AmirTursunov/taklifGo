@@ -1,0 +1,79 @@
+
+> my-project@0.1.0 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/macbookuz/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/macbookuz/Downloads/3d page/pnpm-lock.yaml
+
+▲ Next.js 16.2.4 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 5.1s
+  Skipping validation of types
+  Finished TypeScript config validation in 31ms ...
+  Collecting page data using 7 workers ...
+Firebase Admin init error: Error: Service account object must contain a string "private_key" property.
+    at module evaluation (.next/server/chunks/[root-of-the-server]__1144dui._.js:1:1079)
+    at instantiateModule (.next/server/chunks/[turbopack]_runtime.js:853:9)
+    at getOrInstantiateModuleFromParent (.next/server/chunks/[turbopack]_runtime.js:877:12)
+    at Context.esmImport [as i] (.next/server/chunks/[turbopack]_runtime.js:281:20)
+    at module evaluation (.next/server/chunks/[root-of-the-server]__1144dui._.js:1:1691)
+    at instantiateModule (.next/server/chunks/[turbopack]_runtime.js:853:9)
+    at instantiateRuntimeModule (.next/server/chunks/[turbopack]_runtime.js:882:12) {
+  errorInfo: {
+    code: 'app/invalid-credential',
+    message: 'Service account object must contain a string "private_key" property.'
+  },
+  codePrefix: 'app'
+}
+Firebase Admin init error: Error: Service account object must contain a string "private_key" property.
+    at module evaluation (.next/server/chunks/[root-of-the-server]__0jhq7_z._.js:1:1079)
+    at instantiateModule (.next/server/chunks/[turbopack]_runtime.js:853:9)
+    at getOrInstantiateModuleFromParent (.next/server/chunks/[turbopack]_runtime.js:877:12)
+    at Context.esmImport [as i] (.next/server/chunks/[turbopack]_runtime.js:281:20)
+    at module evaluation (.next/server/chunks/[root-of-the-server]__0jhq7_z._.js:1:1691)
+    at instantiateModule (.next/server/chunks/[turbopack]_runtime.js:853:9)
+    at instantiateRuntimeModule (.next/server/chunks/[turbopack]_runtime.js:882:12) {
+  errorInfo: {
+    code: 'app/invalid-credential',
+    message: 'Service account object must contain a string "private_key" property.'
+  },
+  codePrefix: 'app'
+}
+Firebase Admin init error: Error: Service account object must contain a string "private_key" property.
+    at module evaluation (.next/server/chunks/ssr/Downloads_3d page_0drs13f._.js:4:5552)
+    at instantiateModule (.next/server/chunks/ssr/[turbopack]_runtime.js:853:9)
+    at getOrInstantiateModuleFromParent (.next/server/chunks/ssr/[turbopack]_runtime.js:877:12)
+    at Context.esmImport [as i] (.next/server/chunks/ssr/[turbopack]_runtime.js:281:20)
+    at module evaluation (.next/server/chunks/ssr/Downloads_3d page_0drs13f._.js:4:7073)
+    at instantiateModule (.next/server/chunks/ssr/[turbopack]_runtime.js:853:9)
+    at getOrInstantiateModuleFromParent (.next/server/chunks/ssr/[turbopack]_runtime.js:877:12) {
+  errorInfo: {
+    code: 'app/invalid-credential',
+    message: 'Service account object must contain a string "private_key" property.'
+  },
+  codePrefix: 'app'
+}
+Error: The default Firebase app does not exist. Make sure you call initializeApp() before using any of the Firebase services.
+    at module evaluation (.next/server/chunks/[root-of-the-server]__1144dui._.js:1:1381)
+    at instantiateModule (.next/server/chunks/[turbopack]_runtime.js:853:9)
+    at getOrInstantiateModuleFromParent (.next/server/chunks/[turbopack]_runtime.js:877:12)
+    at Context.esmImport [as i] (.next/server/chunks/[turbopack]_runtime.js:281:20)
+    at module evaluation (.next/server/chunks/[root-of-the-server]__1144dui._.js:1:1691) {
+  errorInfo: {
+    code: 'app/no-app',
+    message: 'The default Firebase app does not exist. Make sure you call initializeApp() before using any of the Firebase services.'
+  },
+  codePrefix: 'app'
+}
+
+> Build error occurred
+Error: Failed to collect page data for /api/bot/webhook
+    at ignore-listed frames {
+  type: 'Error'
+}
