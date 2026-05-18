@@ -238,41 +238,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
           </p>
         </motion.div>
 
-        {/* Map Button */}
-        {data.location && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.4 }}
-            className="w-full flex justify-center mb-4"
-          >
-            <Button 
-              onClick={() => setShowMap(!showMap)}
-              variant="outline"
-              className="bg-transparent border-[#D8B154] text-[#D8B154] hover:bg-[#D8B154] hover:text-[#184C59] transition-all duration-300 rounded-none px-6 h-8 tracking-widest text-[9px] uppercase font-bold"
-            >
-              <MapPin className="w-3 h-3 mr-2" />
-              {showMap 
-                ? (lang === 'uz' ? "Xaritani yopish" : lang === 'ru' ? "Скрыть карту" : "Close Map")
-                : (lang === 'uz' ? "Xaritani ko'rish" : lang === 'ru' ? "Смотреть карту" : "View Map")
-              }
-            </Button>
-          </motion.div>
-        )}
-
       </div>
-
-      {/* Map Section */}
-      {showMap && data.location && (
-        <motion.div 
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="w-[92%] max-w-md mx-auto mb-8 rounded-sm overflow-hidden border border-[#D8B154]/50 shadow-2xl"
-        >
-          <div dangerouslySetInnerHTML={{ __html: data.location }} className="w-full [&>iframe]:w-full [&>iframe]:h-[300px]" />
-        </motion.div>
-      )}
 
       {/* Audio Player */}
       {data.musicUrl && (

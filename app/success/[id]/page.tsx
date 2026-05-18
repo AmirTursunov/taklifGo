@@ -16,10 +16,19 @@ import {
   Phone,
   Eye,
   XCircle,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/lib/LanguageContext";
+
+import { EternalBondTemplate } from '@/components/templates/eternal-bond'
+import { GoldenNightTemplate } from '@/components/templates/golden-night'
+import { NafosatTemplate } from '@/components/templates/nafosat'
+import { GoldenWeddingTemplate } from '@/components/templates/golden-wedding'
+import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday'
+import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
+import { RoyalTealTemplate } from '@/components/templates/royal-teal'
 
 export default function SuccessPage() {
   const { id } = useParams();
@@ -28,6 +37,8 @@ export default function SuccessPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   const invitationUrl =
     typeof window !== "undefined"
@@ -82,6 +93,29 @@ export default function SuccessPage() {
     window.open(telegramUrl, "_blank");
   };
 
+  const handleDownloadImage = () => {
+    setIsCapturing(true);
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    script.onload = () => {
+      setTimeout(() => {
+        const captureElement = document.getElementById("hidden-template-capture");
+        if (captureElement) {
+          (window as any).html2canvas(captureElement, { 
+            useCORS: true, 
+            scale: 2, 
+            backgroundColor: null 
+          }).then((canvas: any) => {
+            const url = canvas.toDataURL('image/jpeg', 0.9);
+            setDownloadUrl(url);
+            setIsCapturing(false);
+          });
+        }
+      }, 1500); // wait for fonts/images to render
+    };
+    document.body.appendChild(script);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#faf9f6] flex items-center justify-center">
@@ -94,6 +128,36 @@ export default function SuccessPage() {
   const isRejected = data?.status === "rejected";
   // Real view count from Firestore — updated live via onSnapshot
   const viewCount = data?.viewCount ?? 0;
+
+  const renderTemplate = () => {
+    if (data?.templateId === "nafosat") return <NafosatTemplate data={data} />;
+    if (data?.templateId === "girl-birthday") return <GirlBirthdayTemplate data={{ ...data, name: data.names, time: data.time || "19:00", age: data.age || "21" }} />;
+    if (data?.templateId === "elegant-birthday") return <ElegantBirthdayTemplate data={{ ...data, name: data.names, time: data.time || "19:00", age: data.age || "30" }} />;
+    if (data?.templateId === "golden-wedding") return <GoldenWeddingTemplate data={data} />;
+    if (data?.templateId === "golden-night") return <GoldenNightTemplate data={data} />;
+    if (data?.templateId === "royal-teal") return <RoyalTealTemplate data={data} />;
+    return <EternalBondTemplate data={data} />;
+  };
+
+  if (downloadUrl) {
+    return (
+      <div className="min-h-screen bg-[#f4f4f5] z-[999] flex flex-col items-center justify-center p-6">
+        <h3 className="font-bold text-center mb-4 text-[#5c6352] text-xl">Tayyor!</h3>
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-6 border-4 border-white max-w-sm w-full">
+          <img src={downloadUrl} alt="Taklifnoma" className="w-full h-auto object-contain max-h-[70vh]" />
+        </div>
+        <p className="text-sm text-center text-[#98a08d] mb-6 max-w-xs font-medium">
+          Rasm ustiga barmog'ingizni uzoq bosib turing va <b>"Rasmni saqlash" (Save Image)</b> orqali telefoningizga yuklab oling.
+        </p>
+        <button 
+          onClick={() => setDownloadUrl(null)} 
+          className="bg-[#98a08d] hover:bg-[#868d7c] text-white px-8 py-3 rounded-full font-bold transition-colors"
+        >
+          Orqaga qaytish
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#faf9f6] p-6 lg:p-12">
@@ -261,11 +325,14 @@ export default function SuccessPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => window.open(`${invitationUrl}?download=true`, "_blank")}
+                  onClick={handleDownloadImage}
+                  disabled={isCapturing}
                   className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-2"
                 >
-                  <Copy className="w-4 h-4" />
-                  {lang === "uz" ? "Rasm qilib saqlash" : lang === "ru" ? "Сохранить фото" : "Save Image"}
+                  {isCapturing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                  {isCapturing 
+                    ? (lang === "uz" ? "Yuklanmoqda..." : "Загрузка...") 
+                    : (lang === "uz" ? "Rasm qilib saqlash" : lang === "ru" ? "Сохранить фото" : "Save Image")}
                 </Button>
               </div>
             </Card>
@@ -306,6 +373,13 @@ export default function SuccessPage() {
             </div>
           </div>
         )}
+      </div>
+      
+      {/* Hidden container to capture the image without navigation */}
+      <div style={{ position: 'fixed', top: '-20000px', left: '-20000px', pointerEvents: 'none', width: '390px', zIndex: -9999 }}>
+        <div id="hidden-template-capture" className="w-full">
+          {data && renderTemplate()}
+        </div>
       </div>
     </div>
   );
