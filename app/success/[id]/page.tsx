@@ -41,19 +41,69 @@ export default function SuccessPage() {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [royalBgBase64, setRoyalBgBase64] = useState<string | null>(null);
+  const [greatVibesBase64, setGreatVibesBase64] = useState<string | null>(null);
+  const [playfairBase64, setPlayfairBase64] = useState<string | null>(null);
 
   useEffect(() => {
-    // Preload background image as base64 for reliable PDF/Image capture
-    fetch("/royal-bg.jpg")
-      .then((res) => res.blob())
-      .then((blob) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setRoyalBgBase64(reader.result as string);
-        };
-        reader.readAsDataURL(blob);
-      })
-      .catch((err) => console.error("Error preloading background image:", err));
+    // Preload background image as base64 using canvas + fetch fallback
+    const preloadBg = () => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0);
+            setRoyalBgBase64(canvas.toDataURL('image/jpeg', 0.95));
+          }
+        } catch (e) {
+          fallbackFetchBg();
+        }
+      };
+      img.onerror = () => fallbackFetchBg();
+      img.src = "/royal-bg.jpg";
+    };
+
+    const fallbackFetchBg = () => {
+      fetch("/royal-bg.jpg")
+        .then((res) => res.blob())
+        .then((blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => setRoyalBgBase64(reader.result as string);
+          reader.readAsDataURL(blob);
+        })
+        .catch((err) => console.error("Error fetching background:", err));
+    };
+
+    preloadBg();
+
+    // Preload Google Fonts as base64
+    const fetchFont = async (cssUrl: string, setter: (val: string) => void) => {
+      try {
+        const cssRes = await fetch(cssUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.0.0 Safari/537.36'
+          }
+        });
+        const cssText = await cssRes.text();
+        const fontUrlMatch = cssText.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/);
+        if (fontUrlMatch) {
+          const fontRes = await fetch(fontUrlMatch[1]);
+          const blob = await fontRes.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => setter(reader.result as string);
+          reader.readAsDataURL(blob);
+        }
+      } catch (e) {
+        console.error("Error preloading font:", cssUrl, e);
+      }
+    };
+
+    fetchFont("https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap", setGreatVibesBase64);
+    fetchFont("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap", setPlayfairBase64);
   }, []);
 
   const invitationUrl =
@@ -400,7 +450,23 @@ export default function SuccessPage() {
       {/* Hidden container to capture the image without navigation */}
       <div style={{ position: 'fixed', top: '-20000px', left: '-20000px', pointerEvents: 'none', width: '390px', height: '844px', zIndex: -9999, overflow: 'hidden' }}>
         <style dangerouslySetInnerHTML={{__html: `
-          @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap');
+          ${greatVibesBase64 ? `
+          @font-face {
+            font-family: 'Great Vibes';
+            src: url("${greatVibesBase64}") format('woff2');
+            font-weight: normal;
+            font-style: normal;
+          }
+          ` : ''}
+
+          ${playfairBase64 ? `
+          @font-face {
+            font-family: 'Playfair Display';
+            src: url("${playfairBase64}") format('woff2');
+            font-weight: normal;
+            font-style: normal;
+          }
+          ` : ''}
 
           .great-vibes-font {
             font-family: 'Great Vibes', cursive !important;
