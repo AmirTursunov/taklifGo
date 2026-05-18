@@ -93,13 +93,15 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
     <div 
       id="invitation-capture"
       className={`min-h-[100dvh] w-full relative overflow-x-hidden flex flex-col items-center justify-center ${playfair.className} playfair-font bg-[#113a47] py-4`}
-      style={{
-        backgroundImage: `url("${data.bgBase64 || '/royal-bg.jpg'}")`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
     >
+      {/* Real background image element for WebKit/iOS Safari compatibility in SVG Canvas */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+        <img 
+          src={data.bgBase64 || "/royal-bg.jpg"} 
+          alt="background" 
+          className="w-full h-full object-cover"
+        />
+      </div>
       
       {/* Decorative Container (transparent since BG image has the design) */}
       <div className="relative z-10 w-[92%] max-w-md min-h-[90vh] flex flex-col items-center justify-between p-4 sm:p-6 text-center bg-transparent rounded-sm">
