@@ -44,20 +44,20 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
   const dateObj = data.date ? new Date(data.date) : new Date()
   const day = dateObj.getDate()
   const year = dateObj.getFullYear()
-  
+
   // Oylar ro'yxati
   const monthsUz = ["YANVAR", "FEVRAL", "MART", "APREL", "MAY", "IYUN", "IYUL", "AVGUST", "SENTABR", "OKTABR", "NOYABR", "DEKABR"]
   const monthsRu = ["ЯНВАРЬ", "ФЕВРАЛЬ", "МАРТ", "АПРЕЛЬ", "МАЙ", "ИЮНЬ", "ИЮЛЬ", "АВГУСТ", "СЕНТЯБРЬ", "ОКТЯБРЬ", "НОЯБРЬ", "ДЕКАБРЬ"]
   const monthsEn = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"]
-  
+
   const monthList = lang === 'uz' ? monthsUz : lang === 'ru' ? monthsRu : monthsEn
   const monthName = monthList[dateObj.getMonth()]
-  
+
   // Hafta kunlari
   const daysUz = ["YAKSHANBA", "DUSHANBA", "SESHANBA", "CHORSHANBA", "PAYSHANBA", "JUMA", "SHANBA"]
   const daysRu = ["ВОСКРЕСЕНЬЕ", "ПОНЕДЕЛЬНИК", "ВТОРНИК", "СРЕДА", "ЧЕТВЕРГ", "ПЯТНИЦА", "СУББОТА"]
   const daysEn = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]
-  
+
   const dayList = lang === 'uz' ? daysUz : lang === 'ru' ? daysRu : daysEn
   const dayName = dayList[dateObj.getDay()]
 
@@ -65,8 +65,8 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
 
   const getInvitationText = () => {
     if (lang === 'uz') {
-      return isWedding 
-        ? "SIZNI HAYOTIMIZDAGI ENG BAXTIYOR KUN NIKOH TO'YIMIZGA TAKLIF ETAMIZ" 
+      return isWedding
+        ? "SIZNI HAYOTIMIZDAGI ENG BAXTIYOR KUN NIKOH TO'YIMIZGA TAKLIF ETAMIZ"
         : "SIZNI TAVALLUD AYYOMIMIZGA LUTFAN TAKLIF ETAMIZ"
     }
     if (lang === 'ru') {
@@ -90,24 +90,26 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
   const namesParts = names.split(/(?:\s+va\s+|\s+and\s+|\s*&\s*|\s+и\s+)/i)
 
   return (
-    <div 
+    <div
       id="invitation-capture"
       className={`min-h-[100dvh] w-full relative overflow-x-hidden flex flex-col items-center justify-center ${playfair.className} playfair-font bg-[#113a47] py-4`}
     >
       {/* Real background image element for WebKit/iOS Safari compatibility in SVG Canvas */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-        <img 
-          src={data.bgBase64 || "/royal-bg.jpg"} 
-          alt="background" 
-          className="w-full h-full object-cover"
-        />
-      </div>
-      
+      <div
+        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+        style={{
+          backgroundImage: `url(${data.bgBase64 || "/royal-bg.jpg"})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+
       {/* Decorative Container (transparent since BG image has the design) */}
       <div className="relative z-10 w-[92%] max-w-md min-h-[90vh] flex flex-col items-center justify-between p-4 sm:p-6 text-center bg-transparent rounded-sm">
-        
+
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
@@ -129,7 +131,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
         </motion.div>
 
         {/* Names Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, delay: 0.5 }}
@@ -137,7 +139,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
         >
           {namesParts.length > 1 ? (
             <div className="flex flex-col items-center justify-center space-y-0.5">
-              <h1 
+              <h1
                 contentEditable={isEditable}
                 suppressContentEditableWarning
                 onBlur={(e) => handleEdit("names", e.currentTarget.textContent + " va " + namesParts[1])}
@@ -146,7 +148,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
                 {namesParts[0].trim()}
               </h1>
               <span className={`${greatVibes.className} great-vibes-font text-2xl md:text-3xl text-[#D8B154] opacity-80`}>&</span>
-              <h1 
+              <h1
                 contentEditable={isEditable}
                 suppressContentEditableWarning
                 onBlur={(e) => handleEdit("names", namesParts[0] + " va " + e.currentTarget.textContent)}
@@ -156,7 +158,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
               </h1>
             </div>
           ) : (
-            <h1 
+            <h1
               contentEditable={isEditable}
               suppressContentEditableWarning
               onBlur={(e) => handleEdit("names", e.currentTarget.textContent || "")}
@@ -180,25 +182,25 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
         </motion.div>
 
         {/* Date & Time Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1 }}
           className="my-6 w-full"
         >
           <h3 className="text-white font-bold tracking-[0.3em] text-[9px] uppercase mb-3">{monthName}</h3>
-          
+
           <div className="flex items-center justify-center gap-3">
             <div className="text-right w-20 border-t border-b border-[#D8B154]/50 py-1.5">
               <p className="text-white font-bold tracking-[0.1em] text-[8px] uppercase">{dayName}</p>
             </div>
-            
+
             <div className="text-4xl md:text-5xl font-bold text-[#D8B154] drop-shadow-lg">
               {day}
             </div>
-            
+
             <div className="text-left w-20 border-t border-b border-[#D8B154]/50 py-1.5">
-              <p 
+              <p
                 contentEditable={isEditable}
                 suppressContentEditableWarning
                 onBlur={(e) => handleEdit("time", e.currentTarget.textContent || "17:00")}
@@ -208,7 +210,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
               </p>
             </div>
           </div>
-          
+
           <h3 className="text-white font-bold tracking-[0.3em] text-[9px] mt-3">{year}</h3>
         </motion.div>
 
@@ -219,7 +221,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
           transition={{ duration: 1, delay: 1.2 }}
           className="w-full space-y-1 mb-4"
         >
-          <p 
+          <p
             contentEditable={isEditable}
             suppressContentEditableWarning
             onBlur={(e) => handleEdit("address", e.currentTarget.textContent || "")}
@@ -227,7 +229,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
           >
             {lang === 'uz' ? 'MANZIL' : lang === 'ru' ? 'АДРЕС' : 'ADDRESS'}: {data.address || "SAMARQAND SHAHAR"}
           </p>
-          <p 
+          <p
             contentEditable={isEditable}
             suppressContentEditableWarning
             onBlur={(e) => handleEdit("venue", e.currentTarget.textContent || "")}
