@@ -24,31 +24,43 @@ export default function LoginPage() {
   const { lang } = useLanguage()
   const { user, loading: authLoading } = useAuth()
 
+  const [checkingRedirect, setCheckingRedirect] = useState(true)
+
+  // ── 1. Immediately check for Google redirect result on page load (iOS fix)
   useEffect(() => {
-    const checkRedirectResult = async () => {
+    const handleRedirectResult = async () => {
       try {
         const { getRedirectResult } = await import('firebase/auth')
         const result = await getRedirectResult(auth)
         if (result?.user) {
-          toast.success(lang === 'uz' ? "Xush kelibsiz!" : lang === 'ru' ? "Добро пожаловать!" : "Welcome!")
+          toast.success(
+            lang === 'uz' ? "Xush kelibsiz!" :
+            lang === 'ru' ? "Добро пожаловать!" : "Welcome!"
+          )
           router.push('/')
+          return
         }
       } catch (err: any) {
-        console.error("Redirect auth error:", err)
-        const msg = getErrorMessage(err.code)
-        setError(msg)
-        toast.error(msg)
+        console.error("getRedirectResult error:", err)
+        if (err.code && err.code !== 'auth/null-user') {
+          const msg = getErrorMessage(err.code)
+          setError(msg)
+          toast.error(msg)
+        }
+      } finally {
+        setCheckingRedirect(false)
       }
     }
+    handleRedirectResult()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-    if (!authLoading) {
-      if (user) {
-        router.push('/')
-      } else {
-        checkRedirectResult()
-      }
+  // ── 2. If already logged in, redirect to home
+  useEffect(() => {
+    if (!authLoading && !checkingRedirect && user) {
+      router.push('/')
     }
-  }, [user, authLoading, router, lang])
+  }, [user, authLoading, checkingRedirect, router])
 
   const getErrorMessage = (code: string) => {
     const errors: Record<string, Record<string, string>> = {
@@ -187,6 +199,18 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Show loading while processing redirect (prevents form flash on iOS)
+  if (checkingRedirect || (authLoading && !checkingRedirect)) {
+    return (
+      <div className="min-h-screen bg-[#faf9f6] flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-10 h-10 text-[#98a08d] animate-spin" />
+        <p className="text-[#98a08d] text-sm font-medium">
+          {lang === 'uz' ? 'Kirish tekshirilmoqda...' : lang === 'ru' ? 'Проверка входа...' : 'Checking sign-in...'}
+        </p>
+      </div>
+    )
   }
 
   return (
