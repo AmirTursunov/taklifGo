@@ -182,6 +182,7 @@ export default function LoginPage() {
 
       // Fallback: API keys not configured — use Firebase default
       if (json.fallback) {
+        auth.languageCode = lang || 'uz'
         await sendPasswordResetEmail(auth, email)
       }
 
