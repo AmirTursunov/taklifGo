@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { auth } from '@/lib/firebase'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, sendPasswordResetEmail } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { Chrome, Mail, Lock, Loader2, ArrowRight, User } from 'lucide-react'
 import { useLanguage } from '@/lib/LanguageContext'
+import { useAuth } from '@/lib/AuthContext'
 import { toast } from 'react-toastify'
 
 export default function LoginPage() {
@@ -21,6 +22,33 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const { lang } = useLanguage()
+  const { user, loading: authLoading } = useAuth()
+
+  useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        const { getRedirectResult } = await import('firebase/auth')
+        const result = await getRedirectResult(auth)
+        if (result?.user) {
+          toast.success(lang === 'uz' ? "Xush kelibsiz!" : lang === 'ru' ? "Добро пожаловать!" : "Welcome!")
+          router.push('/')
+        }
+      } catch (err: any) {
+        console.error("Redirect auth error:", err)
+        const msg = getErrorMessage(err.code)
+        setError(msg)
+        toast.error(msg)
+      }
+    }
+
+    if (!authLoading) {
+      if (user) {
+        router.push('/')
+      } else {
+        checkRedirectResult()
+      }
+    }
+  }, [user, authLoading, router, lang])
 
   const getErrorMessage = (code: string) => {
     const errors: Record<string, Record<string, string>> = {
@@ -87,10 +115,25 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider()
+    provider.addScope('email')
+    provider.addScope('profile')
+    provider.setCustomParameters({ prompt: 'select_account' })
+
+    // iOS Safari and Telegram WebView don't support popups — use redirect
+    const isMobileSafari = /iP(hone|od|ad)/i.test(navigator.userAgent)
+    const isTelegramWebView = /Telegram/i.test(navigator.userAgent)
+    const useRedirect = isMobileSafari || isTelegramWebView
+
     try {
-      await signInWithPopup(auth, provider)
-      toast.success(lang === 'uz' ? "Xush kelibsiz!" : "Добро пожаловать!")
-      router.push('/')
+      if (useRedirect) {
+        const { signInWithRedirect } = await import('firebase/auth')
+        await signInWithRedirect(auth, provider)
+        // Result handled in useEffect via getRedirectResult
+      } else {
+        await signInWithPopup(auth, provider)
+        toast.success(lang === 'uz' ? "Xush kelibsiz!" : lang === 'ru' ? "Добро пожаловать!" : "Welcome!")
+        router.push('/')
+      }
     } catch (err: any) {
       const msg = getErrorMessage(err.code)
       setError(msg)
@@ -100,18 +143,45 @@ export default function LoginPage() {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      const msg = lang === 'uz' ? 'Iltimos, avval email manzilingizni kiriting' : 'Пожалуйста, сначала введите ваш email'
+      const msg = lang === 'uz'
+        ? 'Iltimos, avval email manzilingizni kiriting'
+        : lang === 'ru'
+          ? 'Пожалуйста, сначала введите ваш email'
+          : 'Please enter your email address first'
       setError(msg)
       toast.warning(msg)
       return
     }
     setLoading(true)
     try {
-      await sendPasswordResetEmail(auth, email)
+      const res = await fetch('/api/auth/send-reset-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, lang }),
+      })
+      const json = await res.json()
+
+      if (!res.ok) {
+        const errorMsg = json.error === 'user-not-found'
+          ? (lang === 'uz' ? 'Bu email bilan foydalanuvchi topilmadi' : lang === 'ru' ? 'Пользователь с таким email не найден' : 'No user found with this email')
+          : (lang === 'uz' ? 'Xatolik yuz berdi. Keyinroq urinib ko\'ring.' : lang === 'ru' ? 'Произошла ошибка. Попробуйте позже.' : 'An error occurred. Please try again.')
+        throw new Error(errorMsg)
+      }
+
+      // Fallback: API keys not configured — use Firebase default
+      if (json.fallback) {
+        await sendPasswordResetEmail(auth, email)
+      }
+
       setError('')
-      toast.info(lang === 'uz' ? 'Parolni tiklash xati yuborildi' : 'Письмо для сброса пароля отправлено')
+      const successMsg = lang === 'uz'
+        ? `✅ Parolni tiklash xati ${email} manziliga yuborildi!`
+        : lang === 'ru'
+          ? `✅ Письмо для сброса пароля отправлено на ${email}!`
+          : `✅ Password reset email sent to ${email}!`
+      toast.success(successMsg, { autoClose: 6000 })
     } catch (err: any) {
-      const msg = getErrorMessage(err.code)
+      const msg = err.code ? getErrorMessage(err.code) : err.message
       setError(msg)
       toast.error(msg)
     } finally {
