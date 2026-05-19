@@ -297,7 +297,7 @@ export function NafosatTemplate({
       ══════════════════════════════════════════ */}
       <section ref={heroRef}
         className="relative w-full h-[100dvh] flex items-center justify-center overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #f0f6ff 0%, #e8f1fb 40%, #f7fafd 100%)' }}
+        style={{ position: 'relative', background: 'linear-gradient(160deg, #f0f6ff 0%, #e8f1fb 40%, #f7fafd 100%)' }}
       >
         <GirihPattern opacity={0.055} color="#1a56a0" />
         <FloatingParticles />
@@ -803,7 +803,7 @@ export function NafosatTemplate({
               : <VolumeX className="w-5 h-5" style={{ color: '#4a90d9' }} />
             }
           </motion.button>
-          <audio ref={audioRef} src={data.musicUrl || ''} loop />
+          <audio ref={audioRef} src={data.musicUrl || undefined} loop />
         </div>
       )}
     </div>

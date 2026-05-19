@@ -16,24 +16,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const data = doc.data();
-  const names = data?.names || "Taklifnoma";
-  const image = data?.imageUrl || "https://taklif-go.vercel.app/placeholder-logo.png";
   const category = data?.category || "wedding";
+  const image = (data?.images && data.images[0]) || data?.imageUrl || "https://taklif-go.vercel.app/placeholder-logo.png";
+  
+  let displayTitle = data?.names || "Taklifnoma";
+  if (category === "business") {
+    displayTitle = data?.eventTitle || data?.companyName || data?.names || "Biznes Tadbiri";
+  }
 
-  let dynamicTitle = `${names} - Taklifnoma`;
+  let dynamicTitle = `${displayTitle} - Taklifnoma`;
   let dynamicDesc = "Sizni kutib qolamiz!";
 
   if (category === "birthday") {
-    dynamicTitle = `${names} - Tug'ilgan kun taklifnomasi`;
+    dynamicTitle = `${displayTitle} - Tug'ilgan kun taklifnomasi`;
     dynamicDesc = "Sizni tug'ilgan kun bayramiga lutfan taklif qilamiz!";
   } else if (category === "business") {
-    dynamicTitle = `${names} - Biznes tadbiriga taklif`;
-    dynamicDesc = "Sizni muhim biznes tadbirimizga taklif qilamiz.";
+    dynamicTitle = `${displayTitle} - Biznes tadbiriga taklifnoma`;
+    dynamicDesc = "Sizni muhim biznes tadbirimizga lutfan taklif qilamiz.";
   } else if (category === "farewell") {
-    dynamicTitle = `${names} - Qiz uzatish marosimi`;
-    dynamicDesc = "Sizni qiz uzatish marosimiga taklif qilamiz!";
+    dynamicTitle = `${displayTitle} - Qiz uzatish marosimi`;
+    dynamicDesc = "Sizni qiz uzatish marosimiga lutfan taklif qilamiz!";
   } else {
-    dynamicTitle = `${names} - To'y taklifnomasi`;
+    dynamicTitle = `${displayTitle} - To'y taklifnomasi`;
     dynamicDesc = "Sizni bizning eng baxtli kunimizda kutib qolamiz!";
   }
 

@@ -207,7 +207,7 @@ export function GoldenWeddingTemplate({
       {/* ══ HERO ══════════════════════════════════════ */}
       <section ref={heroRef}
         className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden"
-        style={{ background: 'linear-gradient(160deg, #ffffff 0%, #fffbf0 50%, #fff9e6 100%)' }}
+        style={{ position: 'relative', background: 'linear-gradient(160deg, #ffffff 0%, #fffbf0 50%, #fff9e6 100%)' }}
       >
         <LuxuryGirih opacity={0.06} color="#D4AF37" />
         
@@ -461,7 +461,7 @@ export function GoldenWeddingTemplate({
               <VolumeX className="w-7 h-7 text-[#D4AF37]" />
             )}
           </button>
-          <audio ref={audioRef} src={data.musicUrl} loop />
+          <audio ref={audioRef} src={data.musicUrl || undefined} loop />
         </div>
       )}
     </div>

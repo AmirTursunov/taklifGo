@@ -390,7 +390,7 @@ export function ElegantBirthdayTemplate({
           >
             {isPlaying ? <Volume2 className="animate-pulse" /> : <VolumeX />}
           </motion.button>
-          <audio ref={audioRef} src={data.musicUrl} loop />
+          <audio ref={audioRef} src={data.musicUrl || undefined} loop />
         </div>
       )}
     </div>

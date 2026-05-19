@@ -87,6 +87,63 @@ export default function DashboardPage() {
     if (user) fetchInvitations()
   }, [user])
 
+  const getInvitationTitle = (inv: any) => {
+    const category = inv.category || 'wedding';
+    const names = inv.names || 'Taklifnoma';
+    
+    if (category === 'birthday') {
+      return lang === 'uz' 
+        ? `Tug'ilgan kun: ${names}` 
+        : lang === 'ru' 
+          ? `День рождения: ${names}` 
+          : `Birthday: ${names}`;
+    }
+    if (category === 'business') {
+      const title = inv.eventTitle || inv.companyName || names;
+      return lang === 'uz' 
+        ? `Biznes tadbir: ${title}` 
+        : lang === 'ru' 
+          ? `Бизнес событие: ${title}` 
+          : `Business Event: ${title}`;
+    }
+    if (category === 'farewell') {
+      return lang === 'uz' 
+        ? `Qiz uzatish: ${names}` 
+        : lang === 'ru' 
+          ? `Проводы невесты: ${names}` 
+          : `Farewell Party: ${names}`;
+    }
+    return lang === 'uz' 
+      ? `To'y taklifi: ${names}` 
+      : lang === 'ru' 
+        ? `Свадебное приглашение: ${names}` 
+        : `Wedding Invitation: ${names}`;
+  };
+
+  const getInvitationThumbnail = (inv: any) => {
+    const category = inv.category || 'wedding';
+    const firstImg = inv.images?.[0];
+    
+    const isDefaultWeddingImg = firstImg === "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800" ||
+                                firstImg === "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=200" ||
+                                !firstImg;
+
+    if (isDefaultWeddingImg) {
+      if (category === 'birthday') {
+        return "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&q=80&w=200";
+      }
+      if (category === 'business') {
+        return "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=200";
+      }
+      if (category === 'farewell') {
+        return "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&q=80&w=200";
+      }
+      return "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=200";
+    }
+    
+    return firstImg;
+  };
+
   const stats = useMemo(() => ({
     totalViews: invitations.reduce((acc, inv) => acc + (inv.views || 0), 0),
     pending: invitations.filter(i => i.status === 'pending').length,
@@ -247,7 +304,7 @@ export default function DashboardPage() {
                         {/* Image Container */}
                         <div className="relative w-full sm:w-24 md:w-32 aspect-[4/5] sm:aspect-square rounded-2xl overflow-hidden bg-[#faf9f6] border border-[#98a08d]/10 flex-shrink-0">
                           <img
-                            src={inv.images?.[0] || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=200'}
+                            src={getInvitationThumbnail(inv)}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                             alt=""
                           />
@@ -269,7 +326,7 @@ export default function DashboardPage() {
                               </div>
                             </div>
                             <h4 className="text-xl md:text-2xl font-serif text-[#5c6352] group-hover:text-[#98a08d] transition-colors truncate">
-                              {inv.names}
+                              {getInvitationTitle(inv)}
                             </h4>
                           </div>
 

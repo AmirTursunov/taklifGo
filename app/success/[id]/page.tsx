@@ -29,6 +29,7 @@ import { GoldenWeddingTemplate } from '@/components/templates/golden-wedding'
 import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday'
 import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
 import { RoyalTealTemplate } from '@/components/templates/royal-teal'
+import { CorporateEventTemplate } from '@/components/templates/corporate-event'
 
 export default function SuccessPage() {
   const { id } = useParams();

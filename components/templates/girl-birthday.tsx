@@ -462,6 +462,7 @@ export function GirlBirthdayTemplate({
       <section ref={heroRef}
         className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden py-16 px-6"
         style={{
+          position: 'relative',
           background: 'linear-gradient(160deg, #fff0f8 0%, #f8f0ff 40%, #fff5fb 70%, #fffbec 100%)',
         }}>
 
@@ -934,7 +935,7 @@ export function GirlBirthdayTemplate({
               ? <Volume2 className="w-5 h-5 text-white animate-pulse" />
               : <VolumeX className="w-5 h-5" style={{ color: '#FF3D9A' }} />}
           </motion.button>
-          <audio ref={audioRef} src={data.musicUrl || ''} loop />
+          <audio ref={audioRef} src={data.musicUrl || undefined} loop />
         </div>
       )}
     </div>

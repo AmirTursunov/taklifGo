@@ -290,7 +290,7 @@ export function GoldenNightTemplate({
       <ConfettiCanvas trigger={confetti} />
 
       {/* ── HERO ── */}
-      <section ref={heroRef} className="relative w-full h-screen flex items-center justify-center overflow-hidden">
+      <section ref={heroRef} className="relative w-full h-screen flex items-center justify-center overflow-hidden" style={{ position: 'relative' }}>
         {/* Dark radial bg */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1a1508_0%,_#0a0a0a_70%)]" />
 
@@ -668,7 +668,7 @@ export function GoldenNightTemplate({
               <VolumeX className="w-5 h-5 text-amber-400" />
             )}
           </button>
-          <audio ref={audioRef} src={data.musicUrl || ''} loop />
+          <audio ref={audioRef} src={data.musicUrl || undefined} loop />
         </div>
       )}
     </div>

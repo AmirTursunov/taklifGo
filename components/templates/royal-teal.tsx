@@ -248,7 +248,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
       {/* Audio Player */}
       {data.musicUrl && (
         <>
-          <audio ref={audioRef} src={data.musicUrl} loop />
+          <audio ref={audioRef} src={data.musicUrl || undefined} loop />
           <motion.button
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}

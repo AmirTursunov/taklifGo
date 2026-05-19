@@ -9,6 +9,7 @@ import { GoldenWeddingTemplate } from "@/components/templates/golden-wedding";
 import { ElegantBirthdayTemplate } from "@/components/templates/elegant-birthday";
 import { GirlBirthdayTemplate } from "@/components/templates/girl-birthday";
 import { RoyalTealTemplate } from "@/components/templates/royal-teal";
+import { CorporateEventTemplate } from "@/components/templates/corporate-event";
 import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
@@ -116,6 +117,7 @@ function CreateInvitationContent() {
       message: "",
       category: cat,
       templateId: tmpl,
+      registrationUrl: "",
     };
   });
 
@@ -583,6 +585,31 @@ function CreateInvitationContent() {
               </div>
             </div>
           </section>
+
+          {data.templateId === "corporate-event" && (
+            <section className="space-y-4">
+              <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
+                {lang === "uz" ? "Tadbir Havolalari" : lang === "ru" ? "Ссылки мероприятия" : "Event Links"}
+              </h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>
+                    {lang === "uz" 
+                      ? "Ro'yxatdan o'tish havolasi / Telegram" 
+                      : lang === "ru" 
+                        ? "Ссылка на регистрацию / Telegram" 
+                        : "Registration link / Telegram"}
+                  </Label>
+                  <Input
+                    value={(data as any).registrationUrl || ""}
+                    placeholder={lang === "uz" ? "Masalan: @username yoki https://..." : "Например: @username или https://..."}
+                    onChange={(e) => setData({ ...data, registrationUrl: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+              </div>
+            </section>
+          )}
 
           <section className="space-y-4">
             <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
@@ -1054,6 +1081,13 @@ function CreateInvitationContent() {
                 ) : data.templateId === "royal-teal" ? (
                   <RoyalTealTemplate
                     data={data}
+                  />
+                ) : data.templateId === "corporate-event" ? (
+                  <CorporateEventTemplate
+                    data={data}
+                    onDataChange={(newData) => {
+                      setData((prev) => ({ ...prev, ...newData }));
+                    }}
                   />
                 ) : (
                   <EternalBondTemplate

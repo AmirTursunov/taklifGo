@@ -370,7 +370,7 @@ export function EternalBondTemplate({ data, onDataChange }: { data: InvitationDa
               <VolumeX className="w-6 h-6" />
             )}
           </button>
-          <audio ref={audioRef} src={data.musicUrl || defaultMusic} loop />
+          <audio ref={audioRef} src={data.musicUrl || defaultMusic || undefined} loop />
         </div>
       )}
     </div>
