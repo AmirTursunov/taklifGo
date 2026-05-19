@@ -2,12 +2,20 @@
 
 import { useState, useEffect } from 'react'
 import { auth } from '@/lib/firebase'
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  updateProfile,
+  signInWithPopup,
+  signInWithRedirect,
+  GoogleAuthProvider,
+  sendPasswordResetEmail
+} from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
-import { Mail, Lock, Loader2, ArrowRight, User } from 'lucide-react'
+import { Mail, Lock, Loader2, ArrowRight, User, Chrome } from 'lucide-react'
 import { useLanguage } from '@/lib/LanguageContext'
 import { useAuth } from '@/lib/AuthContext'
 import { toast } from 'react-toastify'
@@ -23,9 +31,11 @@ export default function LoginPage() {
   const { lang } = useLanguage()
   const { user, loading: authLoading } = useAuth()
 
-  // ── 1. Load Google Identity Services SDK Dynamically
+  const hasGoogleClientId = !!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+  // ── 1. Load Google Identity Services SDK Dynamically if Client ID is configured
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || !hasGoogleClientId) return
     const script = document.createElement('script')
     script.src = 'https://accounts.google.com/gsi/client'
     script.async = true
@@ -34,8 +44,7 @@ export default function LoginPage() {
     
     script.onload = () => {
       if ((window as any).google) {
-        // Universal client ID associated with the Firebase Project
-        const client_id = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '897270560095-2s1jtrg1plhgfepn0f5gcrcl173p7cld.apps.googleusercontent.com'
+        const client_id = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
         ;(window as any).google.accounts.id.initialize({
           client_id: client_id,
           callback: handleGoogleCredentialResponse,
@@ -57,9 +66,9 @@ export default function LoginPage() {
       document.body.removeChild(script)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSignUp, lang])
+  }, [isSignUp, lang, hasGoogleClientId])
 
-  // ── 2. Handle Google Login JWT ID Token Response (Instant same-origin credential login)
+  // ── 2. Handle Google Login JWT ID Token Response (Instant GSI login)
   const handleGoogleCredentialResponse = async (response: any) => {
     setLoading(true)
     setError('')
@@ -79,7 +88,63 @@ export default function LoginPage() {
     }
   }
 
-  // ── 3. If already logged in, redirect to home
+  // ── 3. Standard Firebase Google Login Flow (Used if client_id is not set in env)
+  const handleStandardGoogleSignIn = async () => {
+    setLoading(true)
+    setError('')
+    const provider = new GoogleAuthProvider()
+    provider.addScope('email')
+    provider.addScope('profile')
+    provider.setCustomParameters({ prompt: 'select_account' })
+
+    const isMobileSafari = /iP(hone|od|ad)/i.test(navigator.userAgent)
+    const isTelegramWebView = /Telegram/i.test(navigator.userAgent)
+    const useRedirect = isMobileSafari || isTelegramWebView
+
+    try {
+      if (useRedirect) {
+        await signInWithRedirect(auth, provider)
+      } else {
+        await signInWithPopup(auth, provider)
+        toast.success(lang === 'uz' ? "Xush kelibsiz!" : lang === 'ru' ? "Добро пожаловать!" : "Welcome!")
+        router.push('/')
+      }
+    } catch (err: any) {
+      console.error("Standard Google Sign-in error:", err)
+      const msg = getErrorMessage(err.code || err.message)
+      setError(msg)
+      toast.error(msg)
+      setLoading(false)
+    }
+  }
+
+  // ── 4. If redirected back after Google Login redirect (iOS Safari / Telegram)
+  useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        const { getRedirectResult } = await import('firebase/auth')
+        const result = await getRedirectResult(auth)
+        if (result?.user) {
+          toast.success(
+            lang === 'uz' ? "Xush kelibsiz!" :
+            lang === 'ru' ? "Добро пожаловать!" : "Welcome!"
+          )
+          router.push('/')
+        }
+      } catch (err: any) {
+        console.error("getRedirectResult error:", err)
+        if (err.code && err.code !== 'auth/null-user') {
+          const msg = getErrorMessage(err.code)
+          setError(msg)
+          toast.error(msg)
+        }
+      }
+    }
+    checkRedirectResult()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ── 5. If already logged in, redirect to home
   useEffect(() => {
     if (!authLoading && user) {
       router.push('/')
@@ -170,10 +235,17 @@ export default function LoginPage() {
       const json = await res.json()
 
       if (!res.ok) {
-        const errorMsg = json.error === 'user-not-found'
-          ? (lang === 'uz' ? 'Bu email bilan foydalanuvchi topilmadi' : lang === 'ru' ? 'Пользователь с таким email не найден' : 'No user found with this email')
-          : (lang === 'uz' ? 'Parolni tiklash xizmati sozlanmagan. Iltimos, administratorga murojaat qiling.' : lang === 'ru' ? 'Служба сброса пароля не настроена. Пожалуйста, обратитесь к администратору.' : 'Password reset service is not configured. Please contact the administrator.')
-        throw new Error(errorMsg)
+        // Safe Fallback: If Firebase Admin/Resend is not configured, send client-side localized reset email
+        if (json.error === 'admin-not-configured' || res.status === 500) {
+          console.warn("Custom email backend not fully configured. Safely falling back to client-side Firebase reset.")
+          auth.languageCode = lang || 'uz'
+          await sendPasswordResetEmail(auth, email)
+        } else {
+          const errorMsg = json.error === 'user-not-found'
+            ? (lang === 'uz' ? 'Bu email bilan foydalanuvchi topilmadi' : lang === 'ru' ? 'Пользователь с таким email не найден' : 'No user found with this email')
+            : (lang === 'uz' ? 'Xatolik yuz berdi. Keyinroq urinib ko\'ring.' : lang === 'ru' ? 'Произошла ошибка. Попробуйте позже.' : 'An error occurred. Please try again.')
+          throw new Error(errorMsg)
+        }
       }
 
       setError('')
@@ -228,9 +300,20 @@ export default function LoginPage() {
         )}
 
         <div className="space-y-4 relative z-10">
-          {/* Native bug-free Google Sign-In button container */}
+          {/* Dual-Mode Google button */}
           <div className="flex justify-center w-full min-h-[50px]">
-            <div id="googleSignInBtn" className="w-full flex justify-center" />
+            {hasGoogleClientId ? (
+              <div id="googleSignInBtn" className="w-full flex justify-center" />
+            ) : (
+              <Button
+                onClick={handleStandardGoogleSignIn}
+                variant="outline"
+                className="w-full rounded-2xl py-6 border-[#98a08d]/20 text-[#5c6352] hover:bg-[#98a08d] hover:text-white transition-all flex items-center justify-center gap-3 font-bold"
+              >
+                <Chrome className="w-5 h-5 text-red-500 animate-pulse" />
+                {lang === 'uz' ? 'Google orqali davom etish' : 'Продолжить через Google'}
+              </Button>
+            )}
           </div>
 
           <div className="relative">
