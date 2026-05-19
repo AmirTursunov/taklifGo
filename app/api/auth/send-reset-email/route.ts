@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { adminDb } from '@/lib/firebase-admin'
+import * as admin from 'firebase-admin'
+import crypto from 'crypto'
 
 const templates = {
   uz: {
     subject: "TaklifGo – Parolni tiklash",
     greeting: (name: string) => `Salom${name ? ', ' + name : ''}!`,
-    body: "Parolni tiklash so'rovi qabul qilindi. Parolingizni tiklash uchun quyidagi tugmani bosing:",
+    body: "Parolingizni tiklash uchun quyidagi tugmani bosing va yangi parol kiriting:",
     button: "Parolni tiklash",
     warning: "Agar siz bu so'rovni yubormagan bo'lsangiz, ushbu xabarni e'tiborsiz qoldiring. Havolaning amal qilish muddati 1 soat.",
     footer: "© 2025 TaklifGo · Onlayn taklifnomalar platformasi",
@@ -13,7 +16,7 @@ const templates = {
   ru: {
     subject: "TaklifGo – Сброс пароля",
     greeting: (name: string) => `Здравствуйте${name ? ', ' + name : ''}!`,
-    body: "Мы получили запрос на сброс вашего пароля. Нажмите кнопку ниже, чтобы создать новый пароль:",
+    body: "Нажмите кнопку ниже, чтобы сбросить свой старый пароль и создать новый:",
     button: "Сбросить пароль",
     warning: "Если вы не отправляли этот запрос — просто проигнорируйте это письмо. Ссылка действительна в течение 1 часа.",
     footer: "© 2025 TaklifGo · Платформа онлайн-приглашений",
@@ -22,7 +25,7 @@ const templates = {
   en: {
     subject: "TaklifGo – Password Reset",
     greeting: (name: string) => `Hello${name ? ', ' + name : ''}!`,
-    body: "We received a request to reset your password. Click the button below to create a new password:",
+    body: "Click the button below to reset your password and create a new one:",
     button: "Reset Password",
     warning: "If you didn't request this, you can safely ignore this email. This link expires in 1 hour.",
     footer: "© 2025 TaklifGo · Online Invitation Platform",
@@ -93,76 +96,63 @@ export async function POST(req: NextRequest) {
 
     const validLang = (['uz', 'ru', 'en'].includes(lang) ? lang : 'uz') as 'uz' | 'ru' | 'en'
 
-    const hasAdminKeys = !!(
-      process.env.FIREBASE_PRIVATE_KEY &&
-      process.env.FIREBASE_CLIENT_EMAIL &&
-      process.env.RESEND_API_KEY &&
-      process.env.RESEND_API_KEY !== 're_your_resend_api_key_here'
-    )
-
-    if (!hasAdminKeys) {
-      // Fallback: use Firebase client-side reset (handled on client)
-      return NextResponse.json({ fallback: true }, { status: 200 })
+    // 1. Check if Firebase Admin and Resend are configured
+    if (!admin.apps.length || !process.env.RESEND_API_KEY) {
+      return NextResponse.json({ error: 'admin-not-configured' }, { status: 500 })
     }
 
-    // ── Full path: Firebase Admin + Resend ──────────────────────────────────
-    const admin = await import('firebase-admin')
-    await import('@/lib/firebase-admin')
-
-    let resetLink: string
+    // 2. Verify user exists in Firebase Auth
     let userName = ''
-
     try {
-      const adminAuth = admin.auth()
-      try {
-        const userRecord = await adminAuth.getUserByEmail(email)
-        userName = userRecord.displayName || ''
-      } catch { /* user exists check */ }
-
-      resetLink = await adminAuth.generatePasswordResetLink(email, {
-        url: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://taklif-go.vercel.app'}/login`,
-        handleCodeInApp: false,
-      })
-    } catch (adminErr: any) {
-      if (adminErr.code === 'auth/user-not-found') {
+      const userRecord = await admin.auth().getUserByEmail(email)
+      userName = userRecord.displayName || ''
+    } catch (authErr: any) {
+      if (authErr.code === 'auth/user-not-found') {
         return NextResponse.json({ error: 'user-not-found' }, { status: 400 })
       }
-      return NextResponse.json({ error: adminErr.message }, { status: 500 })
+      return NextResponse.json({ error: authErr.message }, { status: 500 })
     }
 
-    try {
-      const { Resend } = await import('resend')
-      const resend = new Resend(process.env.RESEND_API_KEY)
-      const t = templates[validLang]
-      const html = buildEmailHtml(validLang, userName, resetLink)
+    // 3. Generate a secure random token
+    const token = crypto.randomUUID()
+    const expiresAt = Date.now() + 3600000 // 1 hour expiration
 
-      // Use a custom sender email if set in environment, otherwise use onboarding@resend.dev
-      const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+    // 4. Save the token to Firestore
+    await adminDb.collection('password_resets').doc(token).set({
+      email,
+      token,
+      expiresAt,
+      lang: validLang,
+      createdAt: Date.now()
+    })
 
-      const { error } = await resend.emails.send({
-        from: `TaklifGo <${fromEmail}>`,
-        to: [email],
-        subject: t.subject,
-        html,
-      })
+    // 5. Build localized reset link
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://taklif-go.vercel.app'
+    const resetLink = `${baseUrl}/reset-password?token=${token}`
 
-      if (error) {
-        console.warn('Resend failed, falling back to Firebase email:', error)
-        return NextResponse.json({ fallback: true }, { status: 200 })
-      }
+    // 6. Send the premium HTML email via Resend
+    const { Resend } = await import('resend')
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    const t = templates[validLang]
+    const html = buildEmailHtml(validLang, userName, resetLink)
 
-      return NextResponse.json({ success: true })
-    } catch (resendErr: any) {
-      console.warn('Resend exception, falling back to Firebase email:', resendErr)
-      return NextResponse.json({ fallback: true }, { status: 200 })
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+
+    const { error } = await resend.emails.send({
+      from: `TaklifGo <${fromEmail}>`,
+      to: [email],
+      subject: t.subject,
+      html,
+    })
+
+    if (error) {
+      console.error('Resend custom mail send error:', error)
+      return NextResponse.json({ error: (error as any).message }, { status: 500 })
     }
+
+    return NextResponse.json({ success: true })
   } catch (err: any) {
-    console.error('send-reset-email error:', err)
-    // If the error is user-not-found, we must preserve the 400 response
-    if (err.message === 'user-not-found') {
-      return NextResponse.json({ error: 'user-not-found' }, { status: 400 })
-    }
-    // For general API errors, fallback to firebase client email
-    return NextResponse.json({ fallback: true }, { status: 200 })
+    console.error('send-reset-email API error:', err)
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { auth } from '@/lib/firebase'
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, sendPasswordResetEmail } from 'firebase/auth'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
-import { Chrome, Mail, Lock, Loader2, ArrowRight, User } from 'lucide-react'
+import { Mail, Lock, Loader2, ArrowRight, User } from 'lucide-react'
 import { useLanguage } from '@/lib/LanguageContext'
 import { useAuth } from '@/lib/AuthContext'
 import { toast } from 'react-toastify'
@@ -24,43 +23,68 @@ export default function LoginPage() {
   const { lang } = useLanguage()
   const { user, loading: authLoading } = useAuth()
 
-  const [checkingRedirect, setCheckingRedirect] = useState(true)
-
-  // ── 1. Immediately check for Google redirect result on page load (iOS fix)
+  // ── 1. Load Google Identity Services SDK Dynamically
   useEffect(() => {
-    const handleRedirectResult = async () => {
-      try {
-        const { getRedirectResult } = await import('firebase/auth')
-        const result = await getRedirectResult(auth)
-        if (result?.user) {
-          toast.success(
-            lang === 'uz' ? "Xush kelibsiz!" :
-            lang === 'ru' ? "Добро пожаловать!" : "Welcome!"
-          )
-          router.push('/')
-          return
-        }
-      } catch (err: any) {
-        console.error("getRedirectResult error:", err)
-        if (err.code && err.code !== 'auth/null-user') {
-          const msg = getErrorMessage(err.code)
-          setError(msg)
-          toast.error(msg)
-        }
-      } finally {
-        setCheckingRedirect(false)
+    if (typeof window === 'undefined') return
+    const script = document.createElement('script')
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    document.body.appendChild(script)
+    
+    script.onload = () => {
+      if ((window as any).google) {
+        // Universal client ID associated with the Firebase Project
+        const client_id = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '897270560095-2s1jtrg1plhgfepn0f5gcrcl173p7cld.apps.googleusercontent.com'
+        ;(window as any).google.accounts.id.initialize({
+          client_id: client_id,
+          callback: handleGoogleCredentialResponse,
+        })
+        ;(window as any).google.accounts.id.renderButton(
+          document.getElementById('googleSignInBtn'),
+          { 
+            theme: 'outline', 
+            size: 'large', 
+            width: 382, 
+            shape: 'pill',
+            text: 'continue_with'
+          }
+        )
       }
     }
-    handleRedirectResult()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
-  // ── 2. If already logged in, redirect to home
+    return () => {
+      document.body.removeChild(script)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignUp, lang])
+
+  // ── 2. Handle Google Login JWT ID Token Response (Instant same-origin credential login)
+  const handleGoogleCredentialResponse = async (response: any) => {
+    setLoading(true)
+    setError('')
+    try {
+      const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth')
+      const credential = GoogleAuthProvider.credential(response.credential)
+      await signInWithCredential(auth, credential)
+      toast.success(lang === 'uz' ? "Xush kelibsiz!" : lang === 'ru' ? "Добро пожаловать!" : "Welcome!")
+      router.push('/')
+    } catch (err: any) {
+      console.error("Google native login error:", err)
+      const msg = getErrorMessage(err.code || err.message)
+      setError(msg)
+      toast.error(msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ── 3. If already logged in, redirect to home
   useEffect(() => {
-    if (!authLoading && !checkingRedirect && user) {
+    if (!authLoading && user) {
       router.push('/')
     }
-  }, [user, authLoading, checkingRedirect, router])
+  }, [user, authLoading, router])
 
   const getErrorMessage = (code: string) => {
     const errors: Record<string, Record<string, string>> = {
@@ -76,7 +100,7 @@ export default function LoginPage() {
       },
       'auth/wrong-password': {
         uz: 'Parol noto\'g\'ri',
-        ru: 'Неверный parol',
+        ru: 'Неверный пароль',
         en: 'Wrong password'
       },
       'auth/email-already-in-use': {
@@ -125,34 +149,6 @@ export default function LoginPage() {
     }
   }
 
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider()
-    provider.addScope('email')
-    provider.addScope('profile')
-    provider.setCustomParameters({ prompt: 'select_account' })
-
-    // iOS Safari and Telegram WebView don't support popups — use redirect
-    const isMobileSafari = /iP(hone|od|ad)/i.test(navigator.userAgent)
-    const isTelegramWebView = /Telegram/i.test(navigator.userAgent)
-    const useRedirect = isMobileSafari || isTelegramWebView
-
-    try {
-      if (useRedirect) {
-        const { signInWithRedirect } = await import('firebase/auth')
-        await signInWithRedirect(auth, provider)
-        // Result handled in useEffect via getRedirectResult
-      } else {
-        await signInWithPopup(auth, provider)
-        toast.success(lang === 'uz' ? "Xush kelibsiz!" : lang === 'ru' ? "Добро пожаловать!" : "Welcome!")
-        router.push('/')
-      }
-    } catch (err: any) {
-      const msg = getErrorMessage(err.code)
-      setError(msg)
-      toast.error(msg)
-    }
-  }
-
   const handleForgotPassword = async () => {
     if (!email) {
       const msg = lang === 'uz'
@@ -176,23 +172,17 @@ export default function LoginPage() {
       if (!res.ok) {
         const errorMsg = json.error === 'user-not-found'
           ? (lang === 'uz' ? 'Bu email bilan foydalanuvchi topilmadi' : lang === 'ru' ? 'Пользователь с таким email не найден' : 'No user found with this email')
-          : (lang === 'uz' ? 'Xatolik yuz berdi. Keyinroq urinib ko\'ring.' : lang === 'ru' ? 'Произошла ошибка. Попробуйте позже.' : 'An error occurred. Please try again.')
+          : (lang === 'uz' ? 'Parolni tiklash xizmati sozlanmagan. Iltimos, administratorga murojaat qiling.' : lang === 'ru' ? 'Служба сброса пароля не настроена. Пожалуйста, обратитесь к администратору.' : 'Password reset service is not configured. Please contact the administrator.')
         throw new Error(errorMsg)
-      }
-
-      // Fallback: API keys not configured — use Firebase default
-      if (json.fallback) {
-        auth.languageCode = lang || 'uz'
-        await sendPasswordResetEmail(auth, email)
       }
 
       setError('')
       const successMsg = lang === 'uz'
-        ? `✅ Parolni tiklash xati ${email} manziliga yuborildi!`
+        ? `✅ Parolni tiklash xati ${email} manziliga yuborildi! Iltimos, kiruvchi va spam papkalarni tekshiring.`
         : lang === 'ru'
-          ? `✅ Письмо для сброса пароля отправлено на ${email}!`
-          : `✅ Password reset email sent to ${email}!`
-      toast.success(successMsg, { autoClose: 6000 })
+          ? `✅ Письмо для сброса пароля отправлено на ${email}! Пожалуйста, проверьте папки Входящие и Спам.`
+          : `✅ Password reset email sent to ${email}! Please check your inbox and spam folder.`
+      toast.success(successMsg, { autoClose: 8000 })
     } catch (err: any) {
       const msg = err.code ? getErrorMessage(err.code) : err.message
       setError(msg)
@@ -202,13 +192,13 @@ export default function LoginPage() {
     }
   }
 
-  // Show loading while processing redirect (prevents form flash on iOS)
-  if (checkingRedirect || (authLoading && !checkingRedirect)) {
+  // Show loading screen while checking initial Auth status
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-[#faf9f6] flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-10 h-10 text-[#98a08d] animate-spin" />
         <p className="text-[#98a08d] text-sm font-medium">
-          {lang === 'uz' ? 'Kirish tekshirilmoqda...' : lang === 'ru' ? 'Проверка входа...' : 'Checking sign-in...'}
+          {lang === 'uz' ? 'Yuklanmoqda...' : lang === 'ru' ? 'Загрузка...' : 'Loading...'}
         </p>
       </div>
     )
@@ -227,7 +217,7 @@ export default function LoginPage() {
             {isSignUp ? (lang === 'uz' ? 'Ro\'yxatdan o\'tish' : 'Регистрация') : (lang === 'uz' ? 'Xush kelibsiz' : 'С возвращением')}
           </h1>
           <p className="text-[#98a08d] text-sm">
-            {isSignUp ? (lang === 'uz' ? 'O\'z hisobingizni yarating' : 'Создайте свой аккаунт') : (lang === 'uz' ? '3D taklifnomalar olamiga xush kelibsiz' : 'Добро пожаловать v mir 3D приглашений')}
+            {isSignUp ? (lang === 'uz' ? 'O\'z hisobingizni yarating' : 'Создайте свой аккаунт') : (lang === 'uz' ? '3D taklifnomalar olamiga xush kelibsiz' : 'Добро пожаловать в мир 3D приглашений')}
           </p>
         </div>
 
@@ -238,14 +228,10 @@ export default function LoginPage() {
         )}
 
         <div className="space-y-4 relative z-10">
-          <Button
-            onClick={handleGoogleSignIn}
-            variant="outline"
-            className="w-full rounded-2xl py-6 border-[#98a08d]/20 text-[#5c6352] hover:bg-[#98a08d] hover:text-white transition-all flex items-center justify-center gap-3 font-bold"
-          >
-            <Chrome className="w-5 h-5 text-red-500" />
-            {lang === 'uz' ? 'Google orqali davom etish' : 'Продолжить через Google'}
-          </Button>
+          {/* Native bug-free Google Sign-In button container */}
+          <div className="flex justify-center w-full min-h-[50px]">
+            <div id="googleSignInBtn" className="w-full flex justify-center" />
+          </div>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -266,7 +252,7 @@ export default function LoginPage() {
                     placeholder="John Doe"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-12 pr-4 rounded-2xl border border-[#98a08d]/20 py-4 outline-none focus:border-[#98a08d] transition-all"
+                    className="w-full pl-12 pr-4 rounded-2xl border border-[#98a08d]/20 py-4 outline-none focus:border-[#98a08d] transition-all bg-white text-sm"
                     required
                   />
                 </div>
@@ -282,7 +268,7 @@ export default function LoginPage() {
                   placeholder="example@mail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 rounded-2xl border border-[#98a08d]/20 py-4 outline-none focus:border-[#98a08d] transition-all"
+                  className="w-full pl-12 pr-4 rounded-2xl border border-[#98a08d]/20 py-4 outline-none focus:border-[#98a08d] transition-all bg-white text-sm"
                   required
                 />
               </div>
@@ -306,7 +292,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-4 rounded-2xl border border-[#98a08d]/20 py-4 outline-none focus:border-[#98a08d] transition-all"
+                  className="w-full pl-12 pr-4 rounded-2xl border border-[#98a08d]/20 py-4 outline-none focus:border-[#98a08d] transition-all bg-white text-sm"
                   required={!loading}
                 />
               </div>
