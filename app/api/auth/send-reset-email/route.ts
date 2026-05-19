@@ -130,25 +130,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: adminErr.message }, { status: 500 })
     }
 
-    const { Resend } = await import('resend')
-    const resend = new Resend(process.env.RESEND_API_KEY)
-    const t = templates[validLang]
-    const html = buildEmailHtml(validLang, userName, resetLink)
+    try {
+      const { Resend } = await import('resend')
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      const t = templates[validLang]
+      const html = buildEmailHtml(validLang, userName, resetLink)
 
-    const { error } = await resend.emails.send({
-      from: 'TaklifGo <noreply@taklif-go.com>',
-      to: [email],
-      subject: t.subject,
-      html,
-    })
+      // Use a custom sender email if set in environment, otherwise use onboarding@resend.dev
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
 
-    if (error) {
-      return NextResponse.json({ error: (error as any).message }, { status: 500 })
+      const { error } = await resend.emails.send({
+        from: `TaklifGo <${fromEmail}>`,
+        to: [email],
+        subject: t.subject,
+        html,
+      })
+
+      if (error) {
+        console.warn('Resend failed, falling back to Firebase email:', error)
+        return NextResponse.json({ fallback: true }, { status: 200 })
+      }
+
+      return NextResponse.json({ success: true })
+    } catch (resendErr: any) {
+      console.warn('Resend exception, falling back to Firebase email:', resendErr)
+      return NextResponse.json({ fallback: true }, { status: 200 })
     }
-
-    return NextResponse.json({ success: true })
   } catch (err: any) {
     console.error('send-reset-email error:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    // If the error is user-not-found, we must preserve the 400 response
+    if (err.message === 'user-not-found') {
+      return NextResponse.json({ error: 'user-not-found' }, { status: 400 })
+    }
+    // For general API errors, fallback to firebase client email
+    return NextResponse.json({ fallback: true }, { status: 200 })
   }
 }

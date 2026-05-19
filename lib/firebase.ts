@@ -4,9 +4,16 @@ import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
+const getAuthDomain = () => {
+  if (typeof window !== "undefined") {
+    return window.location.host;
+  }
+  return "invitation-28b16.firebaseapp.com";
+};
+
 const firebaseConfig = {
   apiKey: "AIzaSyAi7LtxLWbaVaEMGyu9JpY8T_4045GjzLQ",
-  authDomain: "invitation-28b16.firebaseapp.com",
+  authDomain: getAuthDomain(),
   projectId: "invitation-28b16",
   storageBucket: "invitation-28b16.firebasestorage.app",
   messagingSenderId: "897270560095",
