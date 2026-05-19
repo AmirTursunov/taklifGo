@@ -100,10 +100,15 @@ function CreateInvitationContent() {
     if (cat === "business") greeting = "Biznes Tadbirga Taklifnoma";
 
     return {
-      names: cat === "birthday" ? "Amir" : "Sarah & James",
-      date: "June 15, 2028",
-      location: "Paris, France",
-      venue: "Rose Mansion",
+      names: cat === "business" ? "Biznes Tadbiri" : cat === "birthday" ? "Amir" : "Sarah & James",
+      companyName: cat === "business" ? "TechCorp Uzbekistan" : "",
+      eventTitle: cat === "business" ? "Innovation Summit '25" : "",
+      eventType: cat === "business" ? "Konferensiya" : "",
+      date: cat === "business" ? "15 Iyun, 2025" : "June 15, 2028",
+      time: cat === "business" ? "09:00" : "19:00",
+      location: cat === "business" ? "Toshkent, O'zbekiston" : "Paris, France",
+      venue: cat === "business" ? "Hyatt Regency Tashkent" : "Rose Mansion",
+      description: cat === "business" ? "Biznes sohasidagi eng so'nggi yangiliklar va innovatsiyalar taqdimoti." : "",
       musicUrl: "",
       musicPublicId: "",
       images: [
@@ -517,41 +522,104 @@ function CreateInvitationContent() {
               {t.basicInfo}
             </h3>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>{data.category === 'birthday' ? (lang === 'uz' ? 'Ism' : 'Имя') : t.coupleNames}</Label>
-                <Input
-                  value={data.names}
-                  onChange={(e) => setData({ ...data, names: e.target.value })}
-                  className="rounded-xl border-[#98a08d]/20"
-                />
-              </div>
-              {data.category === 'birthday' && (
-                <div className="space-y-2">
-                  <Label>{lang === 'uz' ? 'Yosh' : 'Возраст'}</Label>
-                  <Input
-                    value={data.age}
-                    onChange={(e) => setData({ ...data, age: e.target.value })}
-                    className="rounded-xl border-[#98a08d]/20"
-                  />
-                </div>
-              )}
-              <div className="space-y-2">
-                <Label>{data.category === 'birthday' ? (lang === 'uz' ? 'Tug\'ilgan kun sanasi' : 'Дата рождения') : t.weddingDate}</Label>
-                <Input
-                  value={data.date}
-                  onChange={(e) => setData({ ...data, date: e.target.value })}
-                  className="rounded-xl border-[#98a08d]/20"
-                />
-              </div>
-              {data.category === 'birthday' && (
-                <div className="space-y-2">
-                  <Label>{lang === 'uz' ? 'Tadbir vaqti' : 'Время мероприятия'}</Label>
-                  <Input
-                    value={data.time}
-                    onChange={(e) => setData({ ...data, time: e.target.value })}
-                    className="rounded-xl border-[#98a08d]/20"
-                  />
-                </div>
+              {data.category === 'business' ? (
+                <>
+                  <div className="space-y-2">
+                    <Label>{lang === 'uz' ? 'Kompaniya nomi' : lang === 'ru' ? 'Название компании' : 'Company Name'}</Label>
+                    <Input
+                      value={(data as any).companyName || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setData({ ...data, companyName: val, names: val || "Biznes Tadbiri" });
+                      }}
+                      className="rounded-xl border-[#98a08d]/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{lang === 'uz' ? 'Tadbir nomi' : lang === 'ru' ? 'Название мероприятия' : 'Event Title'}</Label>
+                    <Input
+                      value={(data as any).eventTitle || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setData({ ...data, eventTitle: val, names: val || data.companyName || "Biznes Tadbiri" });
+                      }}
+                      className="rounded-xl border-[#98a08d]/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{lang === 'uz' ? 'Tadbir turi' : lang === 'ru' ? 'Тип мероприятия' : 'Event Type'}</Label>
+                    <Input
+                      value={(data as any).eventType || ""}
+                      placeholder="Masalan: Konferensiya, Seminar, Forum"
+                      onChange={(e) => setData({ ...data, eventType: e.target.value })}
+                      className="rounded-xl border-[#98a08d]/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{lang === 'uz' ? 'Tadbir sanasi' : lang === 'ru' ? 'Дата мероприятия' : 'Event Date'}</Label>
+                    <Input
+                      value={data.date}
+                      onChange={(e) => setData({ ...data, date: e.target.value })}
+                      className="rounded-xl border-[#98a08d]/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{lang === 'uz' ? 'Tadbir vaqti' : lang === 'ru' ? 'Время мероприятия' : 'Event Time'}</Label>
+                    <Input
+                      value={data.time}
+                      onChange={(e) => setData({ ...data, time: e.target.value })}
+                      className="rounded-xl border-[#98a08d]/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{lang === 'uz' ? 'Tadbir tavsifi' : lang === 'ru' ? 'Описание мероприятия' : 'Event Description'}</Label>
+                    <textarea
+                      value={(data as any).description || ""}
+                      onChange={(e) => setData({ ...data, description: e.target.value })}
+                      rows={3}
+                      className="w-full p-3 rounded-xl border border-[#98a08d]/20 text-sm focus:outline-none focus:ring-1 focus:ring-[#98a08d] bg-transparent text-[#5c6352] placeholder-[#98a08d]/60"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label>{data.category === 'birthday' ? (lang === 'uz' ? 'Ism' : 'Имя') : t.coupleNames}</Label>
+                    <Input
+                      value={data.names}
+                      onChange={(e) => setData({ ...data, names: e.target.value })}
+                      className="rounded-xl border-[#98a08d]/20"
+                    />
+                  </div>
+                  {data.category === 'birthday' && (
+                    <div className="space-y-2">
+                      <Label>{lang === 'uz' ? 'Yosh' : 'Возраст'}</Label>
+                      <Input
+                        value={data.age}
+                        onChange={(e) => setData({ ...data, age: e.target.value })}
+                        className="rounded-xl border-[#98a08d]/20"
+                      />
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <Label>{data.category === 'birthday' ? (lang === 'uz' ? 'Tug\'ilgan kun sanasi' : 'Дата рождения') : t.weddingDate}</Label>
+                    <Input
+                      value={data.date}
+                      onChange={(e) => setData({ ...data, date: e.target.value })}
+                      className="rounded-xl border-[#98a08d]/20"
+                    />
+                  </div>
+                  {data.category === 'birthday' && (
+                    <div className="space-y-2">
+                      <Label>{lang === 'uz' ? 'Tadbir vaqti' : lang === 'ru' ? 'Время мероприятия' : 'Event Time'}</Label>
+                      <Input
+                        value={data.time}
+                        onChange={(e) => setData({ ...data, time: e.target.value })}
+                        className="rounded-xl border-[#98a08d]/20"
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </section>
