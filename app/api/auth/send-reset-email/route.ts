@@ -192,7 +192,8 @@ export async function POST(req: NextRequest) {
     })
 
     // 4. Havola va HTML yaratish
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    const rawBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || req.headers.get('origin') || 'http://localhost:3000'
+    const baseUrl = rawBaseUrl.trim().replace(/[\r\n\t]/g, '').replace(/\/$/, '')
     const resetLink = `${baseUrl}/reset-password?token=${resetToken}`
     const html = buildEmailHtml(validLang, userName, resetLink)
     const subject = templates[validLang].subject
