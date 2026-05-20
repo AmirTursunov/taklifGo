@@ -30,9 +30,9 @@ export const metadata: Metadata = {
 }
 
 import Script from 'next/script'
-
 import { LanguageProvider } from '@/lib/LanguageContext'
 import { AuthProvider } from '@/lib/AuthContext'
+import { NextAuthProvider } from '@/components/NextAuthProvider'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -46,24 +46,26 @@ export default function RootLayout({
       <head />
       <body className="font-sans antialiased">
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="afterInteractive" />
-        <AuthProvider>
-          <LanguageProvider>
-            {children}
-            <ToastContainer 
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-            {process.env.NODE_ENV === 'production' && <Analytics />}
-          </LanguageProvider>
-        </AuthProvider>
+        <NextAuthProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              {children}
+              <ToastContainer 
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+              />
+              {process.env.NODE_ENV === 'production' && <Analytics />}
+            </LanguageProvider>
+          </AuthProvider>
+        </NextAuthProvider>
       </body>
     </html>
   )

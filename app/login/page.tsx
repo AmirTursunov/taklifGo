@@ -1,16 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { auth } from '@/lib/firebase'
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  updateProfile,
-  signInWithPopup,
-  signInWithRedirect,
-  GoogleAuthProvider,
-  sendPasswordResetEmail
-} from 'firebase/auth'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -27,124 +18,12 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [error, setError] = useState('')
+  
   const router = useRouter()
   const { lang } = useLanguage()
   const { user, loading: authLoading } = useAuth()
 
-  const hasGoogleClientId = !!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-
-  // ── 1. Load Google Identity Services SDK Dynamically if Client ID is configured
-  useEffect(() => {
-    if (typeof window === 'undefined' || !hasGoogleClientId) return
-    const script = document.createElement('script')
-    script.src = 'https://accounts.google.com/gsi/client'
-    script.async = true
-    script.defer = true
-    document.body.appendChild(script)
-    
-    script.onload = () => {
-      if ((window as any).google) {
-        const client_id = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-        ;(window as any).google.accounts.id.initialize({
-          client_id: client_id,
-          callback: handleGoogleCredentialResponse,
-        })
-        ;(window as any).google.accounts.id.renderButton(
-          document.getElementById('googleSignInBtn'),
-          { 
-            theme: 'outline', 
-            size: 'large', 
-            width: 382, 
-            shape: 'pill',
-            text: 'continue_with'
-          }
-        )
-      }
-    }
-
-    return () => {
-      document.body.removeChild(script)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSignUp, lang, hasGoogleClientId])
-
-  // ── 2. Handle Google Login JWT ID Token Response (Instant GSI login)
-  const handleGoogleCredentialResponse = async (response: any) => {
-    setLoading(true)
-    setError('')
-    try {
-      const { GoogleAuthProvider, signInWithCredential } = await import('firebase/auth')
-      const credential = GoogleAuthProvider.credential(response.credential)
-      await signInWithCredential(auth, credential)
-      toast.success(lang === 'uz' ? "Xush kelibsiz!" : lang === 'ru' ? "Добро пожаловать!" : "Welcome!")
-      router.push('/')
-    } catch (err: any) {
-      console.error("Google native login error:", err)
-      const msg = getErrorMessage(err.code || err.message)
-      setError(msg)
-      toast.error(msg)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // ── 3. Standard Firebase Google Login Flow (Used if client_id is not set in env)
-  const handleStandardGoogleSignIn = async () => {
-    setLoading(true)
-    setError('')
-    const provider = new GoogleAuthProvider()
-    provider.addScope('email')
-    provider.addScope('profile')
-    provider.setCustomParameters({ prompt: 'select_account' })
-
-    const isMobileSafari = /iP(hone|od|ad)/i.test(navigator.userAgent)
-    const isTelegramWebView = /Telegram/i.test(navigator.userAgent)
-    const useRedirect = isMobileSafari || isTelegramWebView
-
-    try {
-      if (useRedirect) {
-        await signInWithRedirect(auth, provider)
-      } else {
-        await signInWithPopup(auth, provider)
-        toast.success(lang === 'uz' ? "Xush kelibsiz!" : lang === 'ru' ? "Добро пожаловать!" : "Welcome!")
-        router.push('/')
-      }
-    } catch (err: any) {
-      console.error("Standard Google Sign-in error:", err)
-      const msg = getErrorMessage(err.code || err.message)
-      setError(msg)
-      toast.error(msg)
-      setLoading(false)
-    }
-  }
-
-  // ── 4. If redirected back after Google Login redirect (iOS Safari / Telegram)
-  useEffect(() => {
-    const checkRedirectResult = async () => {
-      try {
-        const { getRedirectResult } = await import('firebase/auth')
-        const result = await getRedirectResult(auth)
-        if (result?.user) {
-          toast.success(
-            lang === 'uz' ? "Xush kelibsiz!" :
-            lang === 'ru' ? "Добро пожаловать!" : "Welcome!"
-          )
-          router.push('/')
-        }
-      } catch (err: any) {
-        console.error("getRedirectResult error:", err)
-        if (err.code && err.code !== 'auth/null-user') {
-          const msg = getErrorMessage(err.code)
-          setError(msg)
-          toast.error(msg)
-        }
-      }
-    }
-    checkRedirectResult()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // ── 5. If already logged in, redirect to home
+  // ── 1. If already logged in, redirect to home
   useEffect(() => {
     if (!authLoading && user) {
       router.push('/')
@@ -153,33 +32,38 @@ export default function LoginPage() {
 
   const getErrorMessage = (code: string) => {
     const errors: Record<string, Record<string, string>> = {
-      'auth/invalid-email': {
-        uz: 'Email manzili noto\'g\'ri kiritilgan',
-        ru: 'Неверный формат email',
-        en: 'Invalid email format'
+      'user-not-found': {
+        uz: 'Ushbu email manzili bilan foydalanuvchi topilmadi',
+        ru: 'Пользователь с таким email не найден',
+        en: 'No user found with this email'
       },
-      'auth/user-not-found': {
-        uz: 'Foydalanuvchi topilmadi',
-        ru: 'Пользователь не найден',
-        en: 'User not found'
-      },
-      'auth/wrong-password': {
-        uz: 'Parol noto\'g\'ri',
+      'invalid-password': {
+        uz: 'Parol noto\'g\'ri kiritildi',
         ru: 'Неверный пароль',
-        en: 'Wrong password'
+        en: 'Incorrect password'
       },
-      'auth/email-already-in-use': {
+      'social-account-exists': {
+        uz: 'Ushbu email Google orqali ro\'yxatdan o\'tgan. Iltimos, Google orqali kiring.',
+        ru: 'Этот email зарегистрирован через Google. Войдите через Google.',
+        en: 'This email is registered via Google. Please log in with Google.'
+      },
+      'email-already-in-use': {
         uz: 'Ushbu email allaqachon ro\'yxatdan o\'tgan',
         ru: 'Этот email уже зарегистрирован',
         en: 'Email already registered'
       },
-      'auth/weak-password': {
-        uz: 'Parol juda oddiy (kamida 6 ta belgi kerak)',
-        ru: 'Слишком слабый пароль (минимум 6 символов)',
-        en: 'Weak password (min 6 characters)'
+      'password-too-short': {
+        uz: 'Parol kamida 6 ta belgidan iborat bo\'lishi kerak',
+        ru: 'Пароль должен состоять минимум из 6 символов',
+        en: 'Password must be at least 6 characters long'
       },
-      'auth/invalid-credential': {
-        uz: 'Email yoki parol noto\'g\'ri',
+      'missing-fields': {
+        uz: 'Barcha maydonlarni to\'ldiring',
+        ru: 'Заполните все поля',
+        en: 'Please fill in all fields'
+      },
+      'CredentialsSignin': {
+        uz: 'Email yoki parol noto\'g\'ri kiritildi',
         ru: 'Неверный email или пароль',
         en: 'Invalid email or password'
       }
@@ -189,24 +73,43 @@ export default function LoginPage() {
     return lang === 'uz' ? 'Xatolik yuz berdi' : lang === 'ru' ? 'Произошла ошибка' : 'An error occurred'
   }
 
+  // ── 2. Handle standard credentials login and registration via server endpoints
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
     try {
       if (isSignUp) {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-        if (name) {
-          await updateProfile(userCredential.user, { displayName: name })
+        // Registering first
+        const registerRes = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password }),
+        })
+        const registerJson = await registerRes.json()
+
+        if (!registerRes.ok) {
+          throw new Error(registerJson.error || 'registration-failed')
         }
+
         toast.success(lang === 'uz' ? "Muvaffaqiyatli ro'yxatdan o'tdingiz!" : "Вы успешно зарегистрировались!")
-      } else {
-        await signInWithEmailAndPassword(auth, email, password)
-        toast.success(lang === 'uz' ? "Xush kelibsiz!" : "Добро пожаловать!")
       }
+
+      // Logging in using NextAuth
+      const loginRes = await signIn('credentials', {
+        email: email.toLowerCase(),
+        password,
+        redirect: false,
+      })
+
+      if (loginRes?.error) {
+        throw new Error(loginRes.error)
+      }
+
+      toast.success(lang === 'uz' ? "Xush kelibsiz!" : "Добро пожаловать!")
       router.push('/')
     } catch (err: any) {
-      const msg = getErrorMessage(err.code)
+      const msg = getErrorMessage(err.message)
       setError(msg)
       toast.error(msg)
     } finally {
@@ -214,6 +117,30 @@ export default function LoginPage() {
     }
   }
 
+  // ── 3. Handle Google sign-in (Google authentication redirect via NextAuth)
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      // Direct NextAuth Google Provider call
+      const res = await signIn('google', { callbackUrl: '/' })
+      if (res?.error) {
+        throw new Error(res.error)
+      }
+    } catch (err: any) {
+      // Custom friendly message if Google is not configured on Vercel yet
+      const msg = lang === 'uz'
+        ? "Google tizimi sozlanmagan. Iltimos, Vercel-da GOOGLE_CLIENT_ID ni sozlang."
+        : lang === 'ru'
+          ? "Вход через Google не настроен. Пожалуйста, настройте GOOGLE_CLIENT_ID на Vercel."
+          : "Google login is not configured. Please set GOOGLE_CLIENT_ID on Vercel."
+      setError(msg)
+      toast.warning(msg)
+      setLoading(false)
+    }
+  }
+
+  // ── 4. Handle custom Password Reset request via custom database-backed mailer
   const handleForgotPassword = async () => {
     if (!email) {
       const msg = lang === 'uz'
@@ -235,17 +162,10 @@ export default function LoginPage() {
       const json = await res.json()
 
       if (!res.ok) {
-        // Safe Fallback: If Firebase Admin/Resend is not configured, send client-side localized reset email
-        if (json.error === 'admin-not-configured' || res.status === 500) {
-          console.warn("Custom email backend not fully configured. Safely falling back to client-side Firebase reset.")
-          auth.languageCode = lang || 'uz'
-          await sendPasswordResetEmail(auth, email)
-        } else {
-          const errorMsg = json.error === 'user-not-found'
-            ? (lang === 'uz' ? 'Bu email bilan foydalanuvchi topilmadi' : lang === 'ru' ? 'Пользователь с таким email не найден' : 'No user found with this email')
-            : (lang === 'uz' ? 'Xatolik yuz berdi. Keyinroq urinib ko\'ring.' : lang === 'ru' ? 'Произошла ошибка. Попробуйте позже.' : 'An error occurred. Please try again.')
-          throw new Error(errorMsg)
-        }
+        const errorMsg = json.error === 'user-not-found'
+          ? (lang === 'uz' ? 'Bu email bilan foydalanuvchi topilmadi' : lang === 'ru' ? 'Пользователь с таким email не найден' : 'No user found with this email')
+          : (lang === 'uz' ? 'Parolni tiklash xizmati sozlanmagan. Iltimos, administratorga murojaat qiling.' : lang === 'ru' ? 'Служба сброса пароля не настроена. Пожалуйста, обратитесь к администратору.' : 'Password reset service is not configured. Please contact the administrator.')
+        throw new Error(errorMsg)
       }
 
       setError('')
@@ -256,7 +176,7 @@ export default function LoginPage() {
           : `✅ Password reset email sent to ${email}! Please check your inbox and spam folder.`
       toast.success(successMsg, { autoClose: 8000 })
     } catch (err: any) {
-      const msg = err.code ? getErrorMessage(err.code) : err.message
+      const msg = err.message
       setError(msg)
       toast.error(msg)
     } finally {
@@ -264,7 +184,7 @@ export default function LoginPage() {
     }
   }
 
-  // Show loading screen while checking initial Auth status
+  // Show premium loading screen while checking initial session status
   if (authLoading) {
     return (
       <div className="min-h-screen bg-[#faf9f6] flex flex-col items-center justify-center gap-4">
@@ -300,21 +220,15 @@ export default function LoginPage() {
         )}
 
         <div className="space-y-4 relative z-10">
-          {/* Dual-Mode Google button */}
-          <div className="flex justify-center w-full min-h-[50px]">
-            {hasGoogleClientId ? (
-              <div id="googleSignInBtn" className="w-full flex justify-center" />
-            ) : (
-              <Button
-                onClick={handleStandardGoogleSignIn}
-                variant="outline"
-                className="w-full rounded-2xl py-6 border-[#98a08d]/20 text-[#5c6352] hover:bg-[#98a08d] hover:text-white transition-all flex items-center justify-center gap-3 font-bold"
-              >
-                <Chrome className="w-5 h-5 text-red-500 animate-pulse" />
-                {lang === 'uz' ? 'Google orqali davom etish' : 'Продолжить через Google'}
-              </Button>
-            )}
-          </div>
+          {/* Professional custom styled Google login button */}
+          <Button
+            onClick={handleGoogleSignIn}
+            variant="outline"
+            className="w-full rounded-2xl py-6 border-[#98a08d]/20 text-[#5c6352] hover:bg-[#98a08d] hover:text-white transition-all flex items-center justify-center gap-3 font-bold"
+          >
+            <Chrome className="w-5 h-5 text-red-500" />
+            {lang === 'uz' ? 'Google orqali davom etish' : 'Продолжить через Google'}
+          </Button>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

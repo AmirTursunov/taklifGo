@@ -1,8 +1,6 @@
 'use client'
 
 import { useAuth } from '@/lib/AuthContext'
-import { auth } from '@/lib/firebase'
-import { signOut } from 'firebase/auth'
 import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/lib/LanguageContext'
 import Link from 'next/link'
@@ -12,12 +10,12 @@ import { toast } from 'react-toastify'
 import { isAdmin } from '@/lib/admin'
 
 export function Header() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const { lang, setLang, t } = useLanguage()
   const router = useRouter()
 
   const handleSignOut = async () => {
-    await signOut(auth)
+    await logout()
     toast.info(lang === 'uz' ? "Xayr! Yana kutib qolamiz." : "До свидания! Ждем вас снова.")
     router.push('/')
   }
