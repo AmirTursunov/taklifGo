@@ -112,11 +112,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </h2>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-xs font-black text-[#5c6352]">{user.displayName || 'Admin'}</p>
-              <p className="text-[10px] text-[#98a08d] font-bold uppercase">{user.email}</p>
+              <p className="text-xs font-black text-[#5c6352]">{user?.displayName || 'Admin'}</p>
+              <p className="text-[10px] text-[#98a08d] font-bold uppercase">{user?.email || 'admin@example.com'}</p>
             </div>
             <img 
-              src={user.photoURL || `https://ui-avatars.com/api/?name=${user.email}`} 
+              src={user?.photoURL || `https://ui-avatars.com/api/?name=${user?.email}`} 
               className="w-10 h-10 rounded-full border-2 border-[#98a08d]/20"
               alt="Admin Profile"
             />

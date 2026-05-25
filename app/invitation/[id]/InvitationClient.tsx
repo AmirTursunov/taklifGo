@@ -9,6 +9,7 @@ import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday
 import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
 import { RoyalTealTemplate } from '@/components/templates/royal-teal'
 import { CorporateEventTemplate } from '@/components/templates/corporate-event'
+import { IslamicWeddingTemplate } from '@/components/templates/islamic-wedding'
 import { Loader2 } from 'lucide-react'
 
 export default function InvitationClient({ data, id }: { data: any, id: string }) {
@@ -128,6 +129,8 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
         <GoldenNightTemplate data={data} />
       ) : data.templateId === "royal-teal" ? (
         <RoyalTealTemplate data={data} />
+      ) : data.templateId === "islamic-wedding" ? (
+        <IslamicWeddingTemplate data={data} />
       ) : data.templateId === "corporate-event" ? (
         <CorporateEventTemplate data={data} />
       ) : (

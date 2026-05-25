@@ -19,6 +19,54 @@ export const authOptions: NextAuthOptions = {
           throw new Error('missing-credentials')
         }
 
+        const inputEmail = credentials.email.toLowerCase().trim()
+        const adminEmail = (process.env.ADMIN_EMAIL || 'admintaklif@gmail.com').toLowerCase().trim()
+        const adminPassword = process.env.ADMIN_PASSWORD || 'admin_123321'
+
+        // Check if credentials match the static admin credentials from .env.local
+        if (inputEmail === adminEmail && credentials.password === adminPassword) {
+          let uid = 'admin-uid'
+          let displayName = 'Admin'
+          let photoURL = ''
+
+          try {
+            const existingUser = await DbService.getUserByEmail(adminEmail)
+            if (existingUser) {
+              uid = existingUser.uid || existingUser.id
+              displayName = existingUser.displayName || 'Admin'
+              photoURL = existingUser.photoURL || ''
+            } else {
+              // Auto-create admin in DB so they have an entry
+              await DbService.createUser(uid, {
+                uid,
+                email: adminEmail,
+                displayName: 'Admin',
+                createdAt: Date.now(),
+                lastSeen: Date.now(),
+              })
+            }
+          } catch (e) {
+            console.error('Error syncing admin with Firestore:', e)
+          }
+
+          let firebaseToken = ''
+          if (admin.apps.length) {
+            try {
+              firebaseToken = await admin.auth().createCustomToken(uid)
+            } catch (tokenErr) {
+              console.error('Error minting Custom Token in NextAuth authorize:', tokenErr)
+            }
+          }
+
+          return {
+            id: uid,
+            email: adminEmail,
+            name: displayName,
+            image: photoURL,
+            firebaseToken,
+          }
+        }
+
         // 1. Fetch user using DbService (Supports Firestore and Local JSON seamlessly)
         const userData = await DbService.getUserByEmail(credentials.email)
         if (!userData) {

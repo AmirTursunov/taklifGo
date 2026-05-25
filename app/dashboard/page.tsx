@@ -68,14 +68,21 @@ export default function DashboardPage() {
       try {
         const q = query(
           collection(db, 'invitations'),
-          where('userId', '==', user.uid),
-          orderBy('createdAt', 'desc')
+          where('userId', '==', user.uid)
         )
         const querySnapshot = await getDocs(q)
         const docs = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }))
+        
+        // Sort client-side to bypass composite index requirements in Firestore
+        docs.sort((a: any, b: any) => {
+          const dateA = a.createdAt || 0
+          const dateB = b.createdAt || 0
+          return dateB - dateA
+        })
+
         setInvitations(docs)
       } catch (err) {
         console.error("Error fetching invitations:", err)

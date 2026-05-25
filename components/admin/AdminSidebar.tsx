@@ -41,7 +41,7 @@ export function AdminSidebar() {
         {MENU_ITEMS.map((item) => {
           const isActive = pathname === item.path
           return (
-            <Link key={item.path} href={item.path}>
+            <Link key={item.path} href={item.path} prefetch={false}>
               <motion.div
                 whileHover={{ x: 5 }}
                 whileTap={{ scale: 0.98 }}

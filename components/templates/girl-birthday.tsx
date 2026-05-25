@@ -460,7 +460,7 @@ export function GirlBirthdayTemplate({
 
       {/* ══ HERO ══════════════════════════════════════ */}
       <section ref={heroRef}
-        className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden py-16 px-6"
+        className="relative w-full min-h-screen flex flex-col items-center justify-start pt-[12vh] pb-24 px-6"
         style={{
           position: 'relative',
           background: 'linear-gradient(160deg, #fff0f8 0%, #f8f0ff 40%, #fff5fb 70%, #fffbec 100%)',

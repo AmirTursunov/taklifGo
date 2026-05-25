@@ -30,6 +30,7 @@ import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday
 import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
 import { RoyalTealTemplate } from '@/components/templates/royal-teal'
 import { CorporateEventTemplate } from '@/components/templates/corporate-event'
+import { IslamicWeddingTemplate } from '@/components/templates/islamic-wedding'
 
 export default function SuccessPage() {
   const { id } = useParams();

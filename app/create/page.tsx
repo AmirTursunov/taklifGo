@@ -8,8 +8,11 @@ import { NafosatTemplate } from "@/components/templates/nafosat";
 import { GoldenWeddingTemplate } from "@/components/templates/golden-wedding";
 import { ElegantBirthdayTemplate } from "@/components/templates/elegant-birthday";
 import { GirlBirthdayTemplate } from "@/components/templates/girl-birthday";
+import { MagicBirthdayTemplate } from "@/components/templates/magic-birthday";
 import { RoyalTealTemplate } from "@/components/templates/royal-teal";
 import { CorporateEventTemplate } from "@/components/templates/corporate-event";
+import { IslamicWeddingTemplate } from "@/components/templates/islamic-wedding";
+import { VideoWeddingTemplate } from "@/components/templates/video-wedding";
 import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
@@ -41,6 +44,7 @@ import {
   Trash2,
   VolumeX,
   Info,
+  X,
 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Language } from "@/lib/translations";
@@ -84,6 +88,7 @@ function CreateInvitationContent() {
   const [isReceiptUploading, setIsReceiptUploading] = useState(false);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null); // tayyor Cloudinary URL
   const [receiptReady, setReceiptReady] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true);
   const [uploadingImages, setUploadingImages] = useState<
     Record<number, boolean>
   >({}); // index → loading
@@ -126,11 +131,7 @@ function CreateInvitationContent() {
     };
   });
 
-  useEffect(() => {
-    if (previewRef.current) {
-      previewRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [data.templateId]);
+  // ─── Scroll reset is handled by the key prop on the scroll container ───
 
   const [templateSettings, setTemplateSettings] = useState<Record<string, any>>({});
   const [pricesLoading, setPricesLoading] = useState(true);
@@ -150,11 +151,7 @@ function CreateInvitationContent() {
     fetchPrices();
   }, []);
 
-  useEffect(() => {
-    if (previewRef.current) {
-      previewRef.current.scrollTop = 0;
-    }
-  }, [data.templateId]);
+  // ─── Scroll reset is handled by the key prop on the scroll container ───
 
   // ✅ Barcha fayllarni FormData orqali yuklash (base64 JSON emas)
   // ─── Cloudinary direct upload (Vercel orqali o'tmaydi) ───────────────────────
@@ -486,29 +483,21 @@ function CreateInvitationContent() {
             </h3>
             <div className="grid grid-cols-2 gap-3">
               {TEMPLATES_BY_CATEGORY[data.category || "wedding"].map((tmpl) => {
-                const config = templateSettings[tmpl.id] || { price: 25000, originalPrice: 100000 };
                 return (
                   <button
                     key={tmpl.id}
                     onClick={() => setData({ ...data, templateId: tmpl.id })}
-                    className={`relative p-3 rounded-xl border text-center transition-all ${data.templateId === tmpl.id
+                    className={`relative p-1.5 rounded-xl border transition-all ${data.templateId === tmpl.id
                       ? "border-[#98a08d] bg-[#98a08d]/5 ring-2 ring-[#98a08d]/20"
                       : "border-[#98a08d]/10 hover:border-[#98a08d]/30"
                       }`}
                   >
-                    <div className={`w-full h-12 rounded-lg mb-2 ${tmpl.color} opacity-40`} />
-                    <span className="text-[10px] font-black text-[#5c6352] block mb-1">{tmpl.name}</span>
-                    <div className="flex flex-col items-center gap-0.5">
-                      <span className="text-[8px] text-[#98a08d] line-through opacity-60">
-                        {config.originalPrice.toLocaleString()}
-                      </span>
-                      <span className="text-[9px] font-black text-[#5c6352]">
-                        {config.price.toLocaleString()} UZS
-                      </span>
+                    <div className={`w-full h-16 rounded-lg flex items-center justify-center p-2 shadow-inner ${tmpl.color}`}>
+                      <span className="text-[11px] font-black text-white text-center drop-shadow-md leading-tight">{tmpl.name}</span>
                     </div>
                     {data.templateId === tmpl.id && (
-                      <div className="absolute -top-1 -right-1 bg-[#98a08d] text-white rounded-full p-0.5 shadow-md">
-                        <CheckCircle2 className="w-3 h-3" />
+                      <div className="absolute -top-1.5 -right-1.5 bg-[#98a08d] text-white rounded-full p-0.5 shadow-md z-10">
+                        <CheckCircle2 className="w-4 h-4" />
                       </div>
                     )}
                   </button>
@@ -673,6 +662,39 @@ function CreateInvitationContent() {
                     placeholder={lang === "uz" ? "Masalan: @username yoki https://..." : "Например: @username или https://..."}
                     onChange={(e) => setData({ ...data, registrationUrl: e.target.value })}
                     className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {data.templateId === "magic-birthday" && (
+            <section className="space-y-4">
+              <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
+                {lang === "uz" ? "Tug'ilgan kun ma'lumotlari" : lang === "ru" ? "Данные дня рождения" : "Birthday Details"}
+              </h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>
+                    {lang === "uz" ? "To'liq manzil" : lang === "ru" ? "Полный адрес" : "Full Address"}
+                  </Label>
+                  <Input
+                    value={(data as any).address || ""}
+                    placeholder={lang === "uz" ? "Ko'cha, shahar..." : "Улица, город..."}
+                    onChange={(e) => setData({ ...data, address: e.target.value } as any)}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>
+                    {lang === "uz" ? "Taklif xabari" : lang === "ru" ? "Текст приглашения" : "Invitation message"}
+                  </Label>
+                  <textarea
+                    value={(data as any).message || ""}
+                    placeholder={lang === "uz" ? "Mehmonlarga xabar..." : "Сообщение гостям..."}
+                    onChange={(e) => setData({ ...data, message: e.target.value } as any)}
+                    rows={3}
+                    className="w-full rounded-xl border border-[#98a08d]/20 bg-white px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-[#98a08d]/40"
                   />
                 </div>
               </div>
@@ -981,30 +1003,39 @@ function CreateInvitationContent() {
                   : "Live Preview"}
             </span>
           </div>
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-2 px-4 py-2 bg-[#5c6352]/90 backdrop-blur-md rounded-full shadow-lg border border-white/10"
-          >
-            <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" />
-            <span className="text-[9px] font-medium text-white/90">
-              {lang === "uz"
-                ? "Taklifnomadagi so'zlarni to'g'ridan-to'g'ri ustiga bosib tahrirlashingiz mumkin"
-                : lang === "ru"
-                  ? "Вы можете редактировать текст прямо в приглашении, нажав на него"
-                  : "You can edit the text directly in the invitation by clicking on it"}
-            </span>
-          </motion.div>
+          {showTooltip && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2 pl-4 pr-2 py-2 bg-[#5c6352]/90 backdrop-blur-md rounded-full shadow-lg border border-white/10"
+            >
+              <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce shrink-0" />
+              <span className="text-[9px] font-medium text-white/90">
+                {lang === "uz"
+                  ? "Taklifnomadagi so'zlarni to'g'ridan-to'g'ri ustiga bosib tahrirlashingiz mumkin"
+                  : lang === "ru"
+                    ? "Вы можете редактировать текст прямо в приглашении, нажав на него"
+                    : "You can edit the text directly in the invitation by clicking on it"}
+              </span>
+              <button 
+                onClick={() => setShowTooltip(false)} 
+                className="ml-1 p-1 hover:bg-white/20 rounded-full text-white/80 transition-colors shrink-0"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </motion.div>
+          )}
         </div>
 
         <div className="flex-1 relative min-h-0">
           <div className="absolute inset-4 md:inset-8 bg-white shadow-2xl rounded-[2rem] overflow-hidden border border-[#98a08d]/10">
             <div
+              key={data.templateId}
               ref={previewRef}
               className="absolute inset-0 overflow-y-scroll hide-scrollbar bg-[#faf9f6] scroll-smooth"
               style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              <div key={viewMode} className="w-full min-h-full">
+              <div className="w-full min-h-full">
                 {data.templateId === "nafosat" ? (
                   <NafosatTemplate
                     data={data}
@@ -1089,6 +1120,37 @@ function CreateInvitationContent() {
                       }
                     }}
                   />
+                ) : data.templateId === "magic-birthday" ? (
+                  <MagicBirthdayTemplate
+                    data={{
+                      ...data,
+                      age: data.age || "20th",
+                      time: data.time || "18:00",
+                      address: data.address || data.location,
+                      message: data.message,
+                    }}
+                    onDataChange={async (newData) => {
+                      if (newData.images) {
+                        const updatedImages = [...(newData.images as string[])];
+                        const uploadJobs = updatedImages.map(async (img, i) => {
+                          if (img.startsWith("data:image")) {
+                            setUploadingImages((prev) => ({ ...prev, [i]: true }));
+                            try {
+                              const { url } = await uploadDirect(img, "image");
+                              updatedImages[i] = url;
+                            } catch {
+                            } finally {
+                              setUploadingImages((prev) => ({ ...prev, [i]: false }));
+                            }
+                          }
+                        });
+                        await Promise.all(uploadJobs);
+                        setData((prev) => ({ ...prev, ...newData, images: updatedImages }));
+                      } else {
+                        setData((prev) => ({ ...prev, ...newData }));
+                      }
+                    }}
+                  />
                 ) : data.templateId === "elegant-birthday" ? (
                   <ElegantBirthdayTemplate
                     data={{
@@ -1149,6 +1211,20 @@ function CreateInvitationContent() {
                 ) : data.templateId === "royal-teal" ? (
                   <RoyalTealTemplate
                     data={data}
+                  />
+                ) : data.templateId === "islamic-wedding" ? (
+                  <IslamicWeddingTemplate
+                    data={data}
+                    onDataChange={(newData) => {
+                      setData((prev) => ({ ...prev, ...newData }));
+                    }}
+                  />
+                ) : data.templateId === "video-wedding" ? (
+                  <VideoWeddingTemplate
+                    data={data}
+                    onDataChange={(newData) => {
+                      setData((prev) => ({ ...prev, ...newData }));
+                    }}
                   />
                 ) : data.templateId === "corporate-event" ? (
                   <CorporateEventTemplate

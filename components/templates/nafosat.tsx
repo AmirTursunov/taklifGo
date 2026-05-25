@@ -350,7 +350,7 @@ export function NafosatTemplate({
             transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
             <h1
-              className="playfair font-black leading-none outline-none focus:outline-dashed focus:outline-[#4a90d9] px-4 rounded-xl"
+              className="playfair font-black leading-tight outline-none focus:outline-dashed focus:outline-[#4a90d9] px-4 pb-4 pt-2 rounded-xl"
               style={{
                 fontSize: 'clamp(2.8rem, 9vw, 7rem)',
                 color: '#1a3a6b', // Fallback color
@@ -484,7 +484,7 @@ export function NafosatTemplate({
               Aziz Mehmonlar
             </p>
             <h2
-              className="playfair font-bold leading-tight outline-none focus:outline-dashed focus:outline-[#4a90d9] px-4 rounded-xl"
+              className="playfair font-bold leading-tight outline-none focus:outline-dashed focus:outline-[#4a90d9] px-4 pb-4 pt-2 rounded-xl"
               style={{
                 fontSize: 'clamp(2rem, 5vw, 3.5rem)',
                 color: '#1a3a6b',
@@ -745,7 +745,7 @@ export function NafosatTemplate({
               Muborak Bo'lsin
             </p>
             <h2
-              className="playfair font-black leading-none outline-none focus:outline-dashed focus:outline-white/50 px-4 rounded-xl"
+              className="playfair font-black leading-tight outline-none focus:outline-dashed focus:outline-white/50 px-4 pb-4 pt-2 rounded-xl"
               style={{
                 fontSize: 'clamp(2.2rem, 6vw, 4.5rem)',
                 background: 'linear-gradient(135deg, #ffffff 0%, #c9d8e8 40%, #a8c4e0 60%, #ffffff 100%)',
