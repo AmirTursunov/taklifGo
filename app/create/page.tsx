@@ -13,6 +13,7 @@ import { RoyalTealTemplate } from "@/components/templates/royal-teal";
 import { CorporateEventTemplate } from "@/components/templates/corporate-event";
 import { IslamicWeddingTemplate } from "@/components/templates/islamic-wedding";
 import { VideoWeddingTemplate } from "@/components/templates/video-wedding";
+import { StoryWeddingTemplate } from "@/components/templates/story-wedding";
 import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
@@ -1221,6 +1222,13 @@ function CreateInvitationContent() {
                   />
                 ) : data.templateId === "video-wedding" ? (
                   <VideoWeddingTemplate
+                    data={data}
+                    onDataChange={(newData) => {
+                      setData((prev) => ({ ...prev, ...newData }));
+                    }}
+                  />
+                ) : data.templateId === "story-wedding" ? (
+                  <StoryWeddingTemplate
                     data={data}
                     onDataChange={(newData) => {
                       setData((prev) => ({ ...prev, ...newData }));

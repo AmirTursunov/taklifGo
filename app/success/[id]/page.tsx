@@ -17,6 +17,7 @@ import {
   Eye,
   XCircle,
   Download,
+  Video,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -31,6 +32,7 @@ import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
 import { RoyalTealTemplate } from '@/components/templates/royal-teal'
 import { CorporateEventTemplate } from '@/components/templates/corporate-event'
 import { IslamicWeddingTemplate } from '@/components/templates/islamic-wedding'
+import { StoryWeddingTemplate } from '@/components/templates/story-wedding'
 
 export default function SuccessPage() {
   const { id } = useParams();
@@ -66,6 +68,7 @@ export default function SuccessPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // ── Telegram link ulashish (barcha templatelar) ────────────────────────────
   const shareToTelegram = () => {
     let message = "";
     const category = data?.category || "wedding";
@@ -83,7 +86,6 @@ export default function SuccessPage() {
       else if (lang === "ru") message = `Здравствуйте!\nПриглашаем вас на церемонию проводов невесты!\n\nНажмите, чтобы открыть приглашение 🕊\n${invitationUrl}`;
       else message = `Hello!\nWe invite you to our farewell ceremony!\n\nClick to open the invitation 🕊\n${invitationUrl}`;
     } else {
-      // Default / Wedding
       if (lang === "uz") message = `Assalomu Aleykum!\nSizni bizning eng baxtli kunimizda kutib qolamiz!\n\nTaklifnomani ochish uchun bosing 💌\n${invitationUrl}`;
       else if (lang === "ru") message = `Здравствуйте!\nПриглашаем вас на наш самый счастливый день!\n\nНажмите, чтобы открыть приглашение 💌\n${invitationUrl}`;
       else message = `Hello!\nWe invite you to our most special day!\n\nClick to open the invitation 💌\n${invitationUrl}`;
@@ -103,7 +105,6 @@ export default function SuccessPage() {
 
   const isPending = data?.status === "pending";
   const isRejected = data?.status === "rejected";
-  // Real view count from Firestore — updated live via onSnapshot
   const viewCount = data?.viewCount ?? 0;
 
   return (
@@ -122,10 +123,10 @@ export default function SuccessPage() {
           </Button>
           <div
             className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold border ${isPending
-              ? "bg-[#d97706]/5 text-[#d97706] border-[#d97706]/20"
-              : isRejected
-                ? "bg-red-50 text-red-600 border-red-200"
-                : "bg-[#98a08d]/5 text-[#98a08d] border-[#98a08d]/20"
+                ? "bg-[#d97706]/5 text-[#d97706] border-[#d97706]/20"
+                : isRejected
+                  ? "bg-red-50 text-red-600 border-red-200"
+                  : "bg-[#98a08d]/5 text-[#98a08d] border-[#98a08d]/20"
               }`}
           >
             {isPending ? (
@@ -191,7 +192,7 @@ export default function SuccessPage() {
                 : lang === "uz"
                   ? "Sizning zamonaviy taklifnomangiz muvaffaqiyatli yaratildi va hozirda butun dunyo uchun ochiq."
                   : lang === "ru"
-                    ? "Ваше современный приглашение успешно создано и теперь доступно для всего мира."
+                    ? "Ваше современное приглашение успешно создано и теперь доступно для всего мира."
                     : "Your modern invitation has been successfully created and is now live for the world to see."}
             </p>
           )}
@@ -233,6 +234,8 @@ export default function SuccessPage() {
 
             {/* Main Card */}
             <Card className="lg:col-span-2 p-8 rounded-[2.5rem] border-0 shadow-2xl space-y-8 bg-white">
+
+              {/* Invitation link */}
               <div className="space-y-4">
                 <h3 className="text-sm font-bold text-[#98a08d] tracking-[0.2em] uppercase">
                   {lang === "uz" ? "Taklifnoma Havolasi" : lang === "ru" ? "Ссылка на Приглашение" : "Invitation Link"}
@@ -253,15 +256,20 @@ export default function SuccessPage() {
                 </div>
               </div>
 
+              {/* Action buttons */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                {/* Telegram — link ulashish (hamma template) */}
                 <Button
                   onClick={shareToTelegram}
                   variant="outline"
                   className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-2"
                 >
                   <Send className="w-4 h-4" />
-                  {lang === "uz" ? "Telegramda ulashish" : lang === "ru" ? "Поделиться" : "Share"}
+                  {lang === "uz" ? "Telegram — Havola" : lang === "ru" ? "Telegram — Ссылка" : "Telegram — Link"}
                 </Button>
+
+                {/* Preview */}
                 <Button
                   variant="outline"
                   onClick={() => window.open(invitationUrl, "_blank")}
@@ -276,7 +284,6 @@ export default function SuccessPage() {
             {/* Side Cards */}
             <div className="space-y-6">
 
-              {/* Real view count — live via onSnapshot */}
               <Card className="p-8 rounded-[2.5rem] border-0 shadow-xl bg-white text-center space-y-4">
                 <div className="w-12 h-12 bg-[#98a08d]/10 rounded-full flex items-center justify-center mx-auto">
                   <Eye className="w-6 h-6 text-[#98a08d]" />
@@ -310,10 +317,6 @@ export default function SuccessPage() {
           </div>
         )}
       </div>
-
-
-
-
     </div>
   );
 }
