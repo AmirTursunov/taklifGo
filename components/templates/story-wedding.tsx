@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Volume2, VolumeX, ImagePlus } from 'lucide-react'
+import { Volume2, VolumeX } from 'lucide-react'
 import { Great_Vibes, Cormorant_Garamond, Playfair_Display } from 'next/font/google'
 import { useLanguage } from '@/lib/LanguageContext'
 
@@ -41,19 +41,6 @@ export function StoryWeddingTemplate({ data, onDataChange }: StoryWeddingTemplat
   const handleEdit = (field: string, value: string) => {
     if (onDataChange) {
       onDataChange({ ...data, [field]: value })
-    }
-  }
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file && onDataChange) {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        const imgs = data.images ? [...data.images] : []
-        imgs[0] = ev.target?.result as string
-        onDataChange({ ...data, images: imgs })
-      }
-      reader.readAsDataURL(file)
     }
   }
 
@@ -120,17 +107,6 @@ export function StoryWeddingTemplate({ data, onDataChange }: StoryWeddingTemplat
         {/* Subtle dark overlay — video ko'rinsin lekin text ham o'qilsin */}
         <div className="absolute inset-0 bg-black/20" />
       </div>
-
-      {/* Telegram Preview Image Upload (faqat tahrirlash rejimida) */}
-      {isEditable && (
-        <div className="absolute top-4 left-4 z-50">
-          <label className="flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/20 px-3 py-2 rounded-full cursor-pointer hover:bg-black/60 transition-colors shadow-lg">
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-            <ImagePlus className="w-4 h-4 text-white" />
-            <span className="text-xs font-semibold text-white drop-shadow-md">Telegram Rasm</span>
-          </label>
-        </div>
-      )}
 
       {/* Main Glass Container */}
       <div
