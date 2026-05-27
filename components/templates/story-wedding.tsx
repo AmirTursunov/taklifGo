@@ -129,7 +129,7 @@ export function StoryWeddingTemplate({ data, onDataChange }: StoryWeddingTemplat
         {/* Slides */}
         <AnimatePresence mode="wait">
 
-          {/* ── SLIDE 0 ── */}
+          {/* ── SLIDE 0: Names & Intro (0-3s) ── */}
           {currentSlide === 0 && (
             <motion.div
               key="slide0"
@@ -137,80 +137,37 @@ export function StoryWeddingTemplate({ data, onDataChange }: StoryWeddingTemplat
               initial="enter"
               animate="center"
               exit="exit"
-              className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center"
-            >
-              {/* Bottom center — MY Wedding DAY */}
-              <div className="flex flex-col items-center mt-auto mb-12">
-                <div className="text-white opacity-90" style={{ filter: `drop-shadow(${lightShadow})` }}>
-                  <RingsIcon />
-                </div>
-                <h2
-                  className={`${playfair.className} mt-4 tracking-[0.3em] text-sm font-semibold uppercase text-white`}
-                  style={{ textShadow }}
-                >
-                  M Y
-                </h2>
-                <h1
-                  className={`${greatVibes.className} text-7xl my-2 text-white`}
-                  style={{ textShadow }}
-                >
-                  Wedding
-                </h1>
-                <h2
-                  className={`${playfair.className} tracking-[0.3em] text-sm font-semibold uppercase text-white`}
-                  style={{ textShadow }}
-                >
-                  D A Y
-                </h2>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ── SLIDE 1 ── */}
-          {currentSlide === 1 && (
-            <motion.div
-              key="slide1"
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              className="absolute inset-0 flex flex-col items-center justify-between p-8 text-center"
+              className="absolute inset-0 flex flex-col items-center justify-between p-10 text-center"
             >
               {/* Verse top */}
-              <div className="mt-4">
-                {/* Verse background pill — o'qilsin */}
-                <div
-                  className="px-4 py-3 rounded-sm"
-                  style={{ background: 'rgba(0,0,0,0.28)', backdropFilter: 'blur(4px)' }}
+              <div className="mt-8">
+                <p
+                  contentEditable={isEditable}
+                  suppressContentEditableWarning
+                  onBlur={(e) => handleEdit("verse", e.currentTarget.textContent || "")}
+                  className="text-[10px] tracking-widest uppercase font-semibold text-white/90 outline-none max-w-[280px] leading-relaxed"
+                  style={{ textShadow: lightShadow }}
                 >
-                  <p
-                    contentEditable={isEditable}
-                    suppressContentEditableWarning
-                    onBlur={(e) => handleEdit("verse", e.currentTarget.textContent || "")}
-                    className="text-[9px] tracking-widest uppercase font-semibold text-white outline-none max-w-[280px]"
-                    style={{ textShadow: lightShadow }}
-                  >
-                    {data.verse || "ALLOH ULARNING QALBINI SEVGILILA BIRLASHTIRDI\nANFOL SURASI 63-OYAT"}
-                  </p>
-                </div>
-                <div className="w-16 h-[1px] bg-white/50 mx-auto mt-3" />
+                  {data.verse || "ALLOH ULARNING QALBINI SEVGILILA BIRLASHTIRDI\nANFOL SURASI 63-OYAT"}
+                </p>
+                <div className="w-12 h-px bg-white/40 mx-auto mt-4" />
               </div>
 
               {/* Names center */}
-              <div className="flex flex-col items-center -mt-4">
+              <div className="flex flex-col items-center">
                 {namesParts.length > 1 ? (
                   <div className="flex flex-col items-center">
                     <h1
                       contentEditable={isEditable}
                       suppressContentEditableWarning
                       onBlur={(e) => handleEdit("names", e.currentTarget.textContent + " & " + namesParts[1])}
-                      className={`${greatVibes.className} text-6xl outline-none text-white`}
+                      className={`${greatVibes.className} text-7xl outline-none text-white`}
                       style={{ textShadow }}
                     >
                       {namesParts[0].trim()}
                     </h1>
                     <span
-                      className={`${greatVibes.className} text-4xl -my-4 text-white`}
+                      className={`${greatVibes.className} text-5xl my-2 text-white/80`}
                       style={{ textShadow }}
                     >
                       &
@@ -219,7 +176,7 @@ export function StoryWeddingTemplate({ data, onDataChange }: StoryWeddingTemplat
                       contentEditable={isEditable}
                       suppressContentEditableWarning
                       onBlur={(e) => handleEdit("names", namesParts[0] + " & " + e.currentTarget.textContent)}
-                      className={`${greatVibes.className} text-6xl outline-none text-white`}
+                      className={`${greatVibes.className} text-7xl outline-none text-white`}
                       style={{ textShadow }}
                     >
                       {namesParts[1].trim()}
@@ -230,7 +187,7 @@ export function StoryWeddingTemplate({ data, onDataChange }: StoryWeddingTemplat
                     contentEditable={isEditable}
                     suppressContentEditableWarning
                     onBlur={(e) => handleEdit("names", e.currentTarget.textContent || "")}
-                    className={`${greatVibes.className} text-6xl outline-none px-4 text-white`}
+                    className={`${greatVibes.className} text-7xl outline-none px-4 text-white`}
                     style={{ textShadow }}
                   >
                     {names}
@@ -238,74 +195,53 @@ export function StoryWeddingTemplate({ data, onDataChange }: StoryWeddingTemplat
                 )}
               </div>
 
-              {/* Message */}
+              {/* Bottom Intro */}
+              <div className="flex flex-col items-center mb-8">
+                <div className="text-white/80 mb-6" style={{ filter: `drop-shadow(${lightShadow})` }}>
+                  <RingsIcon />
+                </div>
+                <h2
+                  className={`${playfair.className} tracking-[0.3em] text-[11px] font-semibold uppercase text-white/90`}
+                  style={{ textShadow }}
+                >
+                  M Y <span className="mx-2">—</span> W E D D I N G <span className="mx-2">—</span> D A Y
+                </h2>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── SLIDE 1: Message (3-6s) ── */}
+          {currentSlide === 1 && (
+            <motion.div
+              key="slide1"
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="absolute inset-0 flex flex-col items-center justify-center p-10 text-center"
+            >
+              <div className="text-white/70 mb-10" style={{ filter: `drop-shadow(${lightShadow})` }}>
+                <RingsIcon />
+              </div>
+              
               <div
-                className="max-w-[260px] px-4 py-3 rounded-sm"
-                style={{ background: 'rgba(0,0,0,0.22)', backdropFilter: 'blur(3px)' }}
+                className="max-w-[280px] px-6 py-8 rounded-xl border border-white/10"
+                style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)' }}
               >
                 <p
                   contentEditable={isEditable}
                   suppressContentEditableWarning
                   onBlur={(e) => handleEdit("message", e.currentTarget.innerText || "")}
-                  className="text-xs md:text-sm leading-relaxed font-medium text-white outline-none whitespace-pre-wrap"
+                  className="text-[15px] leading-loose font-medium text-white/95 outline-none whitespace-pre-wrap"
                   style={{ textShadow: lightShadow }}
                 >
                   {message}
                 </p>
               </div>
-
-              {/* Date / Time / Venue bottom */}
-              <div
-                className="flex flex-col items-center space-y-3 px-4 py-4 rounded-sm w-full"
-                style={{ background: 'rgba(0,0,0,0.28)', backdropFilter: 'blur(4px)' }}
-              >
-                <div
-                  className="text-2xl tracking-[0.2em] font-semibold flex items-center gap-3 text-white"
-                  style={{ textShadow }}
-                >
-                  <span>{day.toString().padStart(2, '0')}</span>
-                  <div className="w-px h-6 bg-white/50" />
-                  <span>{monthNum}</span>
-                  <div className="w-px h-6 bg-white/50" />
-                  <span>{year}</span>
-                </div>
-
-                <p
-                  contentEditable={isEditable}
-                  suppressContentEditableWarning
-                  onBlur={(e) => handleEdit("time", e.currentTarget.textContent || "")}
-                  className="text-lg font-medium outline-none text-white"
-                  style={{ textShadow: lightShadow }}
-                >
-                  Soat: {data.time || "18:00"}
-                </p>
-
-                <div className="flex flex-col items-center">
-                  <p
-                    className="text-sm font-semibold tracking-wider text-white/75"
-                    style={{ textShadow: lightShadow }}
-                  >
-                    Manzil:
-                  </p>
-                  <p
-                    contentEditable={isEditable}
-                    suppressContentEditableWarning
-                    onBlur={(e) => handleEdit("venue", e.currentTarget.textContent || "")}
-                    className="text-lg font-medium outline-none text-white"
-                    style={{ textShadow: lightShadow }}
-                  >
-                    {data.venue || "Tohiriy restaurant"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mb-2 text-white opacity-80" style={{ filter: `drop-shadow(${lightShadow})` }}>
-                <RingsIcon />
-              </div>
             </motion.div>
           )}
 
-          {/* ── SLIDE 2 ── */}
+          {/* ── SLIDE 2: Details & Outro (6-10s) ── */}
           {currentSlide === 2 && (
             <motion.div
               key="slide2"
@@ -313,42 +249,62 @@ export function StoryWeddingTemplate({ data, onDataChange }: StoryWeddingTemplat
               initial="enter"
               animate="center"
               exit="exit"
-              className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center"
+              className="absolute inset-0 flex flex-col items-center justify-between p-10 text-center"
             >
-              <div className="max-w-[280px] mb-16">
+              <div className="mt-12 flex flex-col items-center w-full">
                 <h3
                   contentEditable={isEditable}
                   suppressContentEditableWarning
                   onBlur={(e) => handleEdit("closingMessage", e.currentTarget.textContent || "")}
-                  className={`${greatVibes.className} text-4xl leading-relaxed outline-none text-white`}
+                  className={`${greatVibes.className} text-4xl leading-relaxed outline-none text-white max-w-[260px]`}
                   style={{ textShadow }}
                 >
                   {data.closingMessage || "Qalblar ezgulikka to'la ushbu kunda do'stlar yonida bo'ling"}
                 </h3>
+                <div className="w-16 h-px bg-white/30 mx-auto mt-8" />
               </div>
 
-              <div className="flex flex-col items-center">
-                <div className="text-white opacity-85" style={{ filter: `drop-shadow(${lightShadow})` }}>
-                  <RingsIcon />
+              {/* Date / Time / Venue */}
+              <div
+                className="flex flex-col items-center space-y-6 px-8 py-8 rounded-xl w-full border border-white/10 mb-8"
+                style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(8px)' }}
+              >
+                <div
+                  className="text-3xl tracking-[0.2em] font-semibold flex items-center gap-4 text-white"
+                  style={{ textShadow }}
+                >
+                  <span>{day.toString().padStart(2, '0')}</span>
+                  <div className="w-px h-8 bg-white/40" />
+                  <span>{monthNum}</span>
+                  <div className="w-px h-8 bg-white/40" />
+                  <span>{year}</span>
                 </div>
-                <h2
-                  className={`${playfair.className} mt-4 tracking-[0.3em] text-sm font-semibold uppercase text-white`}
-                  style={{ textShadow }}
-                >
-                  M Y
-                </h2>
-                <h1
-                  className={`${greatVibes.className} text-6xl my-2 text-white`}
-                  style={{ textShadow }}
-                >
-                  Wedding
-                </h1>
-                <h2
-                  className={`${playfair.className} tracking-[0.3em] text-sm font-semibold uppercase text-white`}
-                  style={{ textShadow }}
-                >
-                  D A Y
-                </h2>
+
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/60">Soat</p>
+                  <p
+                    contentEditable={isEditable}
+                    suppressContentEditableWarning
+                    onBlur={(e) => handleEdit("time", e.currentTarget.textContent || "")}
+                    className="text-xl font-medium outline-none text-white/90"
+                    style={{ textShadow: lightShadow }}
+                  >
+                    {data.time || "18:00"}
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/60">Manzil</p>
+                  <p
+                    contentEditable={isEditable}
+                    suppressContentEditableWarning
+                    onBlur={(e) => handleEdit("venue", e.currentTarget.textContent || "")}
+                    className="text-xl font-medium outline-none text-white/90 max-w-[220px]"
+                    style={{ textShadow: lightShadow }}
+                  >
+                    {data.venue || "Tohiriy restaurant"}
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}

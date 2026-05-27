@@ -98,16 +98,6 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
 
   return (
     <main className="min-h-screen relative">
-      {showNotice && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] animate-in fade-in slide-in-from-top-4 duration-500">
-          <div className="bg-white/90 backdrop-blur-md border border-[#98a08d]/20 px-6 py-3 rounded-full shadow-xl flex items-center gap-2">
-            <div className="w-2 h-2 bg-[#98a08d] rounded-full animate-pulse" />
-            <p className="text-xs font-bold text-[#5c6352] tracking-wider uppercase">
-              {noticeText[data.lang as keyof typeof noticeText] || noticeText.uz}
-            </p>
-          </div>
-        </div>
-      )}
       {data.templateId === "nafosat" ? (
         <NafosatTemplate data={data} />
       ) : data.templateId === "girl-birthday" ? (
