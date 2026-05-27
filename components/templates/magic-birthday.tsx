@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from '@/lib/LanguageContext'
 import { Camera, MapPin } from 'lucide-react'
+import Image from 'next/image'
+import { greatVibes, cormorant, lato } from '@/lib/fonts'
 
 // ─── CONFETTI PIECE ───────────────────────────────────────────────────────────
 const CONFETTI_COLORS = ['#f9c0d0','#fad4e8','#fce0a0','#c8e0f8','#d0f0c8','#e8c8f8','#f8d8a0','#a8d8f0']
@@ -277,10 +279,9 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
       padding: '20px 16px',
       position: 'relative',
       overflow: 'hidden',
-      fontFamily: "'Georgia', serif",
-    }}>
+      fontFamily: "var(--font-cormorant), 'Georgia', serif",
+    }} className={`${greatVibes.variable} ${cormorant.variable} ${lato.variable}`}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=Lato:wght@300;400&display=swap');
         .magic-birthday * { box-sizing: border-box; }
         .magic-birthday input:focus { outline: none; }
         .magic-birthday button:active { transform: scale(0.97); }
@@ -289,27 +290,33 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
       {/* BG large peony flowers (corners) */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         {/* Bottom left large pink flower */}
-        <img
-          src="https://images.unsplash.com/photo-1490750967868-88df5691cc6b?w=500&q=80&fit=crop"
-          alt=""
-          style={{
+        <div style={{
             position: 'absolute', bottom: -40, left: -40,
             width: 260, height: 260,
-            objectFit: 'cover', borderRadius: '50%',
+            borderRadius: '50%', overflow: 'hidden',
             opacity: 0.35, filter: 'saturate(1.2)',
-          }}
-        />
+          }}>
+          <Image
+            src="https://images.unsplash.com/photo-1490750967868-88df5691cc6b?w=500&q=80&fit=crop"
+            alt=""
+            fill sizes="260px" priority
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
         {/* Top right flower */}
-        <img
-          src="https://images.unsplash.com/photo-1487530811015-780780c73be6?w=400&q=80&fit=crop"
-          alt=""
-          style={{
+        <div style={{
             position: 'absolute', top: -30, right: -30,
             width: 220, height: 220,
-            objectFit: 'cover', borderRadius: '50%',
+            borderRadius: '50%', overflow: 'hidden',
             opacity: 0.28, filter: 'saturate(1.1) hue-rotate(330deg)',
-          }}
-        />
+          }}>
+          <Image
+            src="https://images.unsplash.com/photo-1487530811015-780780c73be6?w=400&q=80&fit=crop"
+            alt=""
+            fill sizes="220px" priority
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
         {/* Hearts */}
         {[
           { left: '4%',  top: '20%',  size: 28, rot: -20 },
@@ -394,7 +401,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
               }}>
                 <div style={{
                   display: 'inline-block',
-                  fontFamily: "'Lato',sans-serif",
+                  fontFamily: 'var(--font-lato), sans-serif',
                   fontSize: 11, fontWeight: 400,
                   letterSpacing: '0.38em',
                   color: '#b8832a',
@@ -410,14 +417,14 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
             {/* Cover content */}
             <div style={{ padding: '28px 32px 36px', textAlign: 'center' }}>
               <div style={{
-                fontFamily: "'Cormorant Garamond',serif",
+                fontFamily: 'var(--font-cormorant), serif',
                 fontSize: 30, fontWeight: 300,
                 color: '#3a2010', lineHeight: 1.25, marginBottom: 6,
               }}>
                 {t.special}
               </div>
               <div style={{
-                fontFamily: "'Cormorant Garamond',serif",
+                fontFamily: 'var(--font-cormorant), serif',
                 fontSize: 38, fontStyle: 'italic', fontWeight: 600,
                 color: '#c85a30', lineHeight: 1.1, marginBottom: 28,
               }}>
@@ -443,7 +450,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                   border: 'none',
                   borderRadius: 50,
                   padding: '14px 44px',
-                  fontFamily: "'Cormorant Garamond',serif",
+                  fontFamily: 'var(--font-cormorant), serif',
                   fontSize: 18, fontWeight: 400,
                   color: '#fff',
                   cursor: 'pointer',
@@ -456,7 +463,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
               </motion.button>
 
               <div style={{
-                fontFamily: "'Cormorant Garamond',serif",
+                fontFamily: 'var(--font-cormorant), serif',
                 fontSize: 14, fontStyle: 'italic',
                 color: '#c49030', opacity: 0.7,
               }}>
@@ -509,7 +516,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
 
               {/* CELEBRATING label */}
               <div style={{
-                fontFamily: "'Lato',sans-serif",
+                fontFamily: 'var(--font-lato), sans-serif',
                 fontSize: 10, letterSpacing: '0.4em',
                 color: '#c49030', textTransform: 'uppercase', marginBottom: 8,
               }}>
@@ -527,7 +534,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                   suppressContentEditableWarning
                   onBlur={(e) => handleEdit('names', e.currentTarget.textContent || '')}
                   style={{
-                    fontFamily: "'Great Vibes',cursive",
+                    fontFamily: 'var(--font-great-vibes), cursive',
                     fontSize: 56,
                     color: '#c85a30',
                     lineHeight: 1.1,
@@ -558,7 +565,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                   onBlur={(e) => handleEdit('age', e.currentTarget.textContent || '')}
                   className="cursor-text outline-none"
                   style={{
-                    fontFamily: "'Cormorant Garamond',serif",
+                    fontFamily: 'var(--font-cormorant), serif',
                     fontSize: 26, fontWeight: 400,
                     color: '#3a2010',
                   }}>
@@ -593,10 +600,11 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                       onChange={handleImageUpload} />
                   </label>
                 )}
-                <img
+                <Image
                   src={personImage}
                   alt="Birthday person or cake"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  fill sizes="150px"
+                  style={{ objectFit: 'cover' }}
                 />
                 {isEditable && (
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none"
@@ -626,7 +634,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                   onBlur={(e) => handleEdit('date', e.currentTarget.textContent || '')}
                   className="cursor-text outline-none"
                   style={{
-                  fontFamily: "'Cormorant Garamond',serif",
+                  fontFamily: 'var(--font-cormorant), serif',
                   fontSize: 18, fontWeight: 400,
                   color: '#5a3010', letterSpacing: '0.02em',
                 }}>{data.date || t.defaultDate}</span>
@@ -648,7 +656,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                   onBlur={(e) => handleEdit('time', e.currentTarget.textContent || '')}
                   className="cursor-text outline-none"
                   style={{
-                  fontFamily: "'Cormorant Garamond',serif",
+                  fontFamily: 'var(--font-cormorant), serif',
                   fontSize: 18, fontWeight: 400,
                   color: '#5a3010', letterSpacing: '0.02em',
                 }}>{data.time || t.defaultTime}</span>
@@ -670,7 +678,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                   onBlur={(e) => handleEdit('venue', e.currentTarget.textContent || '')}
                   className="cursor-text outline-none"
                   style={{
-                  fontFamily: "'Cormorant Garamond',serif",
+                  fontFamily: 'var(--font-cormorant), serif',
                   fontSize: 18, fontWeight: 400,
                   color: '#5a3010', letterSpacing: '0.02em',
                 }}>{data.venue || t.defaultVenue}</span>
@@ -710,7 +718,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                 onBlur={(e) => handleEdit('message', e.currentTarget.textContent || '')}
                 className="cursor-text outline-none"
                 style={{
-                  fontFamily: "'Cormorant Garamond',serif",
+                  fontFamily: 'var(--font-cormorant), serif',
                   fontSize: 16, fontStyle: 'italic', fontWeight: 300,
                   color: '#8a5838', lineHeight: 1.65,
                   marginBottom: 26, padding: '0 8px',
@@ -733,7 +741,7 @@ export function MagicBirthdayTemplate({ data, onDataChange }: { data: any; onDat
                 }}
               >
                 <div style={{
-                  fontFamily: "'Great Vibes',cursive",
+                  fontFamily: 'var(--font-great-vibes), cursive',
                   fontSize: 38, color: '#c49030', marginBottom: 4,
                   lineHeight: 1
                 }}>

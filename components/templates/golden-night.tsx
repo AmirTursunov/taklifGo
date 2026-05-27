@@ -282,7 +282,7 @@ export function GoldenNightTemplate({
     >
       {/* Google Fonts */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+        
         .cinzel { font-family: 'Cinzel', serif; }
         .cormorant { font-family: 'Cormorant Garamond', serif; }
       `}</style>

@@ -14,26 +14,10 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Taklif Go - 3D Interaktiv Taklifnomalar',
-  description: 'Barcha turdagi marosimlar uchun zamonaviy 3D taklifnomalar yaratish platformasi',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  title: 'Taklif Time - Interaktiv Taklifnomalar',
+  description: 'Barcha turdagi marosimlar uchun zamonaviy taklifnomalar yaratish platformasi',
+  generator: 'Taklif Time',
+
 }
 
 import Script from 'next/script'
@@ -43,13 +27,20 @@ import { NextAuthProvider } from '@/components/NextAuthProvider'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import { 
+  cinzel, cormorant, dancingScript, montserrat, quicksand, 
+  greatVibes, lato, inter, spaceGrotesk, lilitaOne, pacifico, 
+  playfair, nunito, amiri 
+} from '@/lib/fonts'
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const fontVars = `${geistSans.variable} ${geistMono.variable} ${cinzel.variable} ${cormorant.variable} ${dancingScript.variable} ${montserrat.variable} ${quicksand.variable} ${greatVibes.variable} ${lato.variable} ${inter.variable} ${spaceGrotesk.variable} ${lilitaOne.variable} ${pacifico.variable} ${playfair.variable} ${nunito.variable} ${amiri.variable}`
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} bg-background`} suppressHydrationWarning>
+    <html lang="en" className={`${fontVars} bg-background`} suppressHydrationWarning>
       <head />
       <body className="font-sans antialiased">
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="afterInteractive" />
@@ -57,7 +48,7 @@ export default function RootLayout({
           <AuthProvider>
             <LanguageProvider>
               {children}
-              <ToastContainer 
+              <ToastContainer
                 position="top-right"
                 autoClose={3000}
                 hideProgressBar={false}

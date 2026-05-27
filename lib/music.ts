@@ -2,7 +2,7 @@ export const PRESET_MUSIC = [
   {
     id: 'default',
     name: 'musicDefault',
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    url: '/musics/wed-music1.m4a',
   },
   {
     id: 'premium',
@@ -18,5 +18,10 @@ export const PRESET_MUSIC = [
     id: 'traditional',
     name: 'musicTraditional',
     url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // Example working link
+  },
+  {
+    id: 'wedding2',
+    name: 'musicWedding2',
+    url: '/musics/wed-music2.m4a',
   }
 ];

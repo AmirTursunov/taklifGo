@@ -25,7 +25,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-4 md:gap-8">
           <Link href="/" prefetch={false} className="text-lg md:text-xl font-serif text-[#5c6352] tracking-tight shrink-0">
-            3D Invitations
+            Taklif-Time
           </Link>
 
           <div className="hidden md:flex p-1 bg-[#98a08d]/5 rounded-full border border-[#98a08d]/10">

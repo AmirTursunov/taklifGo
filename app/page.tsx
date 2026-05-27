@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Sparkles, ArrowRight, Share2, Palette, Globe } from 'lucide-react'
@@ -46,64 +47,78 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative pt-32 md:pt-40 pb-16 md:pb-24 px-6 text-center space-y-6 md:space-y-8 max-w-5xl mx-auto overflow-hidden">
-        <motion.div 
+      <section className="relative pt-36 md:pt-48 pb-20 md:pb-32 px-6 text-center overflow-hidden min-h-[90vh] flex flex-col justify-center items-center w-full">
+        {/* Background Image & Gradients */}
+        <div className="absolute inset-0 z-0 pointer-events-none w-full h-full">
+          <Image 
+            src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=2000"
+            alt="Luxury background"
+            fill
+            priority
+            className="object-cover opacity-[0.45]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#faf9f6]/10 via-[#faf9f6]/40 to-[#faf9f6] pointer-events-none" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center space-y-8 md:space-y-10">
+          <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[#98a08d]/10 rounded-full text-[#98a08d] text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase"
+          className="relative z-10 inline-flex items-center gap-2 px-5 py-2.5 bg-white/60 backdrop-blur-md border border-[#98a08d]/20 rounded-full text-[#7a8270] text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase shadow-sm"
         >
-          <Sparkles className="w-3 h-3" />
+          <Sparkles className="w-3 h-3 text-[#d4a373]" />
           {t.futureOfInvitations}
         </motion.div>
-        
-        <motion.h1 
+
+        <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-4xl md:text-7xl lg:text-8xl font-serif leading-tight"
+          className="relative z-10 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif leading-[1.2] md:leading-tight text-[#3a4030] max-w-5xl mx-auto [text-wrap:balance]"
         >
           {t.heroTitle.split(' ').map((word, i) => (
-            <span key={i} className={i === 1 ? 'italic' : ''}> {word} </span>
+            <span key={i} className={i === 1 ? 'italic text-[#7a8270]' : ''}> {word} </span>
           ))}
         </motion.h1>
-        
-        <motion.p 
+
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
-          className="text-lg md:text-xl text-[#7c6a5a] max-w-2xl mx-auto font-light leading-relaxed px-4"
+          className="relative z-10 text-base md:text-xl text-[#7c6a5a] max-w-2xl mx-auto font-light leading-relaxed px-2 md:px-6"
         >
           {t.heroSubtitle}
         </motion.p>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
+          className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-8 w-full px-4 sm:px-0"
         >
           <Link href="/templates" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-[#98a08d] hover:bg-[#868d7c] text-white rounded-2xl px-12 py-7 md:py-8 text-xs md:text-sm font-bold tracking-[0.2em] uppercase transition-all shadow-xl shadow-[#98a08d]/20 group">
+            <Button className="w-full sm:w-auto bg-gradient-to-r from-[#7a8270] to-[#98a08d] hover:from-[#6a7260] hover:to-[#8a927d] text-white rounded-full px-10 py-7 md:py-8 text-xs md:text-sm font-bold tracking-[0.2em] uppercase transition-all shadow-xl shadow-[#98a08d]/30 hover:shadow-2xl hover:scale-105 group border-0">
               {t.startCreating}
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-2 transition-transform" />
             </Button>
           </Link>
           <Link href="/templates" className="w-full sm:w-auto">
-            <Button variant="outline" className="w-full sm:w-auto rounded-2xl px-12 py-7 md:py-8 text-xs md:text-sm font-bold tracking-[0.2em] uppercase border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all">
+            <Button variant="outline" className="w-full sm:w-auto rounded-full px-10 py-7 md:py-8 text-xs md:text-sm font-bold tracking-[0.2em] uppercase border-2 border-[#98a08d]/20 text-[#6a7060] bg-white/50 backdrop-blur-md hover:bg-[#98a08d] hover:text-white transition-all hover:scale-105 shadow-sm hover:shadow-xl">
               {t.viewTemplates}
             </Button>
           </Link>
         </motion.div>
 
         {/* Floating Decorative Elements */}
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-48 md:w-64 h-48 md:h-64 bg-[#98a08d]/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 w-48 md:w-64 h-48 md:h-64 bg-[#98a08d]/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 left-[-10%] w-64 h-64 bg-[#d4a373]/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute top-2/3 right-[-10%] w-72 h-72 bg-[#98a08d]/10 rounded-full blur-[80px] pointer-events-none" />
+        </div>
       </section>
 
       {/* Features Section */}
       <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto overflow-hidden">
-        <motion.div 
+        <motion.div
           variants={staggerContainer}
           initial="initial"
           whileInView="whileInView"
@@ -115,8 +130,8 @@ export default function Home() {
             { icon: Share2, title: t.instantSharing, desc: t.instantDesc },
             { icon: Globe, title: t.webMobile, desc: t.webMobileDesc }
           ].map((feature, i) => (
-            <motion.div 
-              key={i} 
+            <motion.div
+              key={i}
               variants={fadeInUp}
               className="space-y-4 p-8 md:p-10 rounded-[2.5rem] md:rounded-[3rem] bg-white border border-[#98a08d]/5 shadow-sm hover:shadow-2xl hover:shadow-[#98a08d]/10 transition-all duration-500 group"
             >
@@ -133,7 +148,7 @@ export default function Home() {
       {/* Template Showcase Section */}
       <section className="py-20 md:py-32 px-6 bg-white/40 overflow-hidden">
         <div className="max-w-7xl mx-auto space-y-12 md:space-y-20">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -143,7 +158,7 @@ export default function Home() {
             <h2 className="text-4xl md:text-7xl font-serif text-[#5c6352]">{t.exquisiteTemplates}</h2>
             <p className="text-[#98a08d] tracking-[0.3em] md:tracking-[0.4em] uppercase text-[10px] md:text-xs font-bold">{t.chooseStyle}</p>
           </motion.div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -163,7 +178,7 @@ export default function Home() {
                 </div>
               </Card>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -185,7 +200,7 @@ export default function Home() {
       </section>
 
       {/* Footer Section */}
-      <motion.footer 
+      <motion.footer
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -199,7 +214,7 @@ export default function Home() {
           ))}
         </div>
         <div className="space-y-2">
-          <p className="text-[10px] md:text-xs text-[#98a08d]/60 font-medium italic">© 2024 3D Invitations • Crafted for your special moments</p>
+          <p className="text-[10px] md:text-xs text-[#98a08d]/60 font-medium italic">© 2024 Modern Invitations • Crafted for your special moments</p>
           <div className="w-12 h-1 bg-[#98a08d]/20 mx-auto rounded-full" />
         </div>
       </motion.footer>

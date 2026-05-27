@@ -252,7 +252,7 @@ export function NafosatTemplate({
       style={{ background: '#f7fafd', color: '#1a2a4a', fontFamily: "'Cormorant Garamond', serif" }}>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&display=swap');
+        
         .playfair { font-family: 'Playfair Display', serif; }
         .cinzel   { font-family: 'Cinzel', serif; }
         .cormorant { font-family: 'Cormorant Garamond', serif; }

@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [error, setError] = useState('')
-  
+
   const router = useRouter()
   const { lang } = useLanguage()
   const { user, loading: authLoading } = useAuth()
@@ -209,7 +209,7 @@ export default function LoginPage() {
             {isSignUp ? (lang === 'uz' ? 'Ro\'yxatdan o\'tish' : 'Регистрация') : (lang === 'uz' ? 'Xush kelibsiz' : 'С возвращением')}
           </h1>
           <p className="text-[#98a08d] text-sm">
-            {isSignUp ? (lang === 'uz' ? 'O\'z hisobingizni yarating' : 'Создайте свой аккаунт') : (lang === 'uz' ? '3D taklifnomalar olamiga xush kelibsiz' : 'Добро пожаловать в мир 3D приглашений')}
+            {isSignUp ? (lang === 'uz' ? 'O\'z hisobingizni yarating' : 'Создайте свой аккаунт') : (lang === 'uz' ? 'Zamonaviy taklifnomalar olamiga xush kelibsiz' : 'Добро пожаловать в мир современных приглашений')}
           </p>
         </div>
 

@@ -161,7 +161,7 @@ export function ElegantBirthdayTemplate({
   return (
     <div className="w-full min-h-screen bg-[#fffdfa] text-gray-800 font-sans overflow-x-hidden">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700;900&family=Quicksand:wght@500;700&display=swap');
+        
         .dancing { font-family: 'Dancing Script', cursive; }
         .montserrat { font-family: 'Montserrat', sans-serif; }
         .quicksand { font-family: 'Quicksand', sans-serif; }

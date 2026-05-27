@@ -122,10 +122,10 @@ export default function SuccessPage() {
           </Button>
           <div
             className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold border ${isPending
-                ? "bg-[#d97706]/5 text-[#d97706] border-[#d97706]/20"
-                : isRejected
-                  ? "bg-red-50 text-red-600 border-red-200"
-                  : "bg-[#98a08d]/5 text-[#98a08d] border-[#98a08d]/20"
+              ? "bg-[#d97706]/5 text-[#d97706] border-[#d97706]/20"
+              : isRejected
+                ? "bg-red-50 text-red-600 border-red-200"
+                : "bg-[#98a08d]/5 text-[#98a08d] border-[#98a08d]/20"
               }`}
           >
             {isPending ? (
@@ -189,10 +189,10 @@ export default function SuccessPage() {
                     ? "Ваш платеж будет проверен в течение 5 минут. Ссылка станет активной после подтверждения."
                     : "Your payment will be reviewed within 5 minutes. The link will become active after approval."
                 : lang === "uz"
-                  ? "Sizning 3D taklifnomangiz muvaffaqiyatli yaratildi va hozirda butun dunyo uchun ochiq."
+                  ? "Sizning zamonaviy taklifnomangiz muvaffaqiyatli yaratildi va hozirda butun dunyo uchun ochiq."
                   : lang === "ru"
-                    ? "Ваше 3D-приглашение успешно создано и теперь доступно для всего мира."
-                    : "Your 3D invitation has been successfully created and is now live for the world to see."}
+                    ? "Ваше современный приглашение успешно создано и теперь доступно для всего мира."
+                    : "Your modern invitation has been successfully created and is now live for the world to see."}
             </p>
           )}
 

@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { motion } from 'framer-motion'
-import { 
-  Save, 
-  Settings as SettingsIcon, 
-  CreditCard, 
-  Phone, 
-  Bell, 
+import {
+  Save,
+  Settings as SettingsIcon,
+  CreditCard,
+  Phone,
+  Bell,
   Globe,
   Loader2,
   ShieldCheck
@@ -21,7 +21,7 @@ export default function AdminSettings() {
     price: 25000,
     supportPhone: '+998 90 123 45 67',
     notificationsEnabled: true,
-    siteName: '3D Invitations',
+    siteName: 'Modern Invitations',
     maintenanceMode: false
   })
   const [loading, setLoading] = useState(true)
@@ -71,7 +71,7 @@ export default function AdminSettings() {
           <h1 className="text-3xl font-black text-[#5c6352] tracking-tighter">Sozlamalar</h1>
           <p className="text-[#98a08d] font-medium">Platforma parametrlarini boshqarish.</p>
         </div>
-        <button 
+        <button
           onClick={handleSave}
           disabled={saving}
           className="flex items-center gap-2 px-8 py-3 bg-[#98a08d] text-white rounded-2xl shadow-xl shadow-[#98a08d]/20 font-black text-xs uppercase tracking-widest hover:bg-[#868d7c] transition-all"
@@ -90,11 +90,11 @@ export default function AdminSettings() {
             </div>
             <h3 className="text-lg font-black tracking-tight">To'lov Sozlamalari</h3>
           </div>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-[#98a08d] uppercase tracking-widest">Taklifnoma narxi (UZS)</label>
-              <input 
+              <input
                 type="number"
                 value={settings.price}
                 onChange={(e) => setSettings({ ...settings, price: Number(e.target.value) })}
@@ -112,11 +112,11 @@ export default function AdminSettings() {
             </div>
             <h3 className="text-lg font-black tracking-tight">Aloqa & Qo'llab-quvvatlash</h3>
           </div>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-[#98a08d] uppercase tracking-widest">Support Telefon raqami</label>
-              <input 
+              <input
                 type="text"
                 value={settings.supportPhone}
                 onChange={(e) => setSettings({ ...settings, supportPhone: e.target.value })}
@@ -134,13 +134,13 @@ export default function AdminSettings() {
             </div>
             <h3 className="text-lg font-black tracking-tight">Bildirishnomalar</h3>
           </div>
-          
+
           <div className="flex items-center justify-between p-4 bg-[#f8f7f4] rounded-2xl border border-[#98a08d]/5">
             <div>
               <p className="text-sm font-bold text-[#5c6352]">Telegram bildirishnomalar</p>
               <p className="text-[10px] text-[#98a08d] font-medium">Yangi buyurtmalar haqida xabar berish</p>
             </div>
-            <button 
+            <button
               onClick={() => setSettings({ ...settings, notificationsEnabled: !settings.notificationsEnabled })}
               className={`w-12 h-6 rounded-full transition-all relative ${settings.notificationsEnabled ? 'bg-[#98a08d]' : 'bg-gray-300'}`}
             >
@@ -157,13 +157,13 @@ export default function AdminSettings() {
             </div>
             <h3 className="text-lg font-black tracking-tight">Tizim Sozlamalari</h3>
           </div>
-          
+
           <div className="flex items-center justify-between p-4 bg-[#f8f7f4] rounded-2xl border border-[#98a08d]/5">
             <div>
               <p className="text-sm font-bold text-[#5c6352]">Texnik ishlar rejimi</p>
               <p className="text-[10px] text-[#98a08d] font-medium">Saytni vaqtincha yopish</p>
             </div>
-            <button 
+            <button
               onClick={() => setSettings({ ...settings, maintenanceMode: !settings.maintenanceMode })}
               className={`w-12 h-6 rounded-full transition-all relative ${settings.maintenanceMode ? 'bg-red-500' : 'bg-gray-300'}`}
             >

@@ -173,7 +173,7 @@ export function GoldenWeddingTemplate({
       style={{ background: '#fffcf0', color: '#43341b', fontFamily: "'Playfair Display', serif" }}>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Montserrat:wght@300;400;600;700;800&family=Great+Vibes&display=swap');
+        
         .playfair { font-family: 'Playfair Display', serif; }
         .montserrat { font-family: 'Montserrat', sans-serif; }
         .great-vibes { font-family: 'Great Vibes', cursive; }

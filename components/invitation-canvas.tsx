@@ -27,7 +27,9 @@ interface InvitationCanvasProps {
 
 function FallingPetals() {
   const texture = useTexture('/textures/flower.png');
-  const count = 150; // Much more flowers
+  const { viewport } = useThree();
+  const isMobile = viewport.width < 6;
+  const count = isMobile ? 50 : 150; // Reduce flowers on mobile
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
   
@@ -90,8 +92,10 @@ function FallingPetals() {
 function ParticleVortex() {
   const pointsRef = useRef<THREE.Points>(null);
 
+  const { viewport } = useThree();
+  const isMobile = viewport.width < 6;
   const particles = useMemo(() => {
-    const count = 1000;
+    const count = isMobile ? 300 : 1000;
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
       const theta = (i / count) * Math.PI * 2 * 10;
@@ -271,8 +275,8 @@ function KineticScene({ data, onDataChange }: InvitationCanvasProps) {
       <pointLight position={[-10, -10, -10]} intensity={1} color="#e0f4ff" />
       <Environment preset="studio" />
 
-      <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-      <Sparkles count={100} scale={15} size={2} speed={0.4} color="#d4a574" />
+      <Stars radius={100} depth={50} count={isMobile ? 1000 : 5000} factor={4} saturation={0} fade speed={1} />
+      <Sparkles count={isMobile ? 30 : 100} scale={15} size={2} speed={0.4} color="#d4a574" />
 
       <EternalBond data={data} onDataChange={onDataChange} />
       <FallingPetals />
@@ -289,12 +293,14 @@ export function InvitationCanvas({ data, onDataChange }: InvitationCanvasProps) 
 
   if (!isClient) return <div className="w-full h-full bg-[#faf9f6]" />;
 
+  const isMobileDevice = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div className="w-full h-full relative" style={{ touchAction: 'pan-y' }}>
       <Canvas
         camera={{ position: [0, 0, 12], fov: 35 }}
-        dpr={[1, 2]}
-        gl={{ antialias: true, alpha: true }}
+        dpr={isMobileDevice ? 1 : [1, 1.5]}
+        gl={{ antialias: !isMobileDevice, alpha: true, powerPreference: "high-performance" }}
         style={{ touchAction: 'pan-y' }}
       >
         <Suspense fallback={null}>
