@@ -14,6 +14,7 @@ import { CorporateEventTemplate } from "@/components/templates/corporate-event";
 import { IslamicWeddingTemplate } from "@/components/templates/islamic-wedding";
 import { VideoWeddingTemplate } from "@/components/templates/video-wedding";
 import { StoryWeddingTemplate } from "@/components/templates/story-wedding";
+import { DateInvitationTemplate } from "@/components/templates/date-invitation";
 import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
@@ -106,7 +107,7 @@ function CreateInvitationContent() {
     if (cat === "business") greeting = "Biznes Tadbirga Taklifnoma";
 
     return {
-      names: cat === "business" ? "Biznes Tadbiri" : cat === "birthday" ? "Amir" : "Sarah & James",
+      names: cat === "business" ? "Biznes Tadbiri" : cat === "birthday" ? "Amir" : cat === "date" ? "Malika" : "Sarah & James",
       companyName: cat === "business" ? "TechCorp Uzbekistan" : "",
       eventTitle: cat === "business" ? "Innovation Summit '25" : "",
       eventType: cat === "business" ? "Konferensiya" : "",
@@ -574,7 +575,11 @@ function CreateInvitationContent() {
               ) : (
                 <>
                   <div className="space-y-2">
-                    <Label>{data.category === 'birthday' ? (lang === 'uz' ? 'Ism' : 'Имя') : t.coupleNames}</Label>
+                    <Label>
+                      {data.category === 'birthday' || data.category === 'date'
+                        ? (lang === 'uz' ? 'Ism' : 'Имя')
+                        : t.coupleNames}
+                    </Label>
                     <Input
                       value={data.names}
                       onChange={(e) => setData({ ...data, names: e.target.value })}
@@ -592,14 +597,20 @@ function CreateInvitationContent() {
                     </div>
                   )}
                   <div className="space-y-2">
-                    <Label>{data.category === 'birthday' ? (lang === 'uz' ? 'Tug\'ilgan kun sanasi' : 'Дата рождения') : t.weddingDate}</Label>
+                    <Label>
+                      {data.category === 'birthday'
+                        ? (lang === 'uz' ? "Tug'ilgan kun sanasi" : 'Дата рождения')
+                        : data.category === 'date'
+                          ? (lang === 'uz' ? 'Uchrashuv sanasi' : 'Дата встречи')
+                          : t.weddingDate}
+                    </Label>
                     <Input
                       value={data.date}
                       onChange={(e) => setData({ ...data, date: e.target.value })}
                       className="rounded-xl border-[#98a08d]/20"
                     />
                   </div>
-                  {data.category === 'birthday' && (
+                  {(data.category === 'birthday' || data.category === 'date') && (
                     <div className="space-y-2">
                       <Label>{lang === 'uz' ? 'Tadbir vaqti' : lang === 'ru' ? 'Время мероприятия' : 'Event Time'}</Label>
                       <Input
@@ -652,16 +663,72 @@ function CreateInvitationContent() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>
-                    {lang === "uz" 
-                      ? "Ro'yxatdan o'tish havolasi / Telegram" 
-                      : lang === "ru" 
-                        ? "Ссылка на регистрацию / Telegram" 
+                    {lang === "uz"
+                      ? "Ro'yxatdan o'tish havolasi / Telegram"
+                      : lang === "ru"
+                        ? "Ссылка на регистрацию / Telegram"
                         : "Registration link / Telegram"}
                   </Label>
                   <Input
                     value={(data as any).registrationUrl || ""}
                     placeholder={lang === "uz" ? "Masalan: @username yoki https://..." : "Например: @username или https://..."}
                     onChange={(e) => setData({ ...data, registrationUrl: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {data.category === "date" && (
+            <section className="space-y-4">
+              <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
+                {lang === "uz" ? "Taklifnoma Matnlari" : lang === "ru" ? "Тексты приглашения" : "Invitation Texts"}
+              </h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{lang === "uz" ? "Kichik yozuv (1-slayd)" : "Подзаголовок (1 слайд)"}</Label>
+                  <Input
+                    value={(data as any).subMessage || ""}
+                    placeholder="Senga gapim bor 🤭"
+                    onChange={(e) => setData({ ...data, subMessage: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{lang === "uz" ? "Asosiy xabar (2-slayd)" : "Главное сообщение (2 слайд)"}</Label>
+                  <textarea
+                    value={(data as any).welcomeMessage || ""}
+                    placeholder="Siz bilan qahva ustida dildan suhbatlashgim keldi..."
+                    onChange={(e) => setData({ ...data, welcomeMessage: e.target.value })}
+                    rows={2}
+                    className="w-full rounded-xl border border-[#98a08d]/20 bg-white px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-[#98a08d]/40"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{lang === "uz" ? "Qisqa maqsad (2-slayd)" : "Короткая цель (2 слайд)"}</Label>
+                  <Input
+                    value={(data as any).message || ""}
+                    placeholder="Ajoyib vaqt o'tkazamiz"
+                    onChange={(e) => setData({ ...data, message: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{lang === "uz" ? "Xotima (4-slayd)" : "Заключение (4 слайд)"}</Label>
+                  <Input
+                    value={(data as any).closingMessage || ""}
+                    placeholder="Kutaman!"
+                    onChange={(e) => setData({ ...data, closingMessage: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{lang === "uz" ? "Qo'shimcha gap (4-slayd)" : "Доп. фраза (4 слайд)"}</Label>
+                  <Input
+                    value={(data as any).closingSub || ""}
+                    placeholder="Yaxshi kayfiyat olib kelish esdan chiqmasin ✨"
+                    onChange={(e) => setData({ ...data, closingSub: e.target.value })}
                     className="rounded-xl border-[#98a08d]/20"
                   />
                 </div>
@@ -965,7 +1032,7 @@ function CreateInvitationContent() {
               {lang === "uz" ? "Ma'lumotlarni tekshiring" : "Проверьте данные"}
             </DialogTitle>
             <DialogDescription className="text-[#98a08d] text-sm leading-relaxed">
-              {lang === "uz" 
+              {lang === "uz"
                 ? "Barcha ma'lumotlarni to'g'ri kiritganingizga ishonchingiz komilmi? Havola yaratilgandan so'ng ma'lumotlarni o'zgartirib bo'lmaydi."
                 : "Вы уверены, что ввели все данные правильно? После создания ссылки изменить данные будет невозможно."}
             </DialogDescription>
@@ -1018,8 +1085,8 @@ function CreateInvitationContent() {
                     ? "Вы можете редактировать текст прямо в приглашении, нажав на него"
                     : "You can edit the text directly in the invitation by clicking on it"}
               </span>
-              <button 
-                onClick={() => setShowTooltip(false)} 
+              <button
+                onClick={() => setShowTooltip(false)}
                 className="ml-1 p-1 hover:bg-white/20 rounded-full text-white/80 transition-colors shrink-0"
               >
                 <X className="w-3 h-3" />
@@ -1236,6 +1303,13 @@ function CreateInvitationContent() {
                   />
                 ) : data.templateId === "corporate-event" ? (
                   <CorporateEventTemplate
+                    data={data}
+                    onDataChange={(newData) => {
+                      setData((prev) => ({ ...prev, ...newData }));
+                    }}
+                  />
+                ) : data.templateId === "date-invitation" ? (
+                  <DateInvitationTemplate
                     data={data}
                     onDataChange={(newData) => {
                       setData((prev) => ({ ...prev, ...newData }));

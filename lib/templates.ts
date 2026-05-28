@@ -20,4 +20,7 @@ export const TEMPLATES_BY_CATEGORY: Record<string, { id: string; name: string; c
   business: [
     { id: "corporate-event", name: "Corporate Event", color: "bg-[#0a4a8f]" },
   ],
+  date: [
+    { id: "date-invitation", name: "Romantic Date", color: "bg-[#b07050]" },
+  ],
 };

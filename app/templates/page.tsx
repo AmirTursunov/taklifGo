@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Sparkles, Heart, Gift, Briefcase, ChevronRight } from "lucide-react";
+import { ArrowLeft, Sparkles, Heart, Gift, Briefcase, ChevronRight, Coffee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 
@@ -34,6 +34,13 @@ const CATEGORIES = [
     icon: Briefcase, 
     color: "text-blue-500", 
     bg: "bg-blue-50",
+  },
+  { 
+    id: "date", 
+    name: "Uchrashuv", 
+    icon: Coffee, 
+    color: "text-[#b07050]", 
+    bg: "bg-[#fff9f5]",
   },
 ];
 
