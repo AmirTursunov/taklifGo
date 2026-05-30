@@ -120,18 +120,57 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
 /* Classic Wedding Animations */
-@keyframes goldPulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-@keyframes petalDrift {
-  0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0.8; }
-  100% { transform: translateY(-600px) rotate(720deg) translateX(30px); opacity: 0; }
+@keyframes goldPulse {
+
+  0%,
+  100% {
+    opacity: 0.7
+  }
+
+  50% {
+    opacity: 1
+  }
 }
-.gold-shimmer { animation: goldPulse 3s ease-in-out infinite; }
-.fade-up { animation: fadeUp 0.8s ease forwards; }
-.petal-anim { animation: petalDrift linear infinite; }
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px)
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
+
+@keyframes petalDrift {
+  0% {
+    transform: translateY(0) rotate(0deg) translateX(0);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(-600px) rotate(720deg) translateX(30px);
+    opacity: 0;
+  }
+}
+
+.gold-shimmer {
+  animation: goldPulse 3s ease-in-out infinite;
+}
+
+.fade-up {
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.petal-anim {
+  animation: petalDrift linear infinite;
+}

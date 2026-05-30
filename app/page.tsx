@@ -145,7 +145,7 @@ export default function Home() {
                 <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-2 transition-transform" />
               </Button>
             </Link>
-            <Link href="/dashboard?tab=referrals" className="w-full sm:w-auto">
+            <Link href="#referral-section" className="w-full sm:w-auto">
               <Button variant="outline" className="w-full sm:w-auto rounded-full px-10 py-7 md:py-8 text-xs md:text-sm font-bold tracking-[0.2em] uppercase border-2 border-[#98a08d]/20 text-[#6a7060] bg-white/50 backdrop-blur-md hover:bg-[#98a08d] hover:text-white transition-all hover:scale-105 shadow-sm hover:shadow-xl">
                 {t.viewTemplates}
               </Button>
@@ -272,8 +272,9 @@ export default function Home() {
           </motion.div>
         </motion.div>
       </section> */}
+
       {/* Referal Section */}
-      <section className="py-16 md:py-24 px-6 max-w-7xl mx-auto overflow-hidden">
+      <section id='referral-section' className="py-16 md:py-24 px-6 max-w-7xl mx-auto overflow-hidden">
         <motion.div
           variants={staggerContainer}
           initial="initial"
@@ -333,11 +334,11 @@ export default function Home() {
         <h2 className="text-3xl md:text-5xl font-serif text-[#5c6352] max-w-xl mx-auto leading-tight">{t.startForever}</h2>
         <div className="flex flex-wrap justify-center gap-8 md:gap-12">
           {['Instagram', 'Telegram', 'Support'].map((link) => (
-            <a key={link} href="#" className="text-[10px] md:text-sm text-[#98a08d] hover:text-[#5c6352] transition-all tracking-[0.3em] uppercase font-bold hover:scale-110">{link}</a>
+            <a key={link} href={link == 'Telegram' || link == 'Support' ? 'https://t.me/amir_079' : '#'} className="text-[10px] md:text-sm text-[#98a08d] hover:text-[#5c6352] transition-all tracking-[0.3em] uppercase font-bold hover:scale-110">{link}</a>
           ))}
         </div>
         <div className="space-y-2">
-          <p className="text-[10px] md:text-xs text-[#98a08d]/60 font-medium italic">© 2024 Modern Invitations • Crafted for your special moments</p>
+          <p className="text-[10px] md:text-xs text-[#98a08d]/60 font-medium italic">© 2026 Modern Invitations • Crafted for your special moments</p>
           <div className="w-12 h-1 bg-[#98a08d]/20 mx-auto rounded-full" />
         </div>
       </motion.footer>
