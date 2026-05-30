@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -123,3 +124,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Classic Wedding Animations */
+@keyframes goldPulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes petalDrift {
+  0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0.8; }
+  100% { transform: translateY(-600px) rotate(720deg) translateX(30px); opacity: 0; }
+}
+.gold-shimmer { animation: goldPulse 3s ease-in-out infinite; }
+.fade-up { animation: fadeUp 0.8s ease forwards; }
+.petal-anim { animation: petalDrift linear infinite; }

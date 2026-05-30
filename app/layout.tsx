@@ -24,6 +24,8 @@ import Script from 'next/script'
 import { LanguageProvider } from '@/lib/LanguageContext'
 import { AuthProvider } from '@/lib/AuthContext'
 import { NextAuthProvider } from '@/components/NextAuthProvider'
+import { ReferralTracker } from '@/components/ReferralTracker'
+import { Suspense } from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -43,6 +45,9 @@ export default function RootLayout({
     <html lang="en" className={`${fontVars} bg-background`} suppressHydrationWarning>
       <head />
       <body className="font-sans antialiased">
+        <Suspense fallback={null}>
+          <ReferralTracker />
+        </Suspense>
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="afterInteractive" />
         <NextAuthProvider>
           <AuthProvider>

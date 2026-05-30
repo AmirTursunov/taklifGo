@@ -8,6 +8,7 @@ export const TEMPLATES_BY_CATEGORY: Record<string, { id: string; name: string; c
     { id: "islamic-wedding", name: "Islamic Grace", color: "bg-[#7a9cd0]" },
     { id: "video-wedding", name: "Cinematic Love", color: "bg-[#2d2d2d]" },
     { id: "story-wedding", name: "Story Video", color: "bg-[#111111]" },
+    { id: "classic-wedding", name: "Classic Gold", color: "bg-[#d4a840]" },
   ],
   birthday: [
     { id: "elegant-birthday", name: "Elegant Gold", color: "bg-[#D4AF37]" },

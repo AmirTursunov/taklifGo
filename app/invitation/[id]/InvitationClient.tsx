@@ -12,6 +12,7 @@ import { CorporateEventTemplate } from '@/components/templates/corporate-event'
 import { IslamicWeddingTemplate } from '@/components/templates/islamic-wedding'
 import { StoryWeddingTemplate } from '@/components/templates/story-wedding'
 import { DateInvitationTemplate } from '@/components/templates/date-invitation'
+import ClassicWeddingTemplate from '@/components/templates/classic-wedding'
 import { Loader2 } from 'lucide-react'
 
 export default function InvitationClient({ data, id }: { data: any, id: string }) {
@@ -129,6 +130,8 @@ export default function InvitationClient({ data, id }: { data: any, id: string }
         <DateInvitationTemplate data={data} />
       ) : data.templateId === "corporate-event" ? (
         <CorporateEventTemplate data={data} />
+      ) : data.templateId === "classic-wedding" ? (
+        <ClassicWeddingTemplate data={data} />
       ) : (
         <EternalBondTemplate data={data} />
       )}

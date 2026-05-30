@@ -4,7 +4,7 @@ export const translations = {
     heroSubtitle:
       "O'zbekistondagi premium interaktiv taklifnomalar platformasi. Hikoyangizni unutilmas tarzda ulashing.",
     startCreating: "Yaratishni boshlash",
-    viewTemplates: "Shablonlarni ko'rish",
+    viewTemplates: "Bonus olish",
     futureOfInvitations: "Taklifnomalar Kelajagi",
     premiumDesigns: "Premium Dizaynlar",
     premiumDesc: "To'yingiz uslubiga mos keladigan mukammal zamonaviy muhitlar.",

@@ -15,6 +15,7 @@ import { IslamicWeddingTemplate } from "@/components/templates/islamic-wedding";
 import { VideoWeddingTemplate } from "@/components/templates/video-wedding";
 import { StoryWeddingTemplate } from "@/components/templates/story-wedding";
 import { DateInvitationTemplate } from "@/components/templates/date-invitation";
+import ClassicWeddingTemplate from "@/components/templates/classic-wedding";
 import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
@@ -387,6 +388,7 @@ function CreateInvitationContent() {
         userId: user?.uid,
         userEmail: user?.email || null,
         telegramId: tgId || null,
+        referredBy: typeof window !== 'undefined' ? localStorage.getItem('referredBy') : null,
         status: "pending",
         createdAt: serverTimestamp(),
         lang,
@@ -1314,6 +1316,11 @@ function CreateInvitationContent() {
                     onDataChange={(newData) => {
                       setData((prev) => ({ ...prev, ...newData }));
                     }}
+                  />
+                ) : data.templateId === "classic-wedding" ? (
+                  <ClassicWeddingTemplate
+                    data={data}
+                    onDataChange={(newData: any) => setData((prev: any) => ({ ...prev, ...newData }))}
                   />
                 ) : (
                   <EternalBondTemplate

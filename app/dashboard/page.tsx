@@ -26,7 +26,11 @@ import {
   User,
   ShieldAlert,
   Save,
-  ChevronLeft
+  ChevronLeft,
+  Wallet,
+  Copy,
+  CreditCard,
+  Link as LinkIcon
 } from 'lucide-react'
 import {
   Pagination,
@@ -46,14 +50,26 @@ export default function DashboardPage() {
   const router = useRouter()
   const [invitations, setInvitations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [userData, setUserData] = useState<any>(null)
+  const [withdrawAmount, setWithdrawAmount] = useState('')
+  const [cardNumber, setCardNumber] = useState('')
+  const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [updatingProfile, setUpdatingProfile] = useState(false)
   const [newName, setNewName] = useState(user?.displayName || '')
   const [currentPage, setCurrentPage] = useState(1)
+  const [activeTab, setActiveTab] = useState('projects')
   const itemsPerPage = 5
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab) {
+        setActiveTab(tab);
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -91,7 +107,24 @@ export default function DashboardPage() {
       }
     }
 
-    if (user) fetchInvitations()
+    if (user) {
+      fetchInvitations()
+      // Fetch user data for balance and referrals
+      const fetchUserData = async () => {
+        try {
+          const res = await fetch(`/api/user?uid=${user.uid}`);
+          if (res.ok) {
+            const data = await res.json();
+            setUserData(data);
+          } else {
+            // Agar hali user hujjati ochilmagan bo'lsa (yangi user), api o'zi yaratishi mumkin
+          }
+        } catch (e) {
+          console.error("Failed to fetch user data", e);
+        }
+      }
+      fetchUserData();
+    }
   }, [user])
 
   const getInvitationTitle = (inv: any) => {
@@ -190,6 +223,50 @@ export default function DashboardPage() {
     }
   }
 
+  const handleWithdraw = async () => {
+    if (!cardNumber || cardNumber.length < 16) {
+      toast.error(lang === 'uz' ? "Karta raqamini to'liq kiriting" : "Введите полный номер карты")
+      return
+    }
+    if ((userData?.balance || 0) < 10000) {
+      toast.error(lang === 'uz' ? "Minimal yechish summasi: 10,000 UZS" : "Минимальная сумма: 10,000 UZS")
+      return
+    }
+    
+    setIsWithdrawing(true)
+    try {
+      const res = await fetch('/api/bot/withdraw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: user?.uid,
+          email: user?.email,
+          cardNumber,
+          amount: userData?.balance || 0
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(lang === 'uz' ? "So'rov yuborildi! Tez orada pul tushib keladi." : "Запрос отправлен!");
+        setUserData({ ...userData, balance: 0 });
+        setCardNumber('');
+      } else {
+        toast.error(data.error);
+      }
+    } catch (err) {
+      toast.error("Xatolik yuz berdi");
+    } finally {
+      setIsWithdrawing(false)
+    }
+  }
+
+  const copyReferralLink = () => {
+    if (!user) return;
+    const link = `https://taklif-go.vercel.app/?ref=${user.uid}`;
+    navigator.clipboard.writeText(link);
+    toast.success(lang === 'uz' ? "Havola nusxalandi!" : "Ссылка скопирована!");
+  }
+
   if (authLoading || loading || !mounted) {
     return (
       <div className="min-h-screen bg-[#faf9f6] flex items-center justify-center">
@@ -215,7 +292,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <Tabs defaultValue="projects" className="space-y-6 md:space-y-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 md:space-y-8">
           <TabsList className="bg-white/50 border border-[#98a08d]/10 p-1 rounded-xl md:rounded-2xl w-full sm:w-auto overflow-x-auto flex-nowrap whitespace-nowrap">
             <TabsTrigger value="projects" className="flex-1 sm:flex-none rounded-lg md:rounded-xl px-4 md:px-6 py-2 md:py-2.5 data-[state=active]:bg-[#98a08d] data-[state=active]:text-white gap-2 font-bold transition-all text-sm">
               <LayoutGrid className="w-4 h-4" />
@@ -224,6 +301,10 @@ export default function DashboardPage() {
             <TabsTrigger value="settings" className="flex-1 sm:flex-none rounded-lg md:rounded-xl px-4 md:px-6 py-2 md:py-2.5 data-[state=active]:bg-[#98a08d] data-[state=active]:text-white gap-2 font-bold transition-all text-sm">
               <Settings className="w-4 h-4" />
               {t.settings}
+            </TabsTrigger>
+            <TabsTrigger value="referrals" className="flex-1 sm:flex-none rounded-lg md:rounded-xl px-4 md:px-6 py-2 md:py-2.5 data-[state=active]:bg-[#98a08d] data-[state=active]:text-white gap-2 font-bold transition-all text-sm">
+              <Wallet className="w-4 h-4" />
+              Referal va Hamyon
             </TabsTrigger>
           </TabsList>
 
@@ -483,6 +564,91 @@ export default function DashboardPage() {
                   <Button variant="destructive" className="w-full rounded-xl h-12 font-bold shadow-lg shadow-red-200/50">
                     {t.deleteAccount}
                   </Button>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="referrals" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-6">
+                <Card className="p-8 rounded-[2.5rem] border-0 shadow-sm bg-white space-y-8">
+                  <div className="flex flex-col space-y-2">
+                    <h3 className="text-2xl font-serif text-[#5c6352]">Sizning Referal Havolangiz</h3>
+                    <p className="text-sm text-[#98a08d]">Ushbu havolani do'stlaringizga yuboring va har bir buyurtmadan 5,000 UZS bonus oling!</p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1 relative">
+                      <Input
+                        value={`https://taklif-go.vercel.app/?ref=${user?.uid || ''}`}
+                        readOnly
+                        className="rounded-xl border-[#98a08d]/20 h-14 pl-12 font-medium text-[#5c6352] bg-gray-50/50"
+                      />
+                      <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#98a08d]" />
+                    </div>
+                    <Button
+                      onClick={copyReferralLink}
+                      className="bg-[#98a08d] hover:bg-[#868d7c] text-white rounded-xl h-14 px-8 font-bold gap-2 shrink-0"
+                    >
+                      <Copy className="w-5 h-5" />
+                      Nusxa olish
+                    </Button>
+                  </div>
+                </Card>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <Card className="p-8 rounded-[2.5rem] border-0 shadow-sm bg-white">
+                    <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600 mb-6">
+                      <User className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-[10px] text-[#98a08d] uppercase tracking-widest font-bold mb-1">Taklif Qilinganlar</h4>
+                    <p className="text-4xl font-bold text-[#5c6352]">{userData?.totalReferrals || 0}</p>
+                  </Card>
+                  
+                  <Card className="p-8 rounded-[2.5rem] border-0 shadow-sm bg-[#98a08d]/5 border-[#98a08d]/10 relative overflow-hidden">
+                    <div className="w-12 h-12 bg-[#98a08d]/10 rounded-2xl flex items-center justify-center text-[#98a08d] mb-6">
+                      <Wallet className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-[10px] text-[#98a08d] uppercase tracking-widest font-bold mb-1">Joriy Balans</h4>
+                    <p className="text-4xl font-bold text-[#98a08d]">{userData?.balance?.toLocaleString() || 0} <span className="text-xl">UZS</span></p>
+                  </Card>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <Card className="p-8 rounded-[2.5rem] border-0 shadow-sm bg-white">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center text-green-600">
+                      <CreditCard className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-lg font-serif text-[#5c6352]">Pul Yechish</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs text-[#98a08d] uppercase font-bold tracking-wider">Karta raqami</Label>
+                      <Input
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
+                        placeholder="8600 1234 5678 9012"
+                        className="rounded-xl border-[#98a08d]/20 h-12"
+                      />
+                    </div>
+                    
+                    <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
+                      <p className="text-xs text-amber-700 font-medium">
+                        Minimal yechish summasi: <b>10,000 UZS</b>
+                      </p>
+                    </div>
+
+                    <Button
+                      onClick={handleWithdraw}
+                      disabled={isWithdrawing || (userData?.balance || 0) < 10000}
+                      className="w-full bg-[#5c6352] hover:bg-[#4a5042] text-white rounded-xl h-12 font-bold"
+                    >
+                      {isWithdrawing ? <Loader2 className="w-5 h-5 animate-spin" /> : "Yechib olish so'rovi"}
+                    </Button>
+                  </div>
                 </Card>
               </div>
             </div>

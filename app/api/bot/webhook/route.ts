@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
+import * as admin from "firebase-admin";
 
 const BOT_TOKEN = "8917648922:AAFKV2N9sN8rCqHOqCFMM9wzazX02i-_VyI";
 
@@ -27,6 +28,34 @@ export async function POST(request: NextRequest) {
           const invData = docSnap.data();
           if (invData?.telegramId) {
             await sendTelegramMessage(invData.telegramId, "<b>✅ Tabriklaymiz!</b>\n\nTo'lovingiz tasdiqlandi va taklifnomangiz faollashtirildi.");
+          }
+          
+          // Referal bonusni hisoblash
+          if (invData?.referredBy) {
+            try {
+              const referrerRef = adminDb.collection("users").doc(invData.referredBy);
+              
+              await adminDb.runTransaction(async (transaction) => {
+                const referrerDoc = await transaction.get(referrerRef);
+                if (referrerDoc.exists) {
+                  const currentReferrals = referrerDoc.data()?.totalReferrals || 0;
+                  const newReferrals = currentReferrals + 1;
+                  
+                  // Har bir taklifnoma uchun 5000 UZS. 5-chi taklif uchun qo'shimcha 5000 (jami 10000)
+                  let bonus = 5000;
+                  if (newReferrals % 5 === 0) {
+                    bonus += 5000;
+                  }
+                  
+                  transaction.update(referrerRef, {
+                    balance: admin.firestore.FieldValue.increment(bonus),
+                    totalReferrals: admin.firestore.FieldValue.increment(1)
+                  });
+                }
+              });
+            } catch (err) {
+              console.error("Failed to process referral bonus:", err);
+            }
           }
         }
 
