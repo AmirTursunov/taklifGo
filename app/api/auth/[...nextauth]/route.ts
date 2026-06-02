@@ -11,20 +11,21 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
+        phone: { label: 'Phone', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.phone || !credentials?.password) {
           throw new Error('missing-credentials')
         }
 
-        const inputEmail = credentials.email.toLowerCase().trim()
+        const inputPhone = credentials.phone.toLowerCase().trim()
         const adminEmail = (process.env.ADMIN_EMAIL || 'admintaklif@gmail.com').toLowerCase().trim()
+        const adminPhone = (process.env.ADMIN_PHONE || '+998901234567').trim()
         const adminPassword = process.env.ADMIN_PASSWORD || 'admin_123321'
 
         // Check if credentials match the static admin credentials from .env.local
-        if (inputEmail === adminEmail && credentials.password === adminPassword) {
+        if ((inputPhone === adminEmail || inputPhone === adminPhone) && credentials.password === adminPassword) {
           let uid = 'admin-uid'
           let displayName = 'Admin'
           let photoURL = ''
@@ -68,9 +69,14 @@ export const authOptions: NextAuthOptions = {
         }
 
         // 1. Fetch user using DbService (Supports Firestore and Local JSON seamlessly)
-        const userData = await DbService.getUserByEmail(credentials.email)
+        const userData = await DbService.getUserByPhone(credentials.phone)
         if (!userData) {
-          throw new Error('user-not-found')
+          // Fallback to email check in case admin or someone typed email
+          const userByEmail = await DbService.getUserByEmail?.(credentials.phone)
+          if (!userByEmail) {
+            throw new Error('user-not-found')
+          }
+          Object.assign(userData || {}, userByEmail)
         }
 
         // 2. If it's a social-only login (no password hash)
@@ -98,7 +104,8 @@ export const authOptions: NextAuthOptions = {
 
         return {
           id: uid,
-          email: userData.email,
+          email: userData.email || '',
+          phone: userData.phone || credentials.phone,
           name: userData.displayName || userData.name || '',
           image: userData.photoURL || userData.image || '',
           firebaseToken,

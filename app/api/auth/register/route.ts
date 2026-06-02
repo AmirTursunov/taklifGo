@@ -6,9 +6,9 @@ import crypto from 'crypto'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, email, password } = body
+    const { name, phone, password } = body
 
-    if (!name || !email || !password) {
+    if (!name || !phone || !password) {
       return NextResponse.json({ error: 'missing-fields' }, { status: 400 })
     }
 
@@ -16,12 +16,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'password-too-short' }, { status: 400 })
     }
 
-    const lowerEmail = email.toLowerCase().trim()
+    const cleanPhone = phone.trim()
 
     // 1. Check if user already exists
-    const existingUser = await DbService.getUserByEmail(lowerEmail)
+    const existingUser = await DbService.getUserByPhone(cleanPhone)
     if (existingUser) {
-      return NextResponse.json({ error: 'email-already-in-use' }, { status: 400 })
+      return NextResponse.json({ error: 'phone-already-in-use' }, { status: 400 })
     }
 
     // 2. Hash password with bcryptjs
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     // 4. Save user profile using DbService (Supports Firestore and Local JSON seamlessly)
     await DbService.createUser(uid, {
       uid,
-      email: lowerEmail,
+      phone: cleanPhone,
       displayName: name,
       photoURL: '',
       passwordHash,

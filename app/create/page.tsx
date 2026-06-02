@@ -16,6 +16,8 @@ import { VideoWeddingTemplate } from "@/components/templates/video-wedding";
 import { StoryWeddingTemplate } from "@/components/templates/story-wedding";
 import { DateInvitationTemplate } from "@/components/templates/date-invitation";
 import ClassicWeddingTemplate from "@/components/templates/classic-wedding";
+import BirthdayGreeting from "@/components/templates/birthday-greeting";
+import SecretBirthday from "@/components/templates/secret-birthday";
 import { TEMPLATES_BY_CATEGORY } from "@/lib/templates";
 import { PRESET_MUSIC } from "@/lib/music";
 import { useAuth } from "@/lib/AuthContext";
@@ -48,6 +50,7 @@ import {
   VolumeX,
   Info,
   X,
+  ImageIcon,
 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Language } from "@/lib/translations";
@@ -108,7 +111,7 @@ function CreateInvitationContent() {
     if (cat === "business") greeting = "Biznes Tadbirga Taklifnoma";
 
     return {
-      names: cat === "business" ? "Biznes Tadbiri" : cat === "birthday" ? "Amir" : cat === "date" ? "Malika" : "Sarah & James",
+      names: cat === "business" ? "Biznes Tadbiri" : cat === "birthday" ? "Amir" : cat === "date" ? "Malika" : "Aziz & Aziza",
       companyName: cat === "business" ? "TechCorp Uzbekistan" : "",
       eventTitle: cat === "business" ? "Innovation Summit '25" : "",
       eventType: cat === "business" ? "Konferensiya" : "",
@@ -496,11 +499,16 @@ function CreateInvitationContent() {
                       : "border-[#98a08d]/10 hover:border-[#98a08d]/30"
                       }`}
                   >
-                    <div className={`w-full h-16 rounded-lg flex items-center justify-center p-2 shadow-inner ${tmpl.color}`}>
-                      <span className="text-[11px] font-black text-white text-center drop-shadow-md leading-tight">{tmpl.name}</span>
+                    <div className={`w-full h-16 rounded-lg flex items-center justify-center p-2 shadow-inner relative overflow-hidden ${tmpl.color}`}>
+                      <span className="text-[11px] font-black text-white text-center drop-shadow-md leading-tight relative z-10">{tmpl.name}</span>
+                      {tmpl.type === 'tabriknoma' && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/30 backdrop-blur-sm text-[8px] text-white text-center py-0.5 font-bold uppercase tracking-wider z-10">
+                          Tabriknoma
+                        </div>
+                      )}
                     </div>
                     {data.templateId === tmpl.id && (
-                      <div className="absolute -top-1.5 -right-1.5 bg-[#98a08d] text-white rounded-full p-0.5 shadow-md z-10">
+                      <div className="absolute -top-1.5 -right-1.5 bg-[#98a08d] text-white rounded-full p-0.5 shadow-md z-20">
                         <CheckCircle2 className="w-4 h-4" />
                       </div>
                     )}
@@ -598,21 +606,23 @@ function CreateInvitationContent() {
                       />
                     </div>
                   )}
-                  <div className="space-y-2">
-                    <Label>
-                      {data.category === 'birthday'
-                        ? (lang === 'uz' ? "Tug'ilgan kun sanasi" : 'Дата рождения')
-                        : data.category === 'date'
-                          ? (lang === 'uz' ? 'Uchrashuv sanasi' : 'Дата встречи')
-                          : t.weddingDate}
-                    </Label>
-                    <Input
-                      value={data.date}
-                      onChange={(e) => setData({ ...data, date: e.target.value })}
-                      className="rounded-xl border-[#98a08d]/20"
-                    />
-                  </div>
-                  {(data.category === 'birthday' || data.category === 'date') && (
+                  {data.templateId !== 'birthday-greeting' && data.templateId !== 'secret-birthday' && (
+                    <div className="space-y-2">
+                      <Label>
+                        {data.category === 'birthday'
+                          ? (lang === 'uz' ? "Tug'ilgan kun sanasi" : 'Дата рождения')
+                          : data.category === 'date'
+                            ? (lang === 'uz' ? 'Uchrashuv sanasi' : 'Дата встречи')
+                            : t.weddingDate}
+                      </Label>
+                      <Input
+                        value={data.date}
+                        onChange={(e) => setData({ ...data, date: e.target.value })}
+                        className="rounded-xl border-[#98a08d]/20"
+                      />
+                    </div>
+                  )}
+                  {(data.category === 'birthday' || data.category === 'date') && data.templateId !== 'birthday-greeting' && data.templateId !== 'secret-birthday' && (
                     <div className="space-y-2">
                       <Label>{lang === 'uz' ? 'Tadbir vaqti' : lang === 'ru' ? 'Время мероприятия' : 'Event Time'}</Label>
                       <Input
@@ -627,35 +637,132 @@ function CreateInvitationContent() {
             </div>
           </section>
 
-          <section className="space-y-4">
-            <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
-              {lang === "uz"
-                ? "Joylashuv"
-                : lang === "ru"
-                  ? "Местоположение"
-                  : "Location"}
-            </h3>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>{t.venueName}</Label>
-                <Input
-                  value={data.venue}
-                  onChange={(e) => setData({ ...data, venue: e.target.value })}
-                  className="rounded-xl border-[#98a08d]/20"
-                />
+          {data.templateId !== "birthday-greeting" && data.templateId !== "secret-birthday" && (
+            <section className="space-y-4">
+              <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
+                {lang === "uz"
+                  ? "Joylashuv"
+                  : lang === "ru"
+                    ? "Местоположение"
+                    : "Location"}
+              </h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{t.venueName}</Label>
+                  <Input
+                    value={data.venue}
+                    onChange={(e) => setData({ ...data, venue: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t.location}</Label>
+                  <Input
+                    value={data.location}
+                    onChange={(e) =>
+                      setData({ ...data, location: e.target.value })
+                    }
+                    className="rounded-xl border-[#98a08d]/20"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>{t.location}</Label>
-                <Input
-                  value={data.location}
-                  onChange={(e) =>
-                    setData({ ...data, location: e.target.value })
-                  }
-                  className="rounded-xl border-[#98a08d]/20"
-                />
+            </section>
+          )}
+
+          {(data.templateId === "birthday-greeting" || data.templateId === "secret-birthday") && (
+            <section className="space-y-4">
+              <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
+                {lang === "uz" ? "Tabriknoma Matnlari" : "Тексты поздравления"}
+              </h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{lang === "uz" ? "Tabrik so'zi" : "Текст поздравления"}</Label>
+                  <textarea
+                    value={(data as any).message || ""}
+                    onChange={(e) => setData({ ...data, message: e.target.value })}
+                    rows={6}
+                    className="w-full rounded-xl border border-[#98a08d]/20 bg-white px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-[#98a08d]/40"
+                    placeholder="Hayotingizning eng yorqin kunida..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{lang === "uz" ? "Kimdan" : "От кого"}</Label>
+                  <Input
+                    value={(data as any).closingSub || ""}
+                    onChange={(e) => setData({ ...data, closingSub: e.target.value })}
+                    className="rounded-xl border-[#98a08d]/20"
+                    placeholder="Yaqinlaringizdan"
+                  />
+                </div>
+                {data.templateId === "secret-birthday" && (
+                  <div className="space-y-4 border-t border-[#98a08d]/10 pt-4 mt-2">
+                    <div className="space-y-2">
+                      <Label>{lang === "uz" ? "Kim uchun (Sizning munosabatingiz)" : "Кем приходится"}</Label>
+                      <Input
+                        value={(data as any).subMessage || ""}
+                        onChange={(e) => setData({ ...data, subMessage: e.target.value })}
+                        className="rounded-xl border-[#98a08d]/20"
+                        placeholder="do'stim, dugonam, akam..."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="flex items-center justify-between">
+                        <span className="flex items-center gap-2">
+                          <ImageIcon className="w-4 h-4" />
+                          {lang === "uz" ? "Orqa fon rasmlari (1-5 ta)" : "Фоновые картинки (1-5 шт)"}
+                        </span>
+                        {Object.values(uploadingImages).some((v: any) => v) && <Loader2 className="w-3 h-3 animate-spin text-[#98a08d]" />}
+                      </Label>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        disabled={Object.values(uploadingImages).some((v: any) => v)}
+                        onChange={async (e) => {
+                          const files = Array.from(e.target.files || []);
+                          if (files.length === 0) return;
+
+                          const currentImages = data.images || [];
+                          const startIndex = currentImages.length;
+
+                          const newUrls: string[] = [];
+                          for (let i = 0; i < files.length; i++) {
+                            setUploadingImages((prev) => ({ ...prev, [`sb_${startIndex + i}`]: true }));
+                            try {
+                              const { url } = await uploadDirect(files[i], "image");
+                              newUrls.push(url);
+                            } catch (err) {
+                              console.error(err);
+                            } finally {
+                              setUploadingImages((prev) => ({ ...prev, [`sb_${startIndex + i}`]: false }));
+                            }
+                          }
+                          setData({ ...data, images: [...currentImages, ...newUrls].slice(0, 5) });
+                        }}
+                        className="rounded-xl border-[#98a08d]/20 file:bg-[#98a08d] file:text-white file:border-0 file:rounded-lg file:px-3 file:py-1 file:mr-4 file:text-[10px] file:cursor-pointer disabled:opacity-50"
+                      />
+                      {data.images && data.images.length > 0 && (
+                        <div className="flex gap-2 flex-wrap mt-2">
+                          {data.images.map((url: string, i: number) => (
+                            <div key={i} className="relative w-12 h-12 rounded-lg overflow-hidden border border-[#98a08d]/20 group">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={url} alt={`upload-${i}`} className="w-full h-full object-cover" />
+                              <button
+                                onClick={() => setData({ ...data, images: data.images.filter((_: any, idx: number) => idx !== i) })}
+                                className="absolute top-0 right-0 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {data.templateId === "corporate-event" && (
             <section className="space-y-4">
@@ -1321,6 +1428,14 @@ function CreateInvitationContent() {
                   <ClassicWeddingTemplate
                     data={data}
                     onDataChange={(newData: any) => setData((prev: any) => ({ ...prev, ...newData }))}
+                  />
+                ) : data.templateId === "birthday-greeting" ? (
+                  <BirthdayGreeting
+                    data={data}
+                  />
+                ) : data.templateId === "secret-birthday" ? (
+                  <SecretBirthday
+                    data={data}
                   />
                 ) : (
                   <EternalBondTemplate

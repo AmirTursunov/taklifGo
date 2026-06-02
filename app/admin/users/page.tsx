@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { collection, query, getDocs, orderBy } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { motion } from 'framer-motion'
-import { 
-  Users as UsersIcon, 
-  Search, 
-  Mail, 
+import {
+  Users as UsersIcon,
+  Search,
+  Mail,
   Calendar,
   ChevronRight,
   Loader2,
@@ -34,8 +34,8 @@ export default function UsersManagement() {
     fetchUsers()
   }, [])
 
-  const filtered = users.filter(u => 
-    u.email?.toLowerCase().includes(search.toLowerCase()) || 
+  const filtered = users.filter(u =>
+    u.email?.toLowerCase().includes(search.toLowerCase()) ||
     u.displayName?.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -43,15 +43,15 @@ export default function UsersManagement() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#5c6352] tracking-tighter">Foydalanuvchilar</h1>
+          <h1 className="text-3xl font-black text-[#5c6352] tracking-tighter">Foydalanuvchilar : {users.length} ta</h1>
           <p className="text-[#98a08d] font-medium">Platforma a'zolari va ularning faolligi.</p>
         </div>
 
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#98a08d]" />
-          <input 
-            type="text" 
-            placeholder="Email yoki ism bo'yicha..." 
+          <input
+            type="text"
+            placeholder="Email yoki ism bo'yicha..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-12 pr-6 py-3 bg-white border border-[#98a08d]/20 rounded-2xl text-sm focus:ring-2 focus:ring-[#98a08d]/20 outline-none w-72 transition-all shadow-sm"
@@ -78,8 +78,8 @@ export default function UsersManagement() {
               className="bg-white p-8 rounded-[2rem] border border-[#98a08d]/10 shadow-lg hover:shadow-2xl transition-all group"
             >
               <div className="flex items-center gap-4 mb-6">
-                <img 
-                  src={user.photoURL || `https://ui-avatars.com/api/?name=${user.email}`} 
+                <img
+                  src={user.photoURL || `https://ui-avatars.com/api/?name=${user.email}`}
                   className="w-14 h-14 rounded-2xl border-2 border-[#98a08d]/10 shadow-sm"
                   alt=""
                 />

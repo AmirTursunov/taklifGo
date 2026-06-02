@@ -158,20 +158,32 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { email, lang = 'uz' } = body
+    const { email, phone, lang = 'uz' } = body
 
-    if (!email || typeof email !== 'string') {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
+    if (!email && !phone) {
+      return NextResponse.json({ error: 'Email or phone is required' }, { status: 400 })
     }
 
     const validLang = (['uz', 'ru', 'en'].includes(lang) ? lang : 'uz') as 'uz' | 'ru' | 'en'
-    const lowerEmail = email.toLowerCase().trim()
+    
+    let userData = null;
+    let lowerEmail = '';
 
-    // 1. Foydalanuvchini tekshir
-    const userData = await DbService.getUserByEmail(lowerEmail)
-    if (!userData) {
-      // Xavfsizlik: email mavjudligini oshkor qilmaymiz
-      // Shunga qaramay muvaffaqiyatli javob qaytaramiz
+    if (phone) {
+      const cleanPhone = phone.trim()
+      userData = await DbService.getUserByPhone(cleanPhone)
+      if (userData && userData.email) {
+        lowerEmail = userData.email.toLowerCase().trim()
+      } else {
+        return NextResponse.json({ error: 'no-email-linked' }, { status: 400 })
+      }
+    } else if (email) {
+      lowerEmail = email.toLowerCase().trim()
+      userData = await DbService.getUserByEmail?.(lowerEmail) // Optional call, since we mostly use phone now
+    }
+
+    if (!userData || !lowerEmail) {
+      // Xavfsizlik: foydalanuvchi mavjudligini oshkor qilmaymiz, lekin success qaytaramiz (agar email bn kelgan bo'lsa)
       return NextResponse.json({ success: true })
     }
 

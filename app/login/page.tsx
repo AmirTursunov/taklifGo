@@ -12,7 +12,8 @@ import { useAuth } from '@/lib/AuthContext'
 import { toast } from 'react-toastify'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
+  const [countryCode, setCountryCode] = useState('+998')
+  const [phoneInput, setPhoneInput] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -33,9 +34,9 @@ export default function LoginPage() {
   const getErrorMessage = (code: string) => {
     const errors: Record<string, Record<string, string>> = {
       'user-not-found': {
-        uz: 'Ushbu email manzili bilan foydalanuvchi topilmadi',
-        ru: 'Пользователь с таким email не найден',
-        en: 'No user found with this email'
+        uz: 'Ushbu telefon raqam bilan foydalanuvchi topilmadi',
+        ru: 'Пользователь с таким номером телефона не найден',
+        en: 'No user found with this phone number'
       },
       'invalid-password': {
         uz: 'Parol noto\'g\'ri kiritildi',
@@ -48,9 +49,14 @@ export default function LoginPage() {
         en: 'This email is registered via Google. Please log in with Google.'
       },
       'email-already-in-use': {
-        uz: 'Ushbu email allaqachon ro\'yxatdan o\'tgan',
-        ru: 'Этот email уже зарегистрирован',
-        en: 'Email already registered'
+        uz: 'Ushbu telefon raqam allaqachon ro\'yxatdan o\'tgan',
+        ru: 'Этот номер уже зарегистрирован',
+        en: 'Phone number already registered'
+      },
+      'phone-already-in-use': {
+        uz: 'Ushbu telefon raqam allaqachon ro\'yxatdan o\'tgan',
+        ru: 'Этот номер уже зарегистрирован',
+        en: 'Phone number already registered'
       },
       'password-too-short': {
         uz: 'Parol kamida 6 ta belgidan iborat bo\'lishi kerak',
@@ -63,9 +69,9 @@ export default function LoginPage() {
         en: 'Please fill in all fields'
       },
       'CredentialsSignin': {
-        uz: 'Email yoki parol noto\'g\'ri kiritildi',
-        ru: 'Неверный email или пароль',
-        en: 'Invalid email or password'
+        uz: 'Telefon raqam yoki parol noto\'g\'ri kiritildi',
+        ru: 'Неверный номер телефона или пароль',
+        en: 'Invalid phone or password'
       }
     }
 
@@ -79,12 +85,14 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
+      const phone = `${countryCode}${phoneInput.replace(/[^0-9]/g, '')}`
+
       if (isSignUp) {
         // Registering first
         const registerRes = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password }),
+          body: JSON.stringify({ name, phone, password }),
         })
         const registerJson = await registerRes.json()
 
@@ -97,7 +105,7 @@ export default function LoginPage() {
 
       // Logging in using NextAuth
       const loginRes = await signIn('credentials', {
-        email: email.toLowerCase(),
+        phone,
         password,
         redirect: false,
       })
@@ -140,40 +148,76 @@ export default function LoginPage() {
     }
   }
 
-  // ── 4. Handle custom Password Reset request via custom database-backed mailer
+  // ── 4. Handle custom Password Reset request via Telegram or Email
   const handleForgotPassword = async () => {
-    if (!email) {
+    if (!phoneInput) {
       const msg = lang === 'uz'
-        ? 'Iltimos, avval email manzilingizni kiriting'
+        ? 'Iltimos, avval telefon raqamingizni kiriting'
         : lang === 'ru'
-          ? 'Пожалуйста, сначала введите ваш email'
-          : 'Please enter your email address first'
+          ? 'Пожалуйста, сначала введите ваш номер телефона'
+          : 'Please enter your phone number first'
       setError(msg)
       toast.warning(msg)
       return
     }
+
     setLoading(true)
+    const phone = `${countryCode}${phoneInput.replace(/[^0-9]/g, '')}`
+
     try {
       const res = await fetch('/api/auth/send-reset-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, lang }),
+        body: JSON.stringify({ phone, lang }),
       })
       const json = await res.json()
 
       if (!res.ok) {
-        const errorMsg = json.error === 'user-not-found'
-          ? (lang === 'uz' ? 'Bu email bilan foydalanuvchi topilmadi' : lang === 'ru' ? 'Пользователь с таким email не найден' : 'No user found with this email')
-          : (lang === 'uz' ? 'Parolni tiklash xizmati sozlanmagan. Iltimos, administratorga murojaat qiling.' : lang === 'ru' ? 'Служба сброса пароля не настроена. Пожалуйста, обратитесь к администратору.' : 'Password reset service is not configured. Please contact the administrator.')
-        throw new Error(errorMsg)
+        if (json.error === 'no-email-linked') {
+          toast.warning(
+            <div>
+              {lang === 'uz' ? (
+                <>
+                  Siz profilingizga email ulamagansiz! Parolni tiklash uchun{" "}
+                  <a
+                    href="https://t.me/amir_079"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    admin
+                  </a>{" "}
+                  ga yozing.
+                </>
+              ) : (
+                <>
+                  Вы не привязали email! Для сброса пароля напишите{" "}
+                  <a
+                    href="https://t.me/amir_079"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    admin
+                  </a>
+                  .
+                </>
+              )}
+            </div>,
+            { autoClose: 5000 }
+          )
+          // window.open("https://t.me/amir_079", "_blank")
+          return
+        }
+        throw new Error(json.error)
       }
 
       setError('')
       const successMsg = lang === 'uz'
-        ? `✅ Parolni tiklash xati ${email} manziliga yuborildi! Iltimos, kiruvchi va spam papkalarni tekshiring.`
+        ? `✅ Parolni tiklash xati elektron pochtangizga yuborildi! Iltimos, kiruvchi va spam papkalarni tekshiring.`
         : lang === 'ru'
-          ? `✅ Письмо для сброса пароля отправлено на ${email}! Пожалуйста, проверьте папки Входящие и Спам.`
-          : `✅ Password reset email sent to ${email}! Please check your inbox and spam folder.`
+          ? `✅ Письмо для сброса пароля отправлено на ваш email! Пожалуйста, проверьте папки Входящие и Спам.`
+          : `✅ Password reset email sent to your email! Please check your inbox and spam folder.`
       toast.success(successMsg, { autoClose: 8000 })
     } catch (err: any) {
       const msg = err.message
@@ -257,17 +301,34 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <Label className="text-[#98a08d]">{lang === 'uz' ? 'Email manzilingiz' : 'Ваш Email'}</Label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#98a08d]" />
-                <input
-                  type="email"
-                  placeholder="example@mail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 rounded-2xl border border-[#98a08d]/20 py-4 outline-none focus:border-[#98a08d] transition-all bg-white text-sm"
-                  required
-                />
+              <Label className="text-[#98a08d]">{lang === 'uz' ? 'Telefon raqam' : 'Номер телефона'}</Label>
+              <div className="flex gap-2">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="w-[100px] rounded-2xl border border-[#98a08d]/20 py-4 px-3 outline-none focus:border-[#98a08d] transition-all bg-white text-sm cursor-pointer appearance-none text-center font-bold text-[#5c6352]"
+                >
+                  <option value="+998">🇺🇿 +998</option>
+                  <option value="+7">🇷🇺 +7</option>
+                  <option value="+77">🇰🇿 +77</option>
+                  <option value="+996">🇰🇬 +996</option>
+                  <option value="+992">🇹🇯 +992</option>
+                  <option value="+1">🇺🇸 +1</option>
+                </select>
+                <div className="relative flex-1">
+                  <input
+                    type="tel"
+                    placeholder="90 123 45 67"
+                    value={phoneInput}
+                    onChange={(e) => {
+                      // Only allow digits and spaces
+                      const val = e.target.value.replace(/[^\d\s]/g, '');
+                      setPhoneInput(val);
+                    }}
+                    className="w-full pl-4 pr-4 rounded-2xl border border-[#98a08d]/20 py-4 outline-none focus:border-[#98a08d] transition-all bg-white text-sm font-bold text-[#5c6352] tracking-wider"
+                    required
+                  />
+                </div>
               </div>
             </div>
 

@@ -206,7 +206,7 @@ export const translations = {
     previewDesktop: "Desktop Preview",
     previewMobile: "Mobile View",
     eternalBond: "THE ETERNAL BOND",
-    defaultNames: "Sarah & James",
+    defaultNames: "Aziz & Aziza",
     defaultDate: "JUNE 15, 2028",
     defaultLocation: "PARIS • FRANCE",
     areGettingMarried: "Are Getting Married",

@@ -25,6 +25,7 @@ import { LanguageProvider } from '@/lib/LanguageContext'
 import { AuthProvider } from '@/lib/AuthContext'
 import { NextAuthProvider } from '@/components/NextAuthProvider'
 import { ReferralTracker } from '@/components/ReferralTracker'
+import { MaintenanceGuard } from '@/components/MaintenanceGuard'
 import { Suspense } from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -52,7 +53,9 @@ export default function RootLayout({
         <NextAuthProvider>
           <AuthProvider>
             <LanguageProvider>
-              {children}
+              <MaintenanceGuard>
+                {children}
+              </MaintenanceGuard>
               <ToastContainer
                 position="top-right"
                 autoClose={3000}

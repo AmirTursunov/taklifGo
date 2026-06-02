@@ -22,17 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/lib/LanguageContext";
-
-import { EternalBondTemplate } from '@/components/templates/eternal-bond'
-import { GoldenNightTemplate } from '@/components/templates/golden-night'
-import { NafosatTemplate } from '@/components/templates/nafosat'
-import { GoldenWeddingTemplate } from '@/components/templates/golden-wedding'
-import { ElegantBirthdayTemplate } from '@/components/templates/elegant-birthday'
-import { GirlBirthdayTemplate } from '@/components/templates/girl-birthday'
-import { RoyalTealTemplate } from '@/components/templates/royal-teal'
-import { CorporateEventTemplate } from '@/components/templates/corporate-event'
-import { IslamicWeddingTemplate } from '@/components/templates/islamic-wedding'
-import { StoryWeddingTemplate } from '@/components/templates/story-wedding'
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function SuccessPage() {
   const { id } = useParams();
@@ -41,6 +31,7 @@ export default function SuccessPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [openModal, setOpenModal] = useState(false)
 
   const invitationUrl =
     typeof window !== "undefined"
@@ -123,10 +114,10 @@ export default function SuccessPage() {
           </Button>
           <div
             className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold border ${isPending
-                ? "bg-[#d97706]/5 text-[#d97706] border-[#d97706]/20"
-                : isRejected
-                  ? "bg-red-50 text-red-600 border-red-200"
-                  : "bg-[#98a08d]/5 text-[#98a08d] border-[#98a08d]/20"
+              ? "bg-[#d97706]/5 text-[#d97706] border-[#d97706]/20"
+              : isRejected
+                ? "bg-red-50 text-red-600 border-red-200"
+                : "bg-[#98a08d]/5 text-[#98a08d] border-[#98a08d]/20"
               }`}
           >
             {isPending ? (
@@ -278,9 +269,82 @@ export default function SuccessPage() {
                   <ExternalLink className="w-4 h-4" />
                   {lang === "uz" ? "Ko'rib chiqish" : lang === "ru" ? "Посмотреть" : "Preview"}
                 </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setOpenModal(true)}
+                  className="rounded-2xl py-8 border-[#98a08d]/20 text-[#98a08d] hover:bg-[#98a08d] hover:text-white transition-all gap-2"
+                >
+                  <Video className="w-4 h-4" />
+                  {lang === "uz" ? "Video kabi yuklash" : lang === "ru" ? "Скачать как видео" : "Download as video"}
+                </Button>
+
               </div>
             </Card>
+            {/* Modal */}
 
+            <AnimatePresence>
+
+              {openModal && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+                  onClick={() => setOpenModal(false)}>
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl"
+                  >
+                    <div className="flex flex-col items-center text-center gap-4">
+                      <div className="w-16 h-16 rounded-full bg-[#98a08d]/10 flex items-center justify-center">
+                        <Video className="w-8 h-8 text-[#98a08d]" />
+                      </div>
+                      <h2 className="text-2xl font-semibold text-[#5c6352]">
+                        {lang === "uz"
+                          ? "Video Taklifnoma"
+                          : lang === "ru"
+                            ? "Видео приглашение"
+                            : "Video Invitation"}
+                      </h2>
+                      <p className="text-sm text-gray-500 leading-relaxed">
+                        {lang === "uz"
+                          ? "Video kabi yuklash uchun adminga taklifnomangiz havolasini yuboring."
+                          : lang === "ru"
+                            ? "Чтобы скачать как видео, отправьте ссылку приглашения администратору."
+                            : "To download as video, send your invitation link to the admin."}
+                      </p>
+                      <Button
+                        onClick={() =>
+                          window.open("https://t.me/amir_079", "_blank")
+                        }
+                        className="w-full rounded-2xl py-6 bg-[#98a08d] hover:bg-[#5c6352] text-white"
+                      >
+                        {lang === "uz"
+                          ? "Adminga yozish"
+                          : lang === "ru"
+                            ? "Написать админу"
+                            : "Contact Admin"}
+                      </Button>
+                      <button
+                        onClick={() => setOpenModal(false)}
+                        className="text-sm text-gray-400 hover:text-gray-600 transition"
+                      >
+                        {lang === "uz"
+                          ? "Yopish"
+                          : lang === "ru"
+                            ? "Закрыть"
+                            : "Close"}
+                      </button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+
+            </AnimatePresence>
             {/* Side Cards */}
             <div className="space-y-6">
 

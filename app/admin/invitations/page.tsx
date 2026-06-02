@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 import { collection, query, getDocs, orderBy, doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Search, 
-  Filter, 
-  ExternalLink, 
-  Check, 
-  X, 
+import {
+  Search,
+  Filter,
+  ExternalLink,
+  Check,
+  X,
   Eye,
   Loader2,
   Calendar,
@@ -54,8 +54,8 @@ export default function InvitationsManagement() {
   }
 
   const filtered = invitations.filter(inv => {
-    const matchesSearch = inv.names?.toLowerCase().includes(search.toLowerCase()) || 
-                          inv.id.toLowerCase().includes(search.toLowerCase())
+    const matchesSearch = inv.names?.toLowerCase().includes(search.toLowerCase()) ||
+      inv.id.toLowerCase().includes(search.toLowerCase())
     const matchesFilter = filter === 'all' || inv.status === filter
     return matchesSearch && matchesFilter
   })
@@ -64,16 +64,16 @@ export default function InvitationsManagement() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#5c6352] tracking-tighter">Taklifnomalar</h1>
+          <h1 className="text-3xl font-black text-[#5c6352] tracking-tighter">Yaratilgan taklifnomalar : {invitations.length}</h1>
           <p className="text-[#98a08d] font-medium">Barcha buyurtmalarni boshqarish va tasdiqlash.</p>
         </div>
 
         <div className="flex items-center gap-4">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#98a08d]" />
-            <input 
-              type="text" 
-              placeholder="Ism yoki ID bo'yicha qidirish..." 
+            <input
+              type="text"
+              placeholder="Ism yoki ID bo'yicha qidirish..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-12 pr-6 py-3 bg-white border border-[#98a08d]/20 rounded-2xl text-sm focus:ring-2 focus:ring-[#98a08d]/20 outline-none w-72 transition-all shadow-sm"
@@ -84,9 +84,8 @@ export default function InvitationsManagement() {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                  filter === f ? 'bg-[#98a08d] text-white' : 'text-[#98a08d] hover:bg-[#98a08d]/5'
-                }`}
+                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filter === f ? 'bg-[#98a08d] text-white' : 'text-[#98a08d] hover:bg-[#98a08d]/5'
+                  }`}
               >
                 {f}
               </button>
@@ -138,8 +137,8 @@ export default function InvitationsManagement() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-[10px] text-[#5c6352] font-bold">
                           <Calendar className="w-3 h-3 text-[#98a08d]" />
-                          {inv.createdAt?.toDate 
-                            ? new Date(inv.createdAt.toDate()).toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit' }) 
+                          {inv.createdAt?.toDate
+                            ? new Date(inv.createdAt.toDate()).toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
                             : 'Noma\'lum sana'}
                         </div>
                       </div>
@@ -150,22 +149,21 @@ export default function InvitationsManagement() {
                       </span>
                     </td>
                     <td className="px-8 py-6">
-                      <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${
-                        inv.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
-                      }`}>
+                      <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${inv.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
                         <div className={`w-1.5 h-1.5 rounded-full ${inv.status === 'active' ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`} />
                         {inv.status}
                       </div>
                     </td>
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-2">
-                        <button 
+                        <button
                           onClick={() => setSelectedInv(inv)}
                           className="p-2 hover:bg-[#98a08d]/10 text-[#98a08d] rounded-lg transition-colors shadow-sm bg-white border border-[#98a08d]/10"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => window.open(`/invitation/${inv.id}`, '_blank')}
                           className="p-2 hover:bg-[#98a08d]/10 text-[#98a08d] rounded-lg transition-colors shadow-sm bg-white border border-[#98a08d]/10"
                         >
@@ -185,14 +183,14 @@ export default function InvitationsManagement() {
       <AnimatePresence>
         {selectedInv && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedInv(null)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -233,14 +231,14 @@ export default function InvitationsManagement() {
                   <div className="pt-6 border-t border-[#98a08d]/10 flex gap-4">
                     {selectedInv.status === 'pending' ? (
                       <>
-                        <button 
+                        <button
                           onClick={() => updateStatus(selectedInv.id, 'active')}
                           className="flex-1 py-4 bg-[#98a08d] text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 hover:bg-[#868d7c] transition-all"
                         >
                           <Check className="w-5 h-5" />
                           TASDIQLASH
                         </button>
-                        <button 
+                        <button
                           onClick={() => updateStatus(selectedInv.id, 'rejected')}
                           className="flex-1 py-4 bg-white border-2 border-red-100 text-red-500 rounded-2xl font-black text-sm flex items-center justify-center gap-2 hover:bg-red-50 transition-all"
                         >
@@ -249,9 +247,8 @@ export default function InvitationsManagement() {
                         </button>
                       </>
                     ) : (
-                      <div className={`flex-1 py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 ${
-                        selectedInv.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      }`}>
+                      <div className={`flex-1 py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 ${selectedInv.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                        }`}>
                         {selectedInv.status === 'active' ? (
                           <>
                             <Check className="w-5 h-5" />
@@ -276,7 +273,7 @@ export default function InvitationsManagement() {
                       <span className="text-white text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                         <ImageIcon className="w-4 h-4" /> TO'LOV CHEKI
                       </span>
-                      <button 
+                      <button
                         onClick={() => window.open(selectedInv.receiptUrl, '_blank')}
                         className="text-white hover:text-[#98a08d] transition-colors"
                       >

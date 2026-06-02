@@ -24,8 +24,8 @@ const BASE_REST_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID
 
 export const DbService = {
   // ── USER OPERATIONS ──
-  async getUserByEmail(email: string): Promise<any | null> {
-    const cleanEmail = email.toLowerCase().trim()
+  async getUserByPhone(phone: string): Promise<any | null> {
+    const cleanPhone = phone.trim()
     try {
       const res = await fetch(`${BASE_REST_URL}:runQuery`, {
         method: 'POST',
@@ -35,9 +35,9 @@ export const DbService = {
             from: [{ collectionId: 'users' }],
             where: {
               fieldFilter: {
-                field: { fieldPath: 'email' },
+                field: { fieldPath: 'phone' },
                 op: 'EQUAL',
-                value: { stringValue: cleanEmail }
+                value: { stringValue: cleanPhone }
               }
             },
             limit: 1
@@ -62,6 +62,7 @@ export const DbService = {
       return {
         id: uid,
         uid: uid,
+        phone: fields.phone?.stringValue || '',
         email: fields.email?.stringValue || '',
         displayName: fields.displayName?.stringValue || '',
         photoURL: fields.photoURL?.stringValue || '',
@@ -69,7 +70,7 @@ export const DbService = {
         provider: fields.provider?.stringValue || '',
       }
     } catch (err) {
-      console.error('DbService getUserByEmail error:', err)
+      console.error('DbService getUserByPhone error:', err)
       return null
     }
   },

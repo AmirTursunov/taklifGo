@@ -56,6 +56,7 @@ export default function DashboardPage() {
   const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [updatingProfile, setUpdatingProfile] = useState(false)
   const [newName, setNewName] = useState(user?.displayName || '')
+  const [newEmail, setNewEmail] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [activeTab, setActiveTab] = useState('projects')
   const itemsPerPage = 5
@@ -116,6 +117,8 @@ export default function DashboardPage() {
           if (res.ok) {
             const data = await res.json();
             setUserData(data);
+            if (data.email) setNewEmail(data.email)
+            if (data.displayName && (!newName || newName === '')) setNewName(data.displayName)
           } else {
             // Agar hali user hujjati ochilmagan bo'lsa (yangi user), api o'zi yaratishi mumkin
           }
@@ -199,12 +202,27 @@ export default function DashboardPage() {
   , [invitations.length, itemsPerPage])
 
   const handleUpdateProfile = async () => {
-    if (!auth.currentUser) return
+    if (!user?.uid) return
     setUpdatingProfile(true)
     try {
-      await updateProfile(auth.currentUser, {
-        displayName: newName
+      // 1. Update display name in Firebase Auth if available
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+          displayName: newName
+        })
+      }
+      
+      // 2. Update email and name in Firestore
+      await fetch('/api/user', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          uid: user.uid, 
+          email: newEmail !== undefined ? newEmail : '',
+          displayName: newName
+        })
       })
+
       toast.success(lang === 'uz' ? "Profil yangilandi" : lang === 'ru' ? "Профиль обновлен" : "Profile updated")
     } catch (err: any) {
       toast.error(err.message)
@@ -513,12 +531,25 @@ export default function DashboardPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs text-[#98a08d] uppercase font-bold tracking-wider">Email</Label>
+                      <Label className="text-xs text-[#98a08d] uppercase font-bold tracking-wider">Telefon raqam</Label>
                       <Input
-                        value={user?.email || ''}
+                        value={userData?.phone || user?.email || ''} // NextAuth might still map it to email field in session
                         disabled
                         className="rounded-xl border-[#98a08d]/20 h-12 bg-gray-50 opacity-60"
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs text-[#98a08d] uppercase font-bold tracking-wider">Email (Qo'shimcha)</Label>
+                      <Input
+                        type="email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        placeholder="example@mail.com"
+                        className="rounded-xl border-[#98a08d]/20 h-12"
+                      />
+                      <p className="text-[10px] text-amber-600 font-medium leading-relaxed bg-amber-50 p-3 rounded-xl border border-amber-100">
+                        ⚠️ <strong className="font-black text-amber-700">Eslatma:</strong> Agar bu yerga email manzilingizni kiritsangiz, kelajakda profilingiz parolini unutib qo'ysangiz "Parolni unutdingizmi" orqali emailga tiklash kodini yuborib parolni bemalol tiklay olasiz! Aks holda tiklash uchun adminga yozishingiz kerak bo'ladi.
+                      </p>
                     </div>
                     <Button
                       onClick={handleUpdateProfile}

@@ -35,11 +35,35 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({
       balance: parseInt(fields.balance?.integerValue || "0", 10),
-      totalReferrals: parseInt(fields.totalReferrals?.integerValue || "0", 10)
+      totalReferrals: parseInt(fields.totalReferrals?.integerValue || "0", 10),
+      email: fields.email?.stringValue || "",
+      phone: fields.phone?.stringValue || "",
+      displayName: fields.displayName?.stringValue || fields.name?.stringValue || ""
     });
   } catch (error: any) {
     console.error("Error fetching user data:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { uid, email, displayName } = body
+    if (!uid) {
+      return NextResponse.json({ error: 'Missing uid' }, { status: 400 })
+    }
+    
+    const { DbService } = await import('@/lib/db-service')
+    const updateData: any = {}
+    if (email !== undefined) updateData.email = email.toLowerCase().trim()
+    if (displayName !== undefined) updateData.displayName = displayName.trim()
+    
+    await DbService.updateUser(uid, updateData)
+    return NextResponse.json({ success: true })
+  } catch (err: any) {
+    console.error('Update user error:', err)
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
 

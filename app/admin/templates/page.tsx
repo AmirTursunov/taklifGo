@@ -5,10 +5,10 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { TEMPLATES_BY_CATEGORY } from '@/lib/templates'
 import { motion } from 'framer-motion'
-import { 
-  Save, 
-  Sparkles, 
-  TrendingDown, 
+import {
+  Save,
+  Sparkles,
+  TrendingDown,
   DollarSign,
   Loader2,
   AlertCircle
@@ -79,7 +79,7 @@ export default function TemplatesManagement() {
           <h1 className="text-3xl font-black text-[#5c6352] tracking-tighter">Shablon Narxlari</h1>
           <p className="text-[#98a08d] font-medium">Har bir shablon uchun alohida narx va chegirmalarni belgilash.</p>
         </div>
-        <button 
+        <button
           onClick={handleSave}
           disabled={saving}
           className="flex items-center gap-2 px-8 py-3 bg-[#98a08d] text-white rounded-2xl shadow-xl shadow-[#98a08d]/20 font-black text-xs uppercase tracking-widest hover:bg-[#868d7c] transition-all"
@@ -88,13 +88,13 @@ export default function TemplatesManagement() {
           Saqlash
         </button>
       </div>
-
+      <div className='font-black text-xl text-[#98a08d] tracking-widest '>Umumiy shablonlar soni : <span className='font-black text-xl text-[#7a8270] tracking-widest '>{allTemplates.length}</span> ta</div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {allTemplates.map((tmpl) => {
           const config = templateSettings[tmpl.id] || { price: 25000, originalPrice: 100000 }
           // Extract hex from bg-[#HEX] if possible
           const bgColor = tmpl.color.replace('bg-[', '').replace(']', '')
-          
+
           return (
             <motion.div
               key={tmpl.id}
@@ -103,7 +103,7 @@ export default function TemplatesManagement() {
               className="bg-white rounded-[2.5rem] border border-[#98a08d]/10 shadow-lg overflow-hidden flex flex-col"
             >
               <div className="p-6 pb-0">
-                <div 
+                <div
                   className="w-full h-24 rounded-[1.5rem] flex flex-col items-center justify-center text-white relative overflow-hidden"
                   style={{ backgroundColor: bgColor.startsWith('#') ? bgColor : undefined }}
                 >
@@ -122,7 +122,7 @@ export default function TemplatesManagement() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-[#98a08d] uppercase tracking-widest">Sotuv Narxi</label>
-                    <input 
+                    <input
                       type="number"
                       value={config.price}
                       onChange={(e) => handleUpdate(tmpl.id, 'price', Number(e.target.value))}
@@ -131,7 +131,7 @@ export default function TemplatesManagement() {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-[#98a08d] uppercase tracking-widest">Eski Narx</label>
-                    <input 
+                    <input
                       type="number"
                       value={config.originalPrice}
                       onChange={(e) => handleUpdate(tmpl.id, 'originalPrice', Number(e.target.value))}
@@ -158,7 +158,7 @@ export default function TemplatesManagement() {
         <div className="space-y-2">
           <h4 className="font-black text-amber-900 text-sm uppercase tracking-wide">Eslatma</h4>
           <p className="text-amber-800/80 text-xs leading-relaxed font-medium">
-            Bu yerda o'zgartirilgan narxlar darhol saytdagi shablonlar ro'yxatida va to'lov oynasida aks etadi. 
+            Bu yerda o'zgartirilgan narxlar darhol saytdagi shablonlar ro'yxatida va to'lov oynasida aks etadi.
             Eski narx (ustidan chizilgan) foydalanuvchida chegirma hissini uyg'otish uchun xizmat qiladi.
           </p>
         </div>
