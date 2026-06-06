@@ -173,26 +173,30 @@ export default function SuccessPage() {
           )}
 
           {!isRejected && (
-            <p className="text-[#98a08d] max-w-md mx-auto">
-              {isPending
-                ? lang === "uz"
-                  ? "Sizning to'lovingiz 5 daqiqa ichida ko'rib chiqiladi. Havola tasdiqlangandan so'ng faollashadi."
-                  : lang === "ru"
-                    ? "Ваш платеж будет проверен в течение 5 минут. Ссылка станет активной после подтверждения."
-                    : "Your payment will be reviewed within 5 minutes. The link will become active after approval."
-                : lang === "uz"
-                  ? "Sizning zamonaviy taklifnomangiz muvaffaqiyatli yaratildi va hozirda butun dunyo uchun ochiq."
-                  : lang === "ru"
-                    ? "Ваше современное приглашение успешно создано и теперь доступно для всего мира."
-                    : "Your modern invitation has been successfully created and is now live for the world to see."}
-            </p>
+            <>
+              <p className="text-[#98a08d] max-w-md mx-auto">
+                {isPending
+                  ? lang === "uz"
+                    ? "Sizning to'lovingiz 5 daqiqa ichida ko'rib chiqiladi. Havola tasdiqlangandan so'ng faollashadi."
+                    : lang === "ru"
+                      ? "Ваш платеж будет проверен в течение 5 минут. Ссылка станет активной после подтверждения."
+                      : "Your payment will be reviewed within 5 minutes. The link will become active after approval."
+                  : lang === "uz"
+                    ? "Sizning zamonaviy taklifnomangiz muvaffaqiyatli yaratildi va hozirda butun dunyo uchun ochiq."
+                    : lang === "ru"
+                      ? "Ваше современное приглашение успешно создано и теперь доступно для всего мира."
+                      : "Your modern invitation has been successfully created and is now live for the world to see."}
+                <span style={{ display: "block", color: "#C5AC05", marginTop: "10px" }}>{lang === "uz" ? "Barcha taklifnomalaringiz profilingizda saqlanadi!" : lang === "ru" ? "Все ваши приглашения сохраняются в вашем профиле!" : "All your invitations are saved in your profile!"}</span>
+              </p>
+
+            </>
           )}
 
           {(isPending || isRejected) && (
             <div className="pt-4 space-y-4">
               <div className="inline-flex items-center gap-2 text-sm text-[#5c6352] font-bold p-3 bg-white rounded-2xl shadow-sm border border-[#98a08d]/10">
                 <Phone className="w-4 h-4 text-[#98a08d]" />
-                +998 90 123 45 67
+                +998 93 080 33 68
               </div>
               <p className="text-[10px] text-[#98a08d] italic">
                 {isRejected

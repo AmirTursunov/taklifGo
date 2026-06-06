@@ -24,8 +24,8 @@ import { useAuth } from "@/lib/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { Card } from "@/components/ui/card";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -111,14 +111,14 @@ function CreateInvitationContent() {
     if (cat === "business") greeting = "Biznes Tadbirga Taklifnoma";
 
     return {
-      names: cat === "business" ? "Biznes Tadbiri" : cat === "birthday" ? "Amir" : cat === "date" ? "Malika" : "Aziz & Aziza",
+      names: cat === "business" ? "Biznes Tadbiri" : cat === "birthday" ? "Madina" : cat === "date" ? "Malika" : "Aziz & Aziza",
       companyName: cat === "business" ? "TechCorp Uzbekistan" : "",
       eventTitle: cat === "business" ? "Innovation Summit '25" : "",
       eventType: cat === "business" ? "Konferensiya" : "",
       date: cat === "business" ? "15 Iyun, 2025" : "June 15, 2028",
       time: cat === "business" ? "09:00" : "19:00",
-      location: cat === "business" ? "Toshkent, O'zbekiston" : "Paris, France",
-      venue: cat === "business" ? "Hyatt Regency Tashkent" : "Rose Mansion",
+      location: cat === "business" ? "Toshkent, O'zbekiston" : cat === "wedding" ? "Bukhara, Uzbekistan" : "Paris, France",
+      venue: cat === "business" ? "Hyatt Regency Tashkent" : cat === "wedding" ? "Rudizar" : "Rose Mansion",
       description: cat === "business" ? "Biznes sohasidagi eng so'nggi yangiliklar va innovatsiyalar taqdimoti." : "",
       musicUrl: "",
       musicPublicId: "",
@@ -456,7 +456,7 @@ function CreateInvitationContent() {
             <Button
               variant="ghost"
               size="icon-sm"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/templates")}
               className="text-[#98a08d] hover:text-[#5c6352] hover:bg-[#98a08d]/10 rounded-full"
             >
               <ArrowLeft className="w-4 h-4" />

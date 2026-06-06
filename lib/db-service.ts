@@ -195,5 +195,34 @@ export const DbService = {
     } catch (err) {
       console.error('DbService deletePasswordResetToken error:', err)
     }
+  },
+
+  // ── FEEDBACK OPERATIONS ──
+  async createFeedback(data: { userId: string; userEmail: string; userName: string; rating: number; text: string; createdAt: string }): Promise<void> {
+    try {
+      const docId = `fb_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+      const fields = {
+        userId: { stringValue: data.userId },
+        userEmail: { stringValue: data.userEmail },
+        userName: { stringValue: data.userName },
+        rating: { integerValue: data.rating.toString() },
+        text: { stringValue: data.text },
+        createdAt: { stringValue: data.createdAt },
+      };
+
+      const res = await fetch(`${BASE_REST_URL}/feedbacks/${docId}?key=${FIREBASE_API_KEY}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Firestore REST write error: ${errText}`);
+      }
+    } catch (err) {
+      console.error('DbService createFeedback error:', err);
+      throw err;
+    }
   }
 }

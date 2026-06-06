@@ -7,6 +7,7 @@ import { collection, query, where, getDocs, orderBy } from 'firebase/firestore'
 import { updateProfile, sendPasswordResetEmail } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import { Header } from '@/components/header'
+import { FeedbackModal } from '@/components/feedback-modal'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,7 +31,8 @@ import {
   Wallet,
   Copy,
   CreditCard,
-  Link as LinkIcon
+  Link as LinkIcon,
+  MessageSquarePlus
 } from 'lucide-react'
 import {
   Pagination,
@@ -61,6 +63,7 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('projects')
   const itemsPerPage = 5
   const [mounted, setMounted] = useState(false)
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -92,7 +95,7 @@ export default function DashboardPage() {
           id: doc.id,
           ...doc.data()
         }))
-        
+
         // Sort client-side to bypass composite index requirements in Firestore
         docs.sort((a: any, b: any) => {
           const dateA = a.createdAt || 0
@@ -101,6 +104,15 @@ export default function DashboardPage() {
         })
 
         setInvitations(docs)
+
+        if (docs.length > 0 && typeof window !== 'undefined') {
+          const hasLeft = localStorage.getItem('hasLeftFeedback')
+          if (!hasLeft) {
+            setTimeout(() => {
+              setShowFeedbackModal(true)
+            }, 3000)
+          }
+        }
       } catch (err) {
         console.error("Error fetching invitations:", err)
       } finally {
@@ -133,43 +145,43 @@ export default function DashboardPage() {
   const getInvitationTitle = (inv: any) => {
     const category = inv.category || 'wedding';
     const names = inv.names || 'Taklifnoma';
-    
+
     if (category === 'birthday') {
-      return lang === 'uz' 
-        ? `Tug'ilgan kun: ${names}` 
-        : lang === 'ru' 
-          ? `День рождения: ${names}` 
+      return lang === 'uz'
+        ? `Tug'ilgan kun: ${names}`
+        : lang === 'ru'
+          ? `День рождения: ${names}`
           : `Birthday: ${names}`;
     }
     if (category === 'business') {
       const title = inv.eventTitle || inv.companyName || names;
-      return lang === 'uz' 
-        ? `Biznes tadbir: ${title}` 
-        : lang === 'ru' 
-          ? `Бизнес событие: ${title}` 
+      return lang === 'uz'
+        ? `Biznes tadbir: ${title}`
+        : lang === 'ru'
+          ? `Бизнес событие: ${title}`
           : `Business Event: ${title}`;
     }
     if (category === 'farewell') {
-      return lang === 'uz' 
-        ? `Qiz uzatish: ${names}` 
-        : lang === 'ru' 
-          ? `Проводы невесты: ${names}` 
+      return lang === 'uz'
+        ? `Qiz uzatish: ${names}`
+        : lang === 'ru'
+          ? `Проводы невесты: ${names}`
           : `Farewell Party: ${names}`;
     }
-    return lang === 'uz' 
-      ? `To'y taklifi: ${names}` 
-      : lang === 'ru' 
-        ? `Свадебное приглашение: ${names}` 
+    return lang === 'uz'
+      ? `To'y taklifi: ${names}`
+      : lang === 'ru'
+        ? `Свадебное приглашение: ${names}`
         : `Wedding Invitation: ${names}`;
   };
 
   const getInvitationThumbnail = (inv: any) => {
     const category = inv.category || 'wedding';
     const firstImg = inv.images?.[0];
-    
+
     const isDefaultWeddingImg = firstImg === "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800" ||
-                                firstImg === "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=200" ||
-                                !firstImg;
+      firstImg === "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=200" ||
+      !firstImg;
 
     if (isDefaultWeddingImg) {
       if (category === 'birthday') {
@@ -183,7 +195,7 @@ export default function DashboardPage() {
       }
       return "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=200";
     }
-    
+
     return firstImg;
   };
 
@@ -193,13 +205,13 @@ export default function DashboardPage() {
     active: invitations.filter(i => i.status === 'active').length
   }), [invitations])
 
-  const currentInvitations = useMemo(() => 
+  const currentInvitations = useMemo(() =>
     invitations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-  , [invitations, currentPage, itemsPerPage])
+    , [invitations, currentPage, itemsPerPage])
 
-  const totalPages = useMemo(() => 
+  const totalPages = useMemo(() =>
     Math.ceil(invitations.length / itemsPerPage)
-  , [invitations.length, itemsPerPage])
+    , [invitations.length, itemsPerPage])
 
   const handleUpdateProfile = async () => {
     if (!user?.uid) return
@@ -211,13 +223,13 @@ export default function DashboardPage() {
           displayName: newName
         })
       }
-      
+
       // 2. Update email and name in Firestore
       await fetch('/api/user', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          uid: user.uid, 
+        body: JSON.stringify({
+          uid: user.uid,
           email: newEmail !== undefined ? newEmail : '',
           displayName: newName
         })
@@ -250,7 +262,7 @@ export default function DashboardPage() {
       toast.error(lang === 'uz' ? "Minimal yechish summasi: 10,000 UZS" : "Минимальная сумма: 10,000 UZS")
       return
     }
-    
+
     setIsWithdrawing(true)
     try {
       const res = await fetch('/api/bot/withdraw', {
@@ -308,6 +320,13 @@ export default function DashboardPage() {
               {user?.displayName || t.myInvitations}
             </h1>
           </div>
+          <Button
+            onClick={() => setShowFeedbackModal(true)}
+            className="bg-[#98a08d] hover:bg-[#5c6352] text-white rounded-full flex items-center gap-2 shadow-sm"
+          >
+            <MessageSquarePlus className="w-4 h-4" />
+            {lang === 'uz' ? 'Izoh qoldirish' : lang === 'ru' ? 'Оставить отзыв' : 'Leave Feedback'}
+          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 md:space-y-8">
@@ -635,7 +654,7 @@ export default function DashboardPage() {
                     <h4 className="text-[10px] text-[#98a08d] uppercase tracking-widest font-bold mb-1">Taklif Qilinganlar</h4>
                     <p className="text-4xl font-bold text-[#5c6352]">{userData?.totalReferrals || 0}</p>
                   </Card>
-                  
+
                   <Card className="p-8 rounded-[2.5rem] border-0 shadow-sm bg-[#98a08d]/5 border-[#98a08d]/10 relative overflow-hidden">
                     <div className="w-12 h-12 bg-[#98a08d]/10 rounded-2xl flex items-center justify-center text-[#98a08d] mb-6">
                       <Wallet className="w-6 h-6" />
@@ -654,7 +673,7 @@ export default function DashboardPage() {
                     </div>
                     <h3 className="text-lg font-serif text-[#5c6352]">Pul Yechish</h3>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label className="text-xs text-[#98a08d] uppercase font-bold tracking-wider">Karta raqami</Label>
@@ -665,7 +684,7 @@ export default function DashboardPage() {
                         className="rounded-xl border-[#98a08d]/20 h-12"
                       />
                     </div>
-                    
+
                     <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
                       <p className="text-xs text-amber-700 font-medium">
                         Minimal yechish summasi: <b>10,000 UZS</b>
@@ -686,6 +705,11 @@ export default function DashboardPage() {
           </TabsContent>
         </Tabs>
       </main>
+      <FeedbackModal
+        isOpen={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+        user={user ? { uid: user.uid, email: user.email || '', displayName: userData?.displayName || user.displayName || '' } : null}
+      />
     </div>
   )
 }

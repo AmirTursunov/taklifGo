@@ -7,10 +7,10 @@ import { EternalBondTemplate } from '@/components/templates/eternal-bond'
 const getInvitationData = (id: string) => {
   // In a real app, this would fetch from a database (Supabase/Firebase/etc.)
   return {
-    names: 'Sarah & James',
+    names: 'Aziz & Aziza',
     date: 'June 15, 2028',
-    location: 'Paris, France',
-    venue: 'Rose Mansion',
+    location: 'Uzbekistan, Bukhara',
+    venue: 'Rudizar',
     images: [
       'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800',
