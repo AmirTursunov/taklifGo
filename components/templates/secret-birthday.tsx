@@ -1,16 +1,29 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
+import { useLanguage } from '@/lib/LanguageContext'
 
-const DEFAULT_CONFIG = {
-  from: 'Yaqinlaringiz',
-  relation: "do'stim",
-  wishes: [
-    { icon: '🌸', text: "Hayoting doim bahor kabi gullab yashnаsin" },
+const getDefaultConfig = (lang: string) => ({
+  from: lang === 'uz' ? 'Yaqinlaringiz' : lang === 'ru' ? 'Ваши близкие' : 'Your loved ones',
+  relation: lang === 'uz' ? "do'stim" : lang === 'ru' ? 'друг' : 'friend',
+  wishes: lang === 'uz' ? [
+    { icon: '🌸', text: "Hayoting doim bahor kabi gullab yashnasin" },
     { icon: '⭐', text: "Har bir orzuing ro'yobga chiqsin" },
     { icon: '💜', text: "Quvonch va sog'lik hech tark etmasin" },
     { icon: '✨', text: "Baxtingiz chegara bilmasin!" },
     { icon: '🎀', text: "Umr yo'lingiz nurli bo'lsin" },
+  ] : lang === 'ru' ? [
+    { icon: '🌸', text: "Пусть жизнь всегда цветет как весна" },
+    { icon: '⭐', text: "Пусть сбудется каждая мечта" },
+    { icon: '💜', text: "Пусть радость и здоровье не покидают" },
+    { icon: '✨', text: "Безграничного счастья!" },
+    { icon: '🎀', text: "Светлого жизненного пути" },
+  ] : [
+    { icon: '🌸', text: "May your life always bloom like spring" },
+    { icon: '⭐', text: "May every dream come true" },
+    { icon: '💜', text: "May joy and health never leave you" },
+    { icon: '✨', text: "Boundless happiness!" },
+    { icon: '🎀', text: "May your path be bright" },
   ],
   photos: [
     'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80',
@@ -19,14 +32,13 @@ const DEFAULT_CONFIG = {
     'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80',
     'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80',
   ],
-}
+})
 
-const SCAN_MESSAGES = [
-  "Ma'lumotlar yuklanmoqda...",
-  "Shaxs tasdiqlanmoqda...",
-  "Maxfiy fayl ochilmoqda...",
-  "Ruxsat berildi ✓",
-]
+const getScanMessages = (lang: string) => {
+  if (lang === 'ru') return ["Загрузка данных...", "Подтверждение личности...", "Открытие секретного файла...", "Доступ разрешен ✓"]
+  if (lang === 'en') return ["Loading data...", "Verifying identity...", "Opening secret file...", "Access granted ✓"]
+  return ["Ma'lumotlar yuklanmoqda...", "Shaxs tasdiqlanmoqda...", "Maxfiy fayl ochilmoqda...", "Ruxsat berildi ✓"]
+}
 
 function StarField({ count = 70 }) {
   const stars = useRef(
@@ -55,7 +67,7 @@ function StarField({ count = 70 }) {
   )
 }
 
-function ScreenLock({ onSubmit }: { onSubmit: (name: string) => void }) {
+function ScreenLock({ onSubmit, lang }: { onSubmit: (name: string) => void, lang: string }) {
   const [name, setName] = useState('')
   const [err, setErr] = useState(false)
 
@@ -91,10 +103,16 @@ function ScreenLock({ onSubmit }: { onSubmit: (name: string) => void }) {
           🎂 Secret Birthday Access
         </div>
         <div style={{ fontFamily: "'Pacifico',cursive", fontSize: 30, color: '#fff', textAlign: 'center', lineHeight: 1.2, marginBottom: 8 }}>
-          Maxfiy eshik
+          {lang === 'uz' ? 'Maxfiy eshik' : lang === 'ru' ? 'Секретная дверь' : 'Secret Door'}
         </div>
         <div style={{ fontSize: 13, color: 'rgba(255,255,255,.4)', textAlign: 'center', marginBottom: 36, lineHeight: 1.65 }}>
-          Bu link maxsus siz uchun yaratilgan.<br />Kirishingizni tasdiqlang.
+          {lang === 'uz' ? (
+            <>Bu link maxsus siz uchun yaratilgan.<br />Kirishingizni tasdiqlang.</>
+          ) : lang === 'ru' ? (
+            <>Эта ссылка создана специально для вас.<br />Подтвердите доступ.</>
+          ) : (
+            <>This link was created especially for you.<br />Confirm access.</>
+          )}
         </div>
 
         <div style={{ width: '100%', maxWidth: 290, marginBottom: 12 }}>
@@ -102,7 +120,7 @@ function ScreenLock({ onSubmit }: { onSubmit: (name: string) => void }) {
             value={name}
             onChange={e => setName(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-            placeholder="Ismingizni kiriting..."
+            placeholder={lang === 'uz' ? 'Ismingiz kim?' : lang === 'ru' ? 'Как вас зовут?' : 'What is your name?'}
             maxLength={24}
             autoComplete="off"
             style={{
@@ -132,25 +150,26 @@ function ScreenLock({ onSubmit }: { onSubmit: (name: string) => void }) {
           onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
         >
           <div style={{ position: 'absolute', top: 0, left: '-100%', width: '60%', height: '100%', background: 'linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent)', animation: 'sb-shine 3s ease-in-out infinite' }} />
-          Kirish →
+          {lang === 'uz' ? 'Kirish' : lang === 'ru' ? 'Войти' : 'Enter'}
         </button>
 
         {err && (
           <div style={{ fontSize: 12, color: 'rgba(255,80,80,.8)', marginTop: 10, fontWeight: 600 }}>
-            Iltimos ismingizni kiriting
+            {lang === 'uz' ? 'Iltimos ismingizni kiriting' : lang === 'ru' ? 'Пожалуйста, введите имя' : 'Please enter your name'}
           </div>
         )}
         <div style={{ fontSize: 11, color: 'rgba(255,255,255,.22)', marginTop: 14, textAlign: 'center' }}>
-          🔒 Bu ma'lumot hech qayerga saqlanmaydi
+          🔒 {lang === 'uz' ? 'Bu ma\'lumot hech qayerga saqlanmaydi' : lang === 'ru' ? 'Эти данные нигде не сохраняются' : 'This data is not saved anywhere'}
         </div>
       </div>
     </div>
   )
 }
 
-function ScreenScan({ name, onDone }: { name: string, onDone: () => void }) {
+function ScreenScan({ name, onDone, lang }: { name: string, onDone: () => void, lang: string }) {
   const [progress, setProgress] = useState(0)
   const [msgIdx, setMsgIdx] = useState(0)
+  const SCAN_MESSAGES = getScanMessages(lang)
 
   useEffect(() => {
     let p = 0
@@ -161,7 +180,7 @@ function ScreenScan({ name, onDone }: { name: string, onDone: () => void }) {
       if (p >= 100) { clearInterval(iv); setTimeout(onDone, 700) }
     }, 55)
     return () => clearInterval(iv)
-  }, [onDone])
+  }, [onDone, SCAN_MESSAGES.length])
 
   return (
     <div style={{
@@ -172,6 +191,11 @@ function ScreenScan({ name, onDone }: { name: string, onDone: () => void }) {
       padding: 32,
     }}>
       <StarField />
+      <div style={{ position: 'absolute', top: 180, right: -40, opacity: 0.6 }}>
+          <div style={{ fontSize: 120, fontFamily: "'Pacifico',cursive", color: 'rgba(255,255,255,0.05)', transform: 'rotate(-15deg)' }}>
+            {lang === 'uz' ? 'Baxt' : lang === 'ru' ? 'Счастье' : 'Joy'}
+          </div>
+        </div>
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
         <div style={{ position: 'relative', width: 120, height: 120, marginBottom: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid rgba(168,85,247,.25)' }} />
@@ -184,7 +208,7 @@ function ScreenScan({ name, onDone }: { name: string, onDone: () => void }) {
         </div>
 
         <div style={{ fontSize: 11, letterSpacing: '.2em', textTransform: 'uppercase', color: 'rgba(168,85,247,.9)', marginBottom: 8, fontWeight: 700 }}>
-          Tekshirilmoqda...
+          {lang === 'uz' ? 'Tekshirilmoqda...' : lang === 'ru' ? 'Проверка...' : 'Verifying...'}
         </div>
         <div style={{ fontFamily: "'Pacifico',cursive", fontSize: 30, color: '#fff', marginBottom: 28 }}>
           {name}
@@ -196,14 +220,21 @@ function ScreenScan({ name, onDone }: { name: string, onDone: () => void }) {
         <div style={{ marginTop: 14, fontSize: 12, color: 'rgba(255,255,255,.3)', letterSpacing: '.1em' }}>
           {SCAN_MESSAGES[msgIdx]}
         </div>
+        <div style={{
+          position: 'absolute', bottom: -120, left: 0, right: 0,
+          textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,.4)',
+          letterSpacing: '0.05em'
+        }}>
+          {lang === 'uz' ? "Surish orqali ko'ring" : lang === 'ru' ? "Смахните для просмотра" : "Swipe to view"}
+        </div>
       </div>
     </div>
   )
 }
 
-function ScreenBirthday({ name, config }: { name: string, config: any }) {
+function ScreenBirthday({ name, config, lang }: { name: string, config: any, lang: string }) {
   const [photoIdx, setPhotoIdx] = useState(0)
-  const photos = config.photos?.length ? config.photos : DEFAULT_CONFIG.photos
+  const photos = config.photos?.length ? config.photos : getDefaultConfig(lang).photos
 
   useEffect(() => {
     const iv = setInterval(() => setPhotoIdx(p => (p + 1) % photos.length), 3500)
@@ -244,25 +275,25 @@ function ScreenBirthday({ name, config }: { name: string, config: any }) {
             <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,.85)', letterSpacing: '.12em', textTransform: 'uppercase' }}>Access Granted ✓</div>
           </div>
 
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 12, letterSpacing: '.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,.6)', marginBottom: 6, fontWeight: 700 }}>
-              Tug'ilgan kuningiz bilan
+          <div style={{ position: 'absolute', top: 120, left: 30, zIndex: 10 }}>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,.6)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 4 }}>
+              {lang === 'uz' ? 'Tug\'ilgan kuning bilan,' : lang === 'ru' ? 'С днем рождения,' : 'Happy birthday,'}
             </div>
-            <div style={{ fontFamily: "'Pacifico',cursive", fontSize: 52, color: '#fff', textShadow: '0 2px 30px rgba(168,85,247,.65)', lineHeight: 1.05, animation: 'sb-namepop .7s cubic-bezier(.34,1.56,.64,1) both' }}>
+            <div style={{ fontFamily: "'Pacifico',cursive", fontSize: 42, color: '#fff', textShadow: '0 2px 20px rgba(0,0,0,0.5)', lineHeight: 1.1 }}>
               {name}!
             </div>
             <div style={{ fontFamily: "'Dancing Script',cursive", fontSize: 22, color: '#f9a8d4', marginTop: 4, fontWeight: 700 }}>
-              Aziz {config.relation || "do'stim"} 🎂
+              {lang === 'uz' ? 'Aziz do\'stim' : lang === 'ru' ? 'Дорогой друг' : 'Dear friend'} 🎂
             </div>
           </div>
         </div>
 
-        <div style={{ width: '100%' }}>
+        <div style={{ width: '100%', marginTop: 'auto' }}>
           <div style={{ fontSize: 11, letterSpacing: '.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,.45)', textAlign: 'center', marginBottom: 10, fontWeight: 700 }}>
-            ✦ &nbsp; Tilaklarim &nbsp; ✦
+            ✦ &nbsp; {lang === 'uz' ? 'Tilaklarim' : lang === 'ru' ? 'Мои пожелания' : 'My wishes'} &nbsp; ✦
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {(config.wishes || DEFAULT_CONFIG.wishes).map((w: any, i: number) => (
+            {(config.wishes || getDefaultConfig(lang).wishes).map((w: any, i: number) => (
               <div key={i} style={{
                 background: 'rgba(255,255,255,.1)', backdropFilter: 'blur(16px)',
                 border: '1px solid rgba(255,255,255,.15)', borderRadius: 16,
@@ -272,21 +303,6 @@ function ScreenBirthday({ name, config }: { name: string, config: any }) {
                 <span style={{ fontSize: 22, flexShrink: 0 }}>{w.icon}</span>
                 <span style={{ fontSize: 13, color: 'rgba(255,255,255,.9)', fontWeight: 600, lineHeight: 1.4 }}>{w.text}</span>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-          <div style={{ fontFamily: "'Dancing Script',cursive", fontSize: 16, color: 'rgba(255,255,255,.55)', fontWeight: 600 }}>
-            — Sevgi bilan, <span style={{ color: '#f9a8d4' }}>{config.from || DEFAULT_CONFIG.from}</span> 💖
-          </div>
-          <div style={{ display: 'flex', gap: 5 }}>
-            {photos.map((_: any, i: any) => (
-              <div key={i} style={{
-                width: i === photoIdx ? 18 : 5, height: 5, borderRadius: 3,
-                background: i === photoIdx ? '#fff' : 'rgba(255,255,255,.3)',
-                transition: 'all .4s ease',
-              }} />
             ))}
           </div>
         </div>
@@ -366,24 +382,20 @@ function GlobalStyles() {
 }
 
 export default function SecretBirthday({ data }: { data?: any }) {
+  const { lang } = useLanguage()
   const config = {
-    from: data?.closingSub || DEFAULT_CONFIG.from,
-    relation: data?.subMessage || DEFAULT_CONFIG.relation,
+    from: data?.closingSub || getDefaultConfig(lang).from,
+    relation: data?.subMessage || getDefaultConfig(lang).relation,
     wishes: data?.message ? [
-      { icon: '🌸', text: data.message.split('\\n')[0] || "Hayoting doim bahor kabi gullab yashnаsin" },
-      { icon: '⭐', text: data.message.split('\\n')[1] || "Har bir orzuing ro'yobga chiqsin" },
-      { icon: '💜', text: data.message.split('\\n')[2] || "Quvonch va sog'lik hech tark etmasin" }
-    ] : DEFAULT_CONFIG.wishes,
-    photos: data?.images?.length ? data.images : DEFAULT_CONFIG.photos
+      { icon: '🌸', text: data.message.split('\\n')[0] },
+      { icon: '⭐', text: data.message.split('\\n')[1] || "" },
+      { icon: '💜', text: data.message.split('\\n')[2] || "" }
+    ].filter(w => w.text) : getDefaultConfig(lang).wishes,
+    photos: data?.images?.length ? data.images : getDefaultConfig(lang).photos
   }
 
   const [screen, setScreen] = useState('lock')
   const [userName, setUserName] = useState('')
-
-  const handleNameSubmit = (name: string) => {
-    setUserName(name)
-    setScreen('scan')
-  }
 
   return (
     <div style={{
@@ -399,13 +411,13 @@ export default function SecretBirthday({ data }: { data?: any }) {
     }}>
       <GlobalStyles />
       <div style={{ position: 'absolute', inset: 0, animation: screen === 'lock' ? 'sb-fade .6s ease both' : 'none', zIndex: screen === 'lock' ? 10 : 0 }}>
-        {screen === 'lock' && <ScreenLock onSubmit={handleNameSubmit} />}
+        {screen === 'lock' && <ScreenLock lang={lang} onSubmit={(n) => { setUserName(n); setScreen('scan') }} />}
       </div>
       {screen === 'scan' && (
-        <ScreenScan name={userName} onDone={() => setScreen('bday')} />
+        <ScreenScan lang={lang} name={userName} onDone={() => setScreen('bday')} />
       )}
       {screen === 'bday' && (
-        <ScreenBirthday name={userName} config={config} />
+        <ScreenBirthday lang={lang} name={userName} config={config} />
       )}
     </div>
   )

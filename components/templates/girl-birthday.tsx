@@ -486,9 +486,9 @@ export function GirlBirthdayTemplate({
             <div className="h-[1px] w-8 bg-pink-300" />
           </motion.div>
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 text-center max-w-2xl mx-auto w-full space-y-6">
-
+        <motion.div
+          className="relative z-10 text-center max-w-2xl mx-auto w-full space-y-6"
+        >
           {/* Main name */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}

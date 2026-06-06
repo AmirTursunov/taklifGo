@@ -217,7 +217,7 @@ export function GoldenWeddingTemplate({
         <LuxuryCorner className="bottom-0 left-0" flipY />
         <LuxuryCorner className="bottom-0 right-0" flipX flipY />
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity }}
+        <motion.div
           className="relative z-20 text-center px-6 max-w-4xl mx-auto space-y-10">
 
           <motion.div

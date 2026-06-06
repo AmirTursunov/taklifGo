@@ -878,6 +878,67 @@ function CreateInvitationContent() {
             </section>
           )}
 
+          {["nafosat", "golden-wedding", "golden-night", "eternal-bond", "girl-birthday", "elegant-birthday", "magic-birthday"].includes(data.templateId) && (
+            <section className="space-y-4">
+              <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
+                {lang === "uz" ? "Foto Albom" : lang === "ru" ? "Фотоальбом" : "Photo Album"}
+              </h3>
+              <div className="space-y-2">
+                <Label className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4" />
+                    {lang === "uz" ? "Taklifnoma rasmlari" : lang === "ru" ? "Фотографии приглашения" : "Invitation photos"}
+                  </span>
+                  {Object.values(uploadingImages).some((v: any) => v) && <Loader2 className="w-3 h-3 animate-spin text-[#98a08d]" />}
+                </Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  disabled={Object.values(uploadingImages).some((v: any) => v)}
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (files.length === 0) return;
+
+                    const currentImages = data.images || [];
+                    const startIndex = currentImages.length;
+
+                    const newUrls: string[] = [];
+                    for (let i = 0; i < files.length; i++) {
+                      setUploadingImages((prev) => ({ ...prev, [`gal_${startIndex + i}`]: true }));
+                      try {
+                        const { url } = await uploadDirect(files[i], "image");
+                        newUrls.push(url);
+                      } catch (err) {
+                        console.error(err);
+                      } finally {
+                        setUploadingImages((prev) => ({ ...prev, [`gal_${startIndex + i}`]: false }));
+                      }
+                    }
+                    setData({ ...data, images: [...currentImages, ...newUrls] });
+                  }}
+                  className="rounded-xl border-[#98a08d]/20 file:bg-[#98a08d] file:text-white file:border-0 file:rounded-lg file:px-3 file:py-1 file:mr-4 file:text-[10px] file:cursor-pointer disabled:opacity-50"
+                />
+                {data.images && data.images.length > 0 && (
+                  <div className="flex gap-2 flex-wrap mt-2">
+                    {data.images.map((url: string, i: number) => (
+                      <div key={i} className="relative w-12 h-12 rounded-lg overflow-hidden border border-[#98a08d]/20 group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={url} alt={`upload-${i}`} className="w-full h-full object-cover" />
+                        <button
+                          onClick={() => setData({ ...data, images: data.images.filter((_: any, idx: number) => idx !== i) })}
+                          className="absolute top-0 right-0 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
           <section className="space-y-4">
             <h3 className="text-[10px] tracking-[0.3em] text-[#98a08d] font-bold uppercase">
               {lang === "uz" ? "Musiqa" : lang === "ru" ? "Музыка" : "Music"}

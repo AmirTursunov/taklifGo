@@ -2,23 +2,48 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 
+import { useLanguage } from '@/lib/LanguageContext'
+
 export default function BirthdayGreeting({ data = {} as any }) {
+  const { lang } = useLanguage()
   const [slide, setSlide] = useState(0)
   const timerRef = useRef<any>(null)
+
+  const defaultMessage = lang === 'uz' 
+    ? `Hayotingizning eng yorqin kunida\nsizi chin dildan tabriklaymiz!\n\nQuvonch, sog'lik va baxt\nsizni doim kuzatib yursin.\n\nHar bir orzuingiz ro'yobga chiqsin,\nhar bir kuni bahor kabi gullab yashnasin!`
+    : lang === 'ru'
+      ? `В самый яркий день вашей жизни\nмы от всей души поздравляем вас!\n\nПусть радость, здоровье и счастье\nвсегда сопровождают вас.\n\nПусть сбудется каждая ваша мечта,\nи каждый день цветет как весна!`
+      : `On the brightest day of your life\nwe sincerely congratulate you!\n\nMay joy, health and happiness\nalways accompany you.\n\nMay every dream come true,\nand every day bloom like spring!`;
+
+  const defaultWishes = lang === 'uz' ? [
+    { icon: '🌸', text: "Doim sog'-salomat bo'ling" },
+    { icon: '⭐', text: 'Har bir orzuingiz amalga oshsin' },
+    { icon: '🎀', text: 'Muhabbat va baxt to\'lsin' },
+    { icon: '✨', text: 'Umr yo\'lingiz nurli bo\'lsin' },
+    { icon: '🌈', text: "Har kuni yangi quvonch keltirsin" },
+    { icon: '💫', text: "Baxtingiz chegara bilmasin" },
+  ] : lang === 'ru' ? [
+    { icon: '🌸', text: "Будьте всегда здоровы" },
+    { icon: '⭐', text: "Пусть сбудутся все мечты" },
+    { icon: '🎀', text: "Любви и счастья" },
+    { icon: '✨', text: "Светлого жизненного пути" },
+    { icon: '🌈', text: "Новых радостей каждый день" },
+    { icon: '💫', text: "Безграничного счастья" },
+  ] : [
+    { icon: '🌸', text: "Always stay healthy" },
+    { icon: '⭐', text: "May all your dreams come true" },
+    { icon: '🎀', text: "Full of love and happiness" },
+    { icon: '✨', text: "May your path be bright" },
+    { icon: '🌈', text: "New joy every day" },
+    { icon: '💫', text: "Boundless happiness" },
+  ];
 
   const d = {
     name: data.name || data.names || 'Dilnoza',
     age: data.age || '25',
-    message: data.message || `Hayotingizning eng yorqin kunida\nsizi chin dildan tabriklaymiz!\n\nQuvonch, sog'lik va baxt\nsizni doim kuzatib yursin.\n\nHar bir orzuingiz ro'yobga chiqsin,\nhar bir kuni bahor kabi gullab yashnаsin!`,
-    from: data.from || data.closingSub || 'Yaqinlaringiz',
-    wishes: data.wishes || [
-      { icon: '🌸', text: "Doim sog'-salomat bo'ling" },
-      { icon: '⭐', text: 'Har bir orzuingiz amalga oshsin' },
-      { icon: '🎀', text: 'Muhabbat va baxt to\'lsin' },
-      { icon: '✨', text: 'Umr yo\'lingiz nurli bo\'lsin' },
-      { icon: '🌈', text: "Har kuni yangi quvonch keltirsin" },
-      { icon: '💫', text: "Baxtingiz chegara bilmasin" },
-    ],
+    message: data.message || defaultMessage,
+    from: data.from || data.closingSub || (lang === 'uz' ? 'Yaqinlaringiz' : lang === 'ru' ? 'Ваши близкие' : 'Your loved ones'),
+    wishes: data.wishes || defaultWishes,
   }
 
   const DELAYS = [4500, 6000, 6500]
@@ -135,14 +160,14 @@ export default function BirthdayGreeting({ data = {} as any }) {
               </svg>
 
               <span style={{ display:'inline-block', padding:'4px 14px', borderRadius:50, background:'#fce7f3', color:'#be185d', fontSize:11, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase' }}>
-                Tabriklash
+                {lang === 'uz' ? 'Tabriklash' : lang === 'ru' ? 'Поздравление' : 'Greeting'}
               </span>
 
               <div className="bounce-a" style={{ marginTop:14, fontFamily:"'Pacifico',cursive", fontSize:48, color:'#be185d', lineHeight:1.1, textShadow:'0 2px 0 rgba(255,182,220,0.5)' }}>
                 {d.name}!
               </div>
               <div style={{ fontFamily:"'Dancing Script',cursive", fontSize:22, color:'#7c3aed', marginTop:2, fontWeight:700 }}>
-                Tug'ilgan kuningiz muborak
+                {lang === 'uz' ? "Tug'ilgan kuningiz muborak" : lang === 'ru' ? "С Днем Рождения" : "Happy Birthday"}
               </div>
             </div>
 
@@ -184,7 +209,7 @@ export default function BirthdayGreeting({ data = {} as any }) {
               <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                 <div style={{ width:50, height:1, background:'linear-gradient(90deg,transparent,#f9a8d4)' }}/>
                 <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase', color:'#be185d', opacity:0.7 }}>
-                  {d.age} yosh
+                  {d.age} {lang === 'uz' ? 'yosh' : lang === 'ru' ? 'лет' : 'years'}
                 </div>
                 <div style={{ width:50, height:1, background:'linear-gradient(90deg,#f9a8d4,transparent)' }}/>
               </div>
@@ -226,7 +251,7 @@ export default function BirthdayGreeting({ data = {} as any }) {
               backdropFilter:'blur(8px)',
             }}>
               <div style={{ fontFamily:"'Dancing Script',cursive", fontSize:19, fontWeight:700, color:'#7c3aed', marginBottom:14 }}>
-                Aziz {d.name},
+                {lang === 'uz' ? 'Aziz' : lang === 'ru' ? 'Дорогой(ая)' : 'Dear'} {d.name},
               </div>
               <div style={{ fontSize:13.5, color:'#4c1d95', lineHeight:1.85 }}>
                 {d.message.split('\n').map((l: string,i: number) => <div key={i}>{l || <br/>}</div>)}
@@ -239,7 +264,7 @@ export default function BirthdayGreeting({ data = {} as any }) {
             </div>
 
             <div style={{ marginTop:14, display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap' }}>
-              {['Muhabbat','Baxt','Sog\'lik'].map((t,i)=>(
+              {(lang === 'uz' ? ['Muhabbat','Baxt','Sog\'lik'] : lang === 'ru' ? ['Любовь', 'Счастье', 'Здоровье'] : ['Love', 'Happiness', 'Health']).map((t,i)=>(
                 <span key={i} style={{
                   display:'inline-block', padding:'4px 14px', borderRadius:50, fontSize:11, fontWeight:700,
                   letterSpacing:'0.1em', textTransform:'uppercase',
@@ -264,10 +289,10 @@ export default function BirthdayGreeting({ data = {} as any }) {
                 ))}
               </svg>
               <div style={{ fontFamily:"'Pacifico',cursive", fontSize:22, color:'#be185d', textShadow:'0 2px 0 rgba(255,182,220,0.4)', marginTop:4 }}>
-                Tilaklarimiz
+                {lang === 'uz' ? 'Tilaklarimiz' : lang === 'ru' ? 'Наши пожелания' : 'Our wishes'}
               </div>
               <div style={{ fontFamily:"'Dancing Script',cursive", fontSize:15, color:'#7c3aed', fontWeight:700, marginTop:2, marginBottom:14 }}>
-                {d.name}ga — sevgi bilan 💖
+                {d.name}{lang === 'uz' ? 'ga' : ''} — {lang === 'uz' ? 'sevgi bilan' : lang === 'ru' ? 'с любовью' : 'with love'} 💖
               </div>
             </div>
 
@@ -318,7 +343,7 @@ export default function BirthdayGreeting({ data = {} as any }) {
           ))}
         </div>
         <div style={{ textAlign:'center', marginTop:5, fontSize:11, color:'#be185d', opacity:0.6, fontWeight:600, letterSpacing:'0.08em' }}>
-          bosish orqali o'tish
+          {lang === 'uz' ? "bosish orqali o'tish" : lang === 'ru' ? "нажмите чтобы перелистнуть" : "tap to slide"}
         </div>
       </div>
     </>

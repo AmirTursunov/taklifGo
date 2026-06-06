@@ -28,6 +28,7 @@ export function Header() {
             Taklif-Time
           </Link>
 
+          {/* Desktop Language Selector */}
           <div className="hidden md:flex p-1 bg-[#98a08d]/5 rounded-full border border-[#98a08d]/10">
             {(['uz', 'ru', 'en'] as const).map((l) => (
               <button
@@ -39,6 +40,24 @@ export function Header() {
                 {l.toUpperCase()}
               </button>
             ))}
+          </div>
+
+          {/* Mobile Language Selector */}
+          <div className="flex md:hidden relative">
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value as any)}
+              className="appearance-none bg-white border border-[#98a08d]/20 text-[#5c6352] text-[10px] font-bold rounded-full pl-3 pr-7 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#98a08d] shadow-sm uppercase tracking-wide"
+            >
+              <option value="uz">UZB</option>
+              <option value="ru">RUS</option>
+              <option value="en">ENG</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-[#98a08d]">
+              <svg className="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
           </div>
         </div>
 

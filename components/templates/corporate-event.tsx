@@ -201,9 +201,9 @@ export function CorporateEventTemplate({
             background: 'radial-gradient(ellipse at top right, rgba(10,74,143,0.07) 0%, transparent 70%)',
           }} />
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 px-8 sm:px-16 max-w-5xl mx-auto w-full">
-
+        <motion.div
+          className="relative z-10 px-8 sm:px-16 max-w-5xl mx-auto w-full"
+        >
           {/* Top row */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}

@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 
-const MARBLE_BG = "/textures/wed-photo.avif"
-const ROSES_TOP = "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600&q=85"
-const ROSES_BOTTOM = "https://images.unsplash.com/photo-1490750967868-88df5691cc2c?w=600&q=85"
-const DARK_ROSES = "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&q=85"
+const MARBLE_BG = "/textures/wed-photo.png"
+// const ROSES_TOP = "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600&q=85"
+// const ROSES_BOTTOM = "https://images.unsplash.com/photo-1490750967868-88df5691cc2c?w=600&q=85"
+// const DARK_ROSES = "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&q=85"
 
-const textShadow = '0 1px 10px rgba(0,0,0,0.5), 0 2px 20px rgba(0,0,0,0.3)'
+// const textShadow = '0 1px 10px rgba(0,0,0,0.5), 0 2px 20px rgba(0,0,0,0.3)'
 const goldTextShadow = '0 1px 6px rgba(180,140,40,0.4)'
 
 export default function WeddingInvitation({ data = {}, onDataChange }: { data?: any, onDataChange?: any }) {
@@ -184,7 +184,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
             position: 'absolute', top: 0, left: 0, right: 0, height: '42%',
             overflow: 'hidden',
           }}>
-            <img
+            {/* <img
               src="https://images.unsplash.com/photo-1508182314998-3bd49473002b?w=700&q=85"
               alt=""
               style={{
@@ -193,7 +193,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
                 filter: 'saturate(0.3) brightness(0.55) sepia(0.3)',
                 mixBlendMode: 'multiply',
               }}
-            />
+            /> */}
             {/* Fade to background */}
             <div style={{
               position: 'absolute', inset: 0,
@@ -206,7 +206,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
             position: 'absolute', bottom: 0, left: 0, right: 0, height: '38%',
             overflow: 'hidden',
           }}>
-            <img
+            {/* <img
               src="https://images.unsplash.com/photo-1508182314998-3bd49473002b?w=700&q=85"
               alt=""
               style={{
@@ -216,7 +216,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
                 mixBlendMode: 'multiply',
                 transform: 'scaleY(-1)',
               }}
-            />
+            /> */}
             <div style={{
               position: 'absolute', inset: 0,
               background: 'linear-gradient(to top, rgba(0,0,0,0) 40%, rgba(245,238,225,0.85) 100%)',
@@ -317,7 +317,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
             position: 'absolute', top: 0, left: 0, right: 0, height: '35%',
             overflow: 'hidden',
           }}>
-            <img
+            {/* <img
               src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=700&q=85"
               alt=""
               style={{
@@ -326,7 +326,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
                 filter: 'saturate(0.2) brightness(0.45) sepia(0.4)',
                 mixBlendMode: 'multiply',
               }}
-            />
+            /> */}
             <div style={{
               position: 'absolute', inset: 0,
               background: 'linear-gradient(to bottom, rgba(245,238,225,0.1) 0%, rgba(245,238,225,0.85) 90%)',
@@ -338,7 +338,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
             position: 'absolute', bottom: 0, left: 0, right: 0, height: '28%',
             overflow: 'hidden',
           }}>
-            <img
+            {/* <img
               src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=700&q=85"
               alt=""
               style={{
@@ -348,7 +348,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
                 mixBlendMode: 'multiply',
                 transform: 'scaleY(-1)',
               }}
-            />
+            /> */}
             <div style={{
               position: 'absolute', inset: 0,
               background: 'linear-gradient(to top, rgba(245,238,225,0.1) 0%, rgba(245,238,225,0.85) 90%)',
@@ -423,7 +423,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
             position: 'absolute', top: 0, left: 0, right: 0, height: '36%',
             overflow: 'hidden',
           }}>
-            <img
+            {/* <img
               src="https://images.unsplash.com/photo-1490750967868-88df5691cc2c?w=700&q=85"
               alt=""
               style={{
@@ -432,7 +432,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
                 filter: 'saturate(0.2) brightness(0.45) sepia(0.35)',
                 mixBlendMode: 'multiply',
               }}
-            />
+            /> */}
             <div style={{
               position: 'absolute', inset: 0,
               background: 'linear-gradient(to bottom, rgba(245,238,225,0.05) 20%, rgba(245,238,225,0.95) 100%)',
@@ -444,7 +444,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
             position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%',
             overflow: 'hidden',
           }}>
-            <img
+            {/* <img
               src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=700&q=85"
               alt=""
               style={{
@@ -454,7 +454,7 @@ export default function WeddingInvitation({ data = {}, onDataChange }: { data?: 
                 mixBlendMode: 'multiply',
                 transform: 'scaleY(-1)',
               }}
-            />
+            /> */}
             <div style={{
               position: 'absolute', inset: 0,
               background: 'linear-gradient(to top, rgba(245,238,225,0.05) 20%, rgba(245,238,225,0.95) 100%)',

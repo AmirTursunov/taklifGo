@@ -314,7 +314,7 @@ export function NafosatTemplate({
             style={{ background: 'radial-gradient(circle, rgba(74,144,217,0.08) 0%, transparent 70%)' }} />
         </div>
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity }}
+        <motion.div
           className="relative z-20 text-center px-6 max-w-4xl mx-auto space-y-6">
 
           {/* Arabic bismillah-style top label */}

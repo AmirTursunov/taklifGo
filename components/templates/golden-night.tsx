@@ -261,7 +261,7 @@ export function GoldenNightTemplate({
   useEffect(() => {
     if (audioRef.current) {
       isPlaying
-        ? audioRef.current.play().catch(() => {})
+        ? audioRef.current.play().catch(() => { })
         : audioRef.current.pause()
     }
   }, [isPlaying, data.musicUrl])
@@ -273,10 +273,10 @@ export function GoldenNightTemplate({
 
   return (
     <div
-      className="w-full min-h-screen overflow-x-hidden"
+      className="w-full min-h-screen overflow-x-hidden selection:bg-amber-500/30"
       style={{
-        background: '#0a0a0a',
-        color: '#f5f0e8',
+        background: '#0B132B',
+        color: '#F8F9FA',
         fontFamily: "'Cormorant Garamond', serif",
       }}
     >
@@ -292,7 +292,7 @@ export function GoldenNightTemplate({
       {/* ── HERO ── */}
       <section ref={heroRef} className="relative w-full h-screen flex items-center justify-center overflow-hidden" style={{ position: 'relative' }}>
         {/* Dark radial bg */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1a1508_0%,_#0a0a0a_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1C2D5A_0%,_#0B132B_70%)]" />
 
         {/* Gold dust particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -304,10 +304,12 @@ export function GoldenNightTemplate({
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
                 opacity: 0.15 + Math.random() * 0.4,
+                boxShadow: '0 0 10px rgba(251,191,36,0.8)',
               }}
               animate={{
-                y: [0, -30 - Math.random() * 40, 0],
-                opacity: [0.1, 0.6, 0.1],
+                y: [0, -40 - Math.random() * 50, 0],
+                x: [0, (Math.random() - 0.5) * 30, 0],
+                opacity: [0, 0.8, 0],
                 scale: [1, 1.5, 1],
               }}
               transition={{
@@ -334,7 +336,6 @@ export function GoldenNightTemplate({
         ))}
 
         <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
           className="relative z-10 text-center px-6 space-y-6"
         >
           {/* Top label */}
@@ -352,10 +353,10 @@ export function GoldenNightTemplate({
 
           {/* Names */}
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="cinzel text-5xl sm:text-7xl lg:text-8xl font-bold leading-none outline-none focus:bg-amber-400/5 px-4 rounded-xl"
+            initial={{ opacity: 0, y: 40, scale: 0.9, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 1.5, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="cinzel text-5xl sm:text-7xl lg:text-8xl font-bold leading-tight py-2 outline-none focus:bg-amber-400/5 px-4 rounded-xl drop-shadow-[0_0_25px_rgba(212,175,55,0.2)]"
             style={{
               background: 'linear-gradient(135deg, #FFE066 0%, #D4AF37 40%, #B8860B 70%, #FFD700 100%)',
               WebkitBackgroundClip: 'text',
@@ -424,12 +425,12 @@ export function GoldenNightTemplate({
 
       {/* ── COUNTDOWN ── */}
       <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1, ease: "easeOut" }}
         className="py-20 px-6 text-center relative"
-        style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #0f0d06 100%)' }}
+        style={{ background: 'linear-gradient(180deg, #0B132B 0%, #070B19 100%)' }}
       >
         <div className="max-w-2xl mx-auto space-y-8">
           <div className="space-y-3">
@@ -450,12 +451,12 @@ export function GoldenNightTemplate({
 
       {/* ── GALLERY ── */}
       <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="py-20 px-4"
-        style={{ background: '#080808' }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="py-20 px-4 relative"
+        style={{ background: '#070B19' }}
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 space-y-3">
@@ -506,12 +507,12 @@ export function GoldenNightTemplate({
 
       {/* ── EVENT DETAILS ── */}
       <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="py-20 px-6"
-        style={{ background: 'linear-gradient(180deg, #080808 0%, #0f0d06 100%)' }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1 }}
+        className="py-20 px-6 relative"
+        style={{ background: 'linear-gradient(180deg, #070B19 0%, #04060E 100%)' }}
       >
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
@@ -542,20 +543,20 @@ export function GoldenNightTemplate({
             ].map((item, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="relative p-8 rounded-2xl text-center group"
+                transition={{ duration: 0.8, delay: idx * 0.15, ease: "easeOut" }}
+                className="relative p-8 rounded-3xl text-center group overflow-hidden transition-all duration-500 hover:-translate-y-2"
                 style={{
-                  background: 'linear-gradient(135deg, #141209 0%, #0f0d06 100%)',
-                  border: '1px solid rgba(212,175,55,0.15)',
-                  boxShadow: '0 0 30px rgba(212,175,55,0.05)',
+                  background: 'linear-gradient(135deg, #122044 0%, #070B19 100%)',
+                  border: '1px solid rgba(212,175,55,0.2)',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.3), inset 0 0 20px rgba(212,175,55,0.05)',
                 }}
               >
                 {/* Hover glow */}
-                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ boxShadow: '0 0 40px rgba(212,175,55,0.12)', background: 'radial-gradient(ellipse at center, rgba(212,175,55,0.05) 0%, transparent 70%)' }} />
+                <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{ boxShadow: '0 0 40px rgba(212,175,55,0.15)', background: 'radial-gradient(circle at top, rgba(212,175,55,0.1) 0%, transparent 70%)' }} />
 
                 <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center"
                   style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.2)' }}>
@@ -609,12 +610,13 @@ export function GoldenNightTemplate({
 
       {/* ── FOOTER ── */}
       <motion.footer
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-        className="py-24 text-center space-y-6 relative"
-        style={{ background: '#0a0a0a' }}
+        initial={{ opacity: 0, filter: 'blur(10px)' }}
+        whileInView={{ opacity: 1, filter: 'blur(0px)' }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 1.2 }}
+        className="py-24 text-center space-y-6 relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #122044 0%, #070B19 100%)', }}
+
       >
         {/* Large decorative text */}
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none">
@@ -651,15 +653,15 @@ export function GoldenNightTemplate({
         <div className="fixed bottom-6 right-6 z-50">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 backdrop-blur-md"
+            className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 backdrop-blur-xl group hover:scale-110"
             style={{
               background: isPlaying
                 ? 'linear-gradient(135deg, #D4AF37, #B8860B)'
-                : 'rgba(20,18,9,0.9)',
-              border: '1px solid rgba(212,175,55,0.3)',
+                : 'rgba(11,19,43,0.8)',
+              border: '1px solid rgba(212,175,55,0.4)',
               boxShadow: isPlaying
-                ? '0 0 30px rgba(212,175,55,0.4)'
-                : '0 0 20px rgba(0,0,0,0.5)',
+                ? '0 0 30px rgba(212,175,55,0.5)'
+                : '0 0 20px rgba(0,0,0,0.4)',
             }}
           >
             {isPlaying ? (

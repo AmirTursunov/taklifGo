@@ -92,7 +92,7 @@ export function RoyalTealTemplate({ data, onDataChange }: RoyalTealTemplateProps
   return (
     <div
       id="invitation-capture"
-      className={`min-h-[100dvh] w-full relative overflow-x-hidden flex flex-col items-center justify-center ${playfair.className} playfair-font bg-[#113a47] py-4`}
+      className={`min-h-screen w-full relative overflow-x-hidden flex flex-col items-center justify-center ${playfair.className} playfair-font bg-[#113a47] py-4`}
     >
       {/* Real background image element for WebKit/iOS Safari compatibility in SVG Canvas */}
       <div
